@@ -88,13 +88,50 @@ body.runtime-ready #runtimeGate{opacity:0;visibility:hidden;pointer-events:none}
   border:1px solid var(--line);color:var(--text);font:800 10px/1.2 var(--sans);cursor:pointer;white-space:nowrap}
 .qcChoice.on{border-color:var(--amber);color:var(--amber);background:rgba(255,179,92,.08)}
 .qcChoice small{display:block;color:var(--dim);font:700 8.5px var(--mono);margin-top:2px}
+.qcCount{flex:0 0 auto;color:var(--cyan);font:800 9px var(--mono);white-space:nowrap;padding:0 3px}
 .visionStrip{border:1px solid rgba(75,213,234,.42);background:rgba(75,213,234,.07);border-radius:10px;padding:9px 10px;margin:0 0 8px;color:var(--text)}
 .visionStrip b{color:var(--cyan)}
 .scanLine{font:700 9px var(--mono);line-height:1.55;color:var(--dim);letter-spacing:.02em}
 .qcDetail{position:sticky;right:0;z-index:2;border-color:rgba(99,215,232,.55);color:var(--cyan);box-shadow:-8px 0 12px var(--deck2)}
 
+/* 盤面を隠さず、撞点・速度パネル上で全候補を比較するコーチトレイ。 */
+#coachPicker{position:absolute;inset:5px;z-index:24;display:none;grid-template-rows:auto minmax(0,1fr) auto;gap:7px;min-height:0;overflow:hidden;
+  padding:9px;background:rgba(13,18,23,.985);border:1px solid rgba(99,215,232,.50);border-radius:13px;
+  box-shadow:0 -8px 28px rgba(0,0,0,.48);backdrop-filter:blur(10px)}
+#coachPicker.show{display:grid}
+.coachPickerHead{display:flex;align-items:center;gap:8px;min-width:0}
+.coachPickerHead b{font:900 11px var(--mono);color:var(--amber);letter-spacing:.05em}
+.coachPickerHead span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dim);font:10px var(--sans)}
+.coachPickerHead button{margin-left:auto;flex:0 0 36px;width:36px;height:32px;border-radius:8px;background:#171e25;border:1px solid var(--line);color:var(--dim);font-size:18px;cursor:pointer}
+#coachPickerGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;min-height:0;max-height:100%;overflow-x:hidden;overflow-y:auto;
+  overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--cyan) transparent}
+#coachPickerGrid::-webkit-scrollbar{width:5px}
+#coachPickerGrid::-webkit-scrollbar-thumb{background:rgba(99,215,232,.65);border-radius:99px}
+.coachPick{min-width:0;min-height:50px;padding:7px 8px;text-align:left;border-radius:9px;background:#151b21;border:1px solid var(--line);color:var(--text);cursor:pointer}
+.coachPick.on{border-color:var(--amber);background:rgba(255,179,92,.10);box-shadow:inset 0 0 0 1px rgba(255,179,92,.14)}
+.coachPick b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:850 10.5px var(--sans)}
+.coachPick small{display:block;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dim);font:700 8.5px var(--mono)}
+.coachPickerActions{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:7px;background:rgba(13,18,23,.985)}
+.coachPickerActions button{min-height:42px;border-radius:9px;border:1px solid var(--line);background:#171e25;color:var(--text);font:850 11px var(--sans);cursor:pointer}
+.coachPickerActions .primary{background:var(--amber);border-color:var(--amber);color:#211403}
+
+#btnGhostAim{min-height:34px;border-radius:8px;border:1px solid rgba(99,215,232,.55);background:rgba(99,215,232,.06);color:var(--cyan);font:850 10.5px var(--sans);cursor:pointer}
+#ghostEditor{position:absolute;inset:5px;z-index:27;display:none;grid-template-columns:minmax(116px,38%) minmax(0,1fr);gap:9px;
+  padding:9px;background:rgba(13,18,23,.99);border:1px solid rgba(99,215,232,.55);border-radius:13px;box-shadow:0 -8px 28px rgba(0,0,0,.48)}
+#ghostEditor.show{display:grid}
+.ghostCanvasWrap{display:grid;place-items:center;min-width:0;min-height:0}
+#ghostAimCanvas{width:min(100%,150px);aspect-ratio:1;touch-action:none;border-radius:50%;background:#101820;cursor:grab}
+.ghostEditorInfo{display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:5px;min-width:0;min-height:0;overflow-y:auto}
+.ghostEditorInfo h3{font:900 12px var(--sans);color:var(--amber)}
+.ghostEditorInfo p{font:9.5px/1.4 var(--sans);color:var(--dim)}
+#ghostAimOut{align-self:center;padding:7px 8px;border-radius:8px;background:#10171d;color:var(--cyan);font:800 10px/1.45 var(--mono)}
+.ghostNudges{display:grid;grid-template-columns:1fr 1fr 1.35fr;gap:5px}
+.ghostNudges button,.ghostEditorActions button{min-height:38px;border-radius:8px;border:1px solid var(--line);background:#171e25;color:var(--text);font:800 10px var(--sans);cursor:pointer}
+.ghostEditorActions{display:grid;grid-template-columns:1fr 1.35fr;gap:6px}
+.ghostEditorActions .primary{background:var(--amber);border-color:var(--amber);color:#211403}
+
 /* ---- コントロールデッキ ---- */
-#deck{background:var(--deck);border-top:1px solid var(--line);
+#deck{position:relative;background:var(--deck);border-top:1px solid var(--line);
   display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:center;
   padding:8px 10px calc(env(safe-area-inset-bottom,0px) + 8px)}
 #padWrap{display:flex;flex-direction:column;align-items:center;gap:2px}
@@ -114,6 +151,11 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 #aimRow button{background:var(--deck2);border:1px solid var(--line);color:var(--text);
   font:600 11px var(--mono);padding:6px 7px;border-radius:7px;cursor:pointer;white-space:nowrap}
 #aimRow output{flex:1;text-align:center;color:var(--amber);font-size:13px;min-width:56px}
+#aimStepBtn{border-color:rgba(99,215,232,.55)!important;color:var(--cyan)!important;font-family:var(--sans)!important}
+.aimNudge{font-size:16px!important;font-weight:900!important;min-width:42px}
+#speedJog{display:grid;grid-template-columns:1fr auto 1fr;gap:5px;align-items:center;margin-top:1px}
+#speedJog button{min-height:32px;border-radius:7px;background:var(--deck2);border:1px solid var(--line);color:var(--text);font:800 11px var(--mono);cursor:pointer}
+#speedJog span{color:var(--dim);font:800 9px var(--mono);white-space:nowrap}
 #right{display:flex;flex-direction:column;gap:6px}
 #btnShot{background:var(--amber);color:#221503;border:0;border-radius:12px;
   font:800 15px var(--sans);padding:16px 18px;cursor:pointer;letter-spacing:.1em;box-shadow:0 3px 14px rgba(255,179,92,.25)}
@@ -151,6 +193,15 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 #lessonChips button.on{border-color:var(--amber);color:var(--amber)}
 #lessonChips button em{font-style:normal;font-size:10px;color:var(--dim);margin-right:5px;
   border:1px solid var(--line);border-radius:4px;padding:1px 4px}
+#lessonMission{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 10px;align-items:center;padding:9px 10px;
+  border:1px solid rgba(99,215,232,.36);border-radius:11px;background:#10171d}
+#lessonMissionText{min-width:0}
+#lessonMissionText b{display:block;color:var(--amber);font:900 12px var(--sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#lessonMissionText span{display:block;margin-top:2px;color:#b8c3cc;font:10.5px/1.45 var(--sans)}
+#lessonPhases{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+#lessonPhases i{font:800 9px var(--sans);font-style:normal;text-align:center;padding:5px 3px;border-radius:6px;background:#171e25;color:var(--dim)}
+#lessonPhases i.on{background:rgba(255,179,92,.12);color:var(--amber);box-shadow:inset 0 0 0 1px rgba(255,179,92,.35)}
+#btnLessonTry{min-height:42px;border-radius:9px;border:1px solid var(--cyan);background:rgba(99,215,232,.08);color:var(--cyan);font:900 11px var(--sans);padding:7px 10px;cursor:pointer}
 #ltrans{display:flex;gap:6px;align-items:center}
 #ltrans button{background:var(--deck2);border:1px solid var(--line);color:var(--text);
   font:700 14px var(--mono);padding:10px 0;border-radius:9px;cursor:pointer;flex:1;min-width:0}
@@ -177,6 +228,18 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 #ccBtns button{flex:1;border-radius:10px;border:0;font:800 13px var(--sans);padding:12px;cursor:pointer}
 #ccPlay{background:var(--amber);color:#221503}
 #ccTry{background:var(--deck2);border:1px solid var(--cyan)!important;color:var(--cyan)}
+#ccard.coachDocked{inset:5px;max-height:none;z-index:25;border-color:rgba(255,179,92,.50);border-radius:13px;padding:10px 12px}
+
+/* NBA配置宣言もコントロール面に載せ、テーブル全体を見たまま決める。 */
+#deck>#rotationFoulModal{position:absolute;inset:4px;z-index:26;align-items:stretch;justify-content:stretch;padding:0;background:transparent;backdrop-filter:none}
+#deck>#rotationFoulModal .rotationFoulCard{width:100%;max-width:none;max-height:none;height:100%;border-radius:12px;padding:9px 10px;display:grid;
+  grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto minmax(0,1fr);gap:5px 9px;overflow:hidden;background:rgba(14,19,24,.99)}
+.rotationFoulCard h3{font-size:12px;align-self:center}
+.rotationFoulCard p{grid-column:1/-1;font-size:9.5px;line-height:1.35;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rotationFoulCard .modalGrid{grid-column:1;grid-row:3;align-self:center}
+.rotationFoulCard .modalActions{grid-column:2;grid-row:1/4;align-self:stretch;display:flex}
+.rotationFoulCard .modalActions button{min-width:116px;height:100%;padding:7px 10px}
+.rotationFoulCard select{min-height:40px}
 
 /* ---- PRO COMPETITION LAYER ---- */
 #proHud{position:absolute;top:calc(env(safe-area-inset-top,0px) + 48px);left:10px;right:10px;
@@ -202,14 +265,21 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 .playerPlate strong{font:900 15px var(--mono);color:var(--text)}
 .playerPlate i{font-style:normal;color:var(--red);letter-spacing:-2px}
 #gameState{font:700 10px var(--mono);color:var(--cyan);max-width:190px;overflow:hidden;text-overflow:ellipsis}
+#gameStateWrap{display:grid;place-items:center;gap:2px;min-width:0}
+#rotationTargetQuick{display:none;width:68px;min-height:24px;padding:2px 18px 2px 6px;border:1px solid rgba(99,215,232,.6);border-radius:6px;
+  background:#0c1217;color:var(--cyan);font:800 9px var(--mono);cursor:pointer}
+#rotationTargetQuick.show{display:block}
 #proBadge{font:900 9px var(--mono);letter-spacing:.12em;color:#1d1307;background:var(--amber);padding:5px 7px;border-radius:6px;white-space:nowrap}
+#proBadge small{font-size:7px;letter-spacing:.04em;opacity:.72}
 #compat2d{position:absolute;inset:0;width:100%;height:100%;display:none;touch-action:none;pointer-events:none;z-index:1}
 
 .drawer{position:fixed;inset:0;z-index:40;display:none;justify-content:flex-end;background:rgba(0,0,0,.46);backdrop-filter:blur(2px)}
 .drawer.show{display:flex}
 .drawerPanel{width:min(430px,94vw);height:100%;background:#10151a;border-left:1px solid var(--line);
-  box-shadow:-20px 0 50px rgba(0,0,0,.4);padding:calc(env(safe-area-inset-top,0px) + 15px) 16px calc(env(safe-area-inset-bottom,0px) + 18px);overflow-y:auto}
-.drawerHead{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:14px}
+  box-shadow:-20px 0 50px rgba(0,0,0,.4);padding:calc(env(safe-area-inset-top,0px) + 15px) 16px calc(env(safe-area-inset-bottom,0px) + 18px);
+  min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;scrollbar-gutter:stable}
+.drawerHead{position:sticky;top:calc(env(safe-area-inset-top,0px) * -1 - 15px);z-index:4;display:flex;align-items:flex-start;justify-content:space-between;gap:15px;
+  margin:-2px -2px 14px;padding:4px 2px 10px;background:linear-gradient(#10151a 80%,rgba(16,21,26,0))}
 .drawerEyebrow{font:800 9px var(--mono);letter-spacing:.18em;color:var(--amber)}
 .drawerTitle{font:900 19px var(--sans);margin-top:3px}
 .drawerClose{background:#171e25;border:1px solid var(--line);color:var(--dim);font-size:20px;width:36px;height:36px;border-radius:10px;cursor:pointer}
@@ -221,7 +291,20 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 .settingRow select,.settingRow input[type=text],.settingRow input[type=number]{width:100%;background:#0b1014;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px;font:700 11px var(--sans)}
 .settingRow input[type=range]{height:18px}
 .settingMeta{font:10px/1.55 var(--sans);color:var(--dim);padding:8px 10px;background:#0b1014;border-radius:9px}
-.ruleTabs{display:flex;gap:5px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none}
+.clothColorLabel{display:inline-flex;align-items:center;gap:7px}
+#clothColorPreview{display:inline-block;width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.7);box-shadow:0 0 0 1px rgba(0,0,0,.55)}
+.appCredit{margin-top:14px;padding:11px 12px;border-top:1px solid var(--line);text-align:center;color:var(--dim);font:800 9px/1.65 var(--mono);letter-spacing:.04em}
+.appCredit b{display:block;color:var(--text);font-size:10px;letter-spacing:.08em}
+.appCredit span{color:var(--cyan)}
+.drawerScrollHint{margin:8px 0 2px;color:var(--amber);font:800 9px var(--mono);text-align:center;letter-spacing:.04em}
+.envImpact{margin-top:9px;padding:10px;border:1px solid rgba(99,215,232,.38);border-radius:10px;background:rgba(99,215,232,.055)}
+.envImpact strong{display:block;color:var(--cyan);font:900 10px var(--mono);letter-spacing:.05em}
+.envImpact span{display:block;margin-top:4px;color:#cbd5dd;font:10.5px/1.5 var(--sans)}
+.drawerActions{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) * -1 - 18px);z-index:4;display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  margin:14px -2px -4px;padding:12px 2px calc(env(safe-area-inset-bottom,0px) + 4px);background:linear-gradient(rgba(16,21,26,0),#10151a 18%)}
+.drawerActions button{min-height:46px;border-radius:10px;border:1px solid var(--line);background:#171e25;color:var(--text);font:850 11px var(--sans);cursor:pointer}
+.drawerActions .primary{background:var(--amber);border-color:var(--amber);color:#211403}
+.ruleTabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:12px}
 .ruleTabs button{flex:0 0 auto;background:#151b21;border:1px solid var(--line);color:var(--dim);padding:8px 10px;border-radius:8px;font:700 10px var(--sans);cursor:pointer}
 .ruleTabs button.on{border-color:var(--amber);color:var(--amber)}
 #ruleBody{font-size:12px;line-height:1.72;color:#cbd3da}
@@ -231,7 +314,8 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 
 .modalLayer{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(4px)}
 .modalLayer.show{display:flex}
-.modalCard{width:min(460px,96vw);background:#12181e;border:1px solid #35414c;border-radius:16px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.modalCard{width:min(460px,96vw);background:#12181e;border:1px solid #35414c;border-radius:16px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.55);
+  min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
 .modalCard h3{font:900 17px var(--sans);margin-bottom:5px}
 .modalCard p{font:11px/1.55 var(--sans);color:var(--dim);margin-bottom:12px}
 .modalGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -293,7 +377,9 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
     font-size:18px;line-height:1}
   .playerPlate{min-width:0;min-height:42px;padding:4px 7px;justify-content:space-between}
   .playerPlate span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #gameStateWrap{max-width:92px}
   #gameState{max-width:92px;text-align:center;font-size:9px}
+  #rotationTargetQuick{width:66px;min-height:26px;font-size:9px}
   #proBadge,.hudLabel{display:none}
 
   #chips{top:8px;left:8px;right:8px;overflow-x:auto;scrollbar-width:none}
@@ -318,15 +404,17 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   #mid{align-content:center;gap:5px}
   #pad{width:116px;height:116px}
   #padVal{font-size:10px}
-  #aimRow{min-height:72px;grid-template-columns:repeat(4,minmax(0,1fr));
-    grid-template-areas:"label value value value" "minus1 minus01 plus01 plus1";align-content:center;gap:7px 4px}
+  #aimRow{min-height:72px;grid-template-columns:repeat(5,minmax(0,1fr));
+    grid-template-areas:"label value value step step" "jumpminus minus plus jumpplus jumpplus";align-content:center;gap:7px 4px}
   #aimRow span{grid-area:label;text-align:center;align-self:center}
   #aimRow button{min-width:0;min-height:44px;padding:7px 3px;font-size:11.5px}
-  #aimRow button:nth-of-type(1){grid-area:minus1}
-  #aimRow button:nth-of-type(2){grid-area:minus01}
-  #aimRow button:nth-of-type(3){grid-area:plus01}
-  #aimRow button:nth-of-type(4){grid-area:plus1}
+  #aimMinusJump{grid-area:jumpminus}
+  #aimMinus{grid-area:minus}
+  #aimPlus{grid-area:plus}
+  #aimPlusJump{grid-area:jumpplus}
+  #aimStepBtn{grid-area:step}
   #aimRow output{grid-area:value;min-width:0;display:grid;place-items:center}
+  #btnGhostAim{min-height:42px}
   #mid label{font-size:10.5px}
   input[type=range]{height:44px}
   input[type=range]::-webkit-slider-thumb{width:26px;height:26px;margin-top:-11px}
@@ -352,7 +440,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   #ccBtns button{min-height:48px;padding:10px 7px}
 
   .drawer{align-items:flex-end;justify-content:center}
-  .drawerPanel{width:100%;height:min(88dvh,760px);border:1px solid var(--line);border-bottom:0;border-radius:20px 20px 0 0;
+  .drawerPanel{width:100%;height:min(92dvh,820px);border:1px solid var(--line);border-bottom:0;border-radius:20px 20px 0 0;
     padding:18px 14px calc(env(safe-area-inset-bottom,0px) + 18px);box-shadow:0 -18px 50px rgba(0,0,0,.46)}
   #mobileMenuDrawer .drawerPanel{height:auto;max-height:84dvh}
   .drawerClose{width:44px;height:44px}
@@ -360,6 +448,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   .settingRow input[type=range]{height:44px}
   .settingRow select,.settingRow input[type=text],.settingRow input[type=number]{min-height:44px;font-size:12px}
   .ruleTabs button{min-height:44px}
+  .ruleTabs{grid-template-columns:repeat(3,minmax(0,1fr));position:sticky;top:62px;z-index:3;padding:5px 0;background:#10151a}
   .modalLayer{align-items:flex-end;padding:0}
   .modalCard{width:100%;max-height:88dvh;overflow-y:auto;border-radius:20px 20px 0 0;padding:18px 14px calc(env(safe-area-inset-bottom,0px) + 18px)}
   .modalActions button,.modalGrid select{min-height:48px}
@@ -376,7 +465,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   #padWrap,#mid{min-height:140px}
   #deck[data-pane="power"] #mid{grid-template-columns:minmax(0,2fr) minmax(0,1fr);column-gap:14px;align-items:center}
   #pad{width:102px;height:102px}
-  #aimRow{min-height:106px;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-areas:none}
+  #aimRow{min-height:106px;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-areas:none}
   #aimRow span{display:none;grid-area:auto}
   #aimRow button,#aimRow output{grid-area:auto}
   #right{grid-template-rows:minmax(82px,1fr) 44px;min-height:140px}
@@ -390,6 +479,15 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   #scoreBoard.show{display:grid;flex:0 0 auto;grid-template-columns:minmax(90px,1fr) auto minmax(90px,1fr) 44px}
   #eventLog{left:auto;width:min(310px,45vw)}
   .drawerPanel,.modalCard{max-height:96dvh;height:96dvh}
+  #coachPickerGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #ghostEditor{grid-template-columns:132px minmax(0,1fr);padding:7px;gap:7px}
+  .ghostEditorInfo{grid-template-rows:auto minmax(0,1fr) auto auto}
+  .ghostEditorInfo p{display:none}
+  .ghostNudges button,.ghostEditorActions button{min-height:32px}
+  #deck>#rotationFoulModal .rotationFoulCard{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 132px;grid-template-rows:auto minmax(0,1fr)}
+  .rotationFoulCard p{grid-column:1/3}
+  .rotationFoulCard .modalGrid{grid-column:1/3;grid-row:2}
+  .rotationFoulCard .modalActions{grid-column:3;grid-row:1/3}
 }
 
 /* Portrait phones: the three everyday controls remain visible together. */
@@ -403,13 +501,22 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   #mid .powerBlock{display:grid!important;gap:1px}
   #mid .powerBlock label:nth-of-type(2),#mid .powerBlock #elv{display:none}
   #mid .pivotBlock{display:none!important}
-  #aimRow{display:grid!important;min-height:44px;grid-template-columns:44px minmax(0,1fr) 44px;
-    grid-template-areas:"minus value plus";gap:5px;align-items:center}
-  #aimRow span,#aimRow button:nth-of-type(1),#aimRow button:nth-of-type(4){display:none}
-  #aimRow button:nth-of-type(2){display:block;grid-area:minus}
-  #aimRow button:nth-of-type(3){display:block;grid-area:plus}
+  #aimRow{display:grid!important;min-height:44px;grid-template-columns:44px minmax(0,1fr) 44px 62px;
+    grid-template-areas:"minus value plus step";gap:5px;align-items:center}
+  #aimRow span,#aimMinusJump,#aimPlusJump{display:none}
+  #aimMinus{display:block;grid-area:minus}
+  #aimPlus{display:block;grid-area:plus}
+  #aimStepBtn{display:block;grid-area:step;font-size:9.5px!important;line-height:1.2;white-space:normal}
   #aimRow output{display:grid;grid-area:value;place-items:center;min-height:44px;border:1px solid var(--line);
     border-radius:9px;background:var(--deck2);font-size:12px}
+  #speedJog button{min-height:28px}
+  #speedJog span{font-size:8px}
+  #btnGhostAim{min-height:30px;font-size:9.5px}
+  #ghostEditor{grid-template-columns:minmax(132px,44%) minmax(0,1fr);padding:7px;gap:7px}
+  #ghostAimCanvas{width:min(100%,148px)}
+  .ghostEditorInfo{grid-template-rows:auto minmax(0,1fr) auto auto}
+  .ghostEditorInfo p{display:none}
+  .ghostNudges button,.ghostEditorActions button{min-height:34px}
   #right{grid-area:actions;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:70px 43px;
     gap:6px;min-height:112px}
   #btnShot{grid-column:1/-1;grid-row:1;min-height:70px;padding:10px 5px;font-size:15px}
@@ -421,6 +528,35 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   #deck.mobileAdvanced #mid .pivotBlock{display:grid!important}
   #deck.mobileAdvanced #mid{gap:2px}
   #advisor{max-height:54px}
+  .qcLead{max-width:102px}
+  .qcLead span,.qcLead em{max-width:96px}
+  .qcChoice{padding:5px 7px}
+}
+
+/* Desktop: table stays dominant; controls become a stable side console. */
+@media (min-width:1180px) and (min-height:640px){
+  #app{grid-template-columns:minmax(0,1fr) 390px;grid-template-rows:auto minmax(0,1fr);height:100dvh}
+  #stage{grid-column:1;grid-row:1/3}
+  #advisor{grid-column:2;grid-row:1;padding:10px;max-height:92px}
+  #deck{grid-column:2;grid-row:2;display:grid;grid-template-columns:132px minmax(0,1fr);grid-template-areas:"spin controls" "actions actions";
+    align-content:center;gap:16px 12px;padding:20px 18px calc(env(safe-area-inset-bottom,0px) + 20px);border-left:1px solid var(--line);border-top:0}
+  #padWrap{grid-area:spin}
+  #pad{width:126px;height:126px}
+  #mid{grid-area:controls;gap:8px}
+  #right{grid-area:actions;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  #btnShot{grid-column:1/3;grid-row:1/3;min-height:92px;font-size:18px}
+  #btnCoach,#btnStop{min-height:42px}
+  #aimRow{display:grid;grid-template-columns:34px 38px minmax(40px,1fr) 38px 34px;gap:4px;width:100%;max-width:100%}
+  #aimRow>span,#aimStepBtn{grid-column:1/-1}
+  #aimRow>*{min-width:0;max-width:100%}
+  #aimRow button{padding-left:2px;padding-right:2px}
+  #aimRow .aimNudge{min-width:0!important}
+  #aimRow output{min-height:38px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;background:var(--deck2)}
+  #ldeck{grid-column:2;grid-row:2;border-left:1px solid var(--line);border-top:0;padding:16px}
+  #lessonMission{grid-template-columns:1fr}
+  #btnLessonTry{width:100%}
+  .drawerPanel{width:min(520px,46vw)}
+  #coachPickerGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 </style>
 </head>
@@ -459,14 +595,14 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">BILLIARD LAB PRO</span>
+      <span id="proBadge">BILLIARD LAB PRO <small>v1.0.1</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
         <option value="set4">ショットラボ</option>
         <option value="nine">ナインボール</option>
         <option value="ten">テンボール</option>
         <option value="eight">エイトボール</option>
-        <option value="rotation">ローテーション</option>
+        <option value="rotation">ローテーション（120・180・240・300点）</option>
         <option value="kairun">カイルン（台湾式四ツ球 2・3・5）</option>
       </select>
       <div id="matchControls">
@@ -486,7 +622,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <button id="btnPushOut" class="hudBtn" disabled>プッシュアウト</button>
       <div id="scoreBoard">
         <div class="playerPlate turn" id="p0Plate"><span id="p0Name">YOU</span><strong id="p0Score">0</strong><i id="p0Fouls"></i></div>
-        <span id="gameState">BREAK</span>
+        <div id="gameStateWrap"><span id="gameState">BREAK</span><select id="rotationTargetQuick" aria-label="ローテーション目標点"><option value="120">120点</option><option value="180">180点</option><option value="240">240点</option><option value="300">300点</option></select></div>
         <div class="playerPlate" id="p1Plate"><span id="p1Name">PRO AI</span><strong id="p1Score">0</strong><i id="p1Fouls"></i></div>
         <button id="btnMatchSetup" class="hudBtn" type="button" aria-label="対戦設定を開く" aria-haspopup="dialog">⚙</button>
       </div>
@@ -512,6 +648,18 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
     <div id="quickCoach" aria-live="polite"></div>
   </div>
   <div id="deck" data-pane="aim">
+    <section id="coachPicker" aria-hidden="true" aria-label="AIコーチ 全ショット候補">
+      <div class="coachPickerHead"><b id="coachPickerTitle">全候補</b><span id="coachPickerSummary">盤面を見ながら比較できます</span><button id="btnCoachPickerClose" type="button" aria-label="候補一覧を閉じる">×</button></div>
+      <div id="coachPickerGrid"></div>
+      <div class="coachPickerActions"><button id="btnCoachPickerExplain" type="button">選択中の詳しい理由</button><button class="primary" id="btnCoachPickerUse" type="button">この構えに決定</button></div>
+    </section>
+    <section id="ghostEditor" aria-hidden="true" aria-label="的球拡大 イメージボール調整">
+      <div class="ghostCanvasWrap"><canvas id="ghostAimCanvas" width="300" height="300" aria-label="イメージボールをドラッグして接触点を調整"></canvas></div>
+      <div class="ghostEditorInfo"><h3 id="ghostAimTitle">的球拡大・イメージボール</h3><p>半透明の白球を的球の周囲で指ドラッグ。接触点から実際の狙い角へ変換します。</p><output id="ghostAimOut">的球を選択してください</output>
+        <div class="ghostNudges"><button type="button" data-ghost-nudge="-0.1">−0.1°</button><button type="button" data-ghost-nudge="0.1">＋0.1°</button><button type="button" data-ghost-center="1">現在ラインへ戻す</button></div>
+        <div class="ghostEditorActions"><button id="btnGhostCancel" type="button">取消</button><button class="primary" id="btnGhostUse" type="button">この接触点に決定</button></div>
+      </div>
+    </section>
     <div id="mobileControlTabs" role="tablist" aria-label="ショット調整">
       <button type="button" role="tab" data-pane-button="aim" class="on" aria-selected="true">狙い</button>
       <button type="button" role="tab" data-pane-button="tip" aria-selected="false">撞点</button>
@@ -525,15 +673,18 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <div class="controlBlock powerBlock">
         <label>スピード <output id="spdOut" class="mono">3.0 m/s</output></label>
         <input type="range" id="spd" aria-label="ショット速度" min="0.5" max="10" step="0.1" value="3">
+        <div id="speedJog" aria-label="ショット速度の微調整"><button type="button" data-speed-jog="-0.1">−0.1</button><span>微調整</span><button type="button" data-speed-jog="0.1">＋0.1</button></div>
         <label>キュー角度(エレベーション) <output id="elvOut" class="mono">0°</output></label>
         <input type="range" id="elv" aria-label="キュー角度" min="0" max="75" step="1" value="0">
       </div>
       <div id="aimRow" class="mobilePane">
         <span>ねらい</span>
-        <button data-a="-1">−1°</button><button data-a="-0.1">−0.1°</button>
+        <button id="aimMinusJump" type="button" data-a="-1">−1°</button><button id="aimMinus" class="aimNudge" type="button" data-jog="-1" aria-label="狙いを左へ微調整">−</button>
         <output id="aimOut">0.0°</output>
-        <button data-a="0.1">+0.1°</button><button data-a="1">+1°</button>
+        <button id="aimPlus" class="aimNudge" type="button" data-jog="1" aria-label="狙いを右へ微調整">＋</button><button id="aimPlusJump" type="button" data-a="1">+1°</button>
+        <button id="aimStepBtn" type="button" aria-label="狙いの調整刻み">刻み 0.1°</button>
       </div>
+      <button id="btnGhostAim" type="button">◎ 的球拡大・イメージ球</button>
       <div class="controlBlock pivotBlock">
         <label>ピボット長(キューの見越し特性) <output id="pvOut" class="mono">20cm</output></label>
         <input type="range" id="pv" aria-label="ピボット長" min="12" max="40" step="1" value="20">
@@ -546,6 +697,11 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
     </div>
   </div>
   <div id="ldeck">
+    <div id="lessonMission">
+      <div id="lessonMissionText"><b>課題を選択</b><span>お手本を観察し、予測してから自分で撞きます。</span></div>
+      <button id="btnLessonTry" type="button">🎯 この球を自分で撞く</button>
+      <div id="lessonPhases"><i class="on">1 観察</i><i>2 予測</i><i>3 実践</i><i>4 振り返り</i></div>
+    </div>
     <div id="lessonChips"></div>
     <div id="ltrans">
       <button id="btnPrevShot" title="前のショット">|◀</button>
@@ -584,6 +740,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③強さを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.0.1</b><span>Created by littlepond</span></div>
   </section>
 </div>
 
@@ -609,6 +766,9 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <label>先取数・目標点<select id="mobileRaceSelect" aria-label="先取数・目標点"></select></label>
       <label>コーチ<select id="mobileCoachMode" aria-label="コーチ動作"><option value="quick" selected>QUICK AUTO</option><option value="manual">手動</option><option value="off">OFF</option></select></label>
       <label>試合テンポ<select id="mobileMatchTempo" aria-label="試合テンポ"><option value="fast" selected>FAST</option><option value="normal">標準</option></select></label>
+      <label id="rackModeRow">9・10ボール配列<select id="mobileRackMode" aria-label="9・10ボールのラック配列"><option value="random" selected>規定球固定・毎ラックランダム</option><option value="standard">固定配列（練習用）</option></select></label>
+      <label id="nineFootRow">9ボールのフット位置<select id="mobileNineFoot" aria-label="9ボールのフットスポット"><option value="nine" selected>9番オンフット（WPA現行）</option><option value="one">1番オンフット（従来方式）</option></select></label>
+      <label id="rotationNoCallRuleRow">ノーコールイン<select id="mobileRotationNoCallRule" aria-label="ローテーションのノーコールイン処理"><option value="spot" selected>フットへ戻す（大会方式）</option><option value="current">入ったまま（NBA 2026本文）</option></select></label>
     </div>
     <div class="modalActions"><button data-close="matchSetupModal">取消</button><button class="primary" id="btnApplyMatchSetup">適用</button></div>
   </section>
@@ -617,8 +777,11 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 <div class="drawer" id="labDrawer" aria-hidden="true">
   <section class="drawerPanel" role="dialog" aria-modal="true" aria-label="実球環境設定">
     <div class="drawerHead"><div><div class="drawerEyebrow">REAL-WORLD CALIBRATION</div><div class="drawerTitle">テーブル・用具・人間差</div></div><button class="drawerClose" data-close="labDrawer">×</button></div>
-    <div class="settingMeta">同じラインでも、湿度、ラシャ、球の汚れ、クッション、タップ、ストローク誤差で結果は変わります。ここで実台に合わせて校正できます。</div>
+    <div class="settingMeta">デフォルトは「コーチ予測＝実球」の競技標準です。環境を変えると、下の差分表示に転がり・クッション・ポケット・実行誤差への影響が即時に出ます。</div>
+    <div class="drawerScrollHint">↕ 上下にスワイプして全設定を表示</div>
+    <div class="envImpact" id="envImpact" aria-live="polite"><strong>COACH MATCH · 予測一致 ON</strong><span>競技標準からの変化を計算中…</span></div>
     <div class="settingGroup"><h3>テーブル環境</h3>
+      <div class="settingRow"><label class="clothColorLabel">ラシャ色 <i id="clothColorPreview" aria-hidden="true"></i></label><select id="clothColor" aria-label="ラシャ色"><option value="blue" selected>トーナメントブルー</option><option value="green">クラシックグリーン</option><option value="teal">チャンピオンシップティール</option><option value="burgundy">バーガンディ</option><option value="charcoal">チャコール</option></select></div>
       <div class="settingRow"><label>ラシャ速度 <output id="clothOut">トーナメント</output></label><input id="clothSpeed" type="range" min="75" max="125" value="100"></div>
       <div class="settingRow"><label>湿度 <output id="humidityOut">45%</output></label><input id="humidity" type="range" min="20" max="90" value="45"></div>
       <div class="settingRow"><label>クッション反発 <output id="cushionOut">競技基準</output></label><input id="cushionLive" type="range" min="75" max="110" value="100"></div>
@@ -632,10 +795,12 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <div class="settingRow"><label>チョーク状態</label><select id="chalk"><option value="fresh" selected>良好</option><option value="thin">薄い</option><option value="poor">不足</option></select></div>
     </div>
     <div class="settingGroup"><h3>ストローク再現性</h3>
-      <div class="settingRow"><label>人間誤差 <output id="accuracyOut">OFF（理論値）</output></label><input id="humanError" type="range" min="0" max="100" value="0"></div>
+      <div class="settingRow"><label>実行誤差 <output id="accuracyOut">0%（予測一致）</output></label><input id="humanError" type="range" min="0" max="100" value="0"></div>
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.0.1</b><span>Created by littlepond</span></div>
+    <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
 
@@ -655,6 +820,18 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 
 <div class="modalLayer" id="optionModal" aria-hidden="true">
   <div class="modalCard" role="dialog" aria-modal="true"><h3 id="optionTitle">選択権</h3><p id="optionText"></p><div class="modalActions"><button id="btnOptionPass">相手に返す</button><button class="primary" id="btnOptionTake">現状で撞く</button></div></div>
+</div>
+
+<div class="modalLayer" id="rotationFoulModal" aria-hidden="true">
+  <section class="modalCard rotationFoulCard" role="dialog" aria-modal="false" aria-label="NBAローテーション ファウル後の配置選択">
+    <h3>NBAローテーション：ファウル後の選択</h3>
+    <p id="rotationFoulText">手球とテーブル上の最小番号球の位置を、1回だけ宣言します。</p>
+    <div class="modalGrid">
+      <label>手球<select id="rotationCueChoice"><option value="current">現状</option><option value="kitchen">ヘッドライン内</option></select></label>
+      <label>最小番号球<select id="rotationObjectChoice"><option value="current">現状</option><option value="center">センタースポット</option><option value="foot">フットスポット</option></select></label>
+    </div>
+    <div class="modalActions"><button class="primary" id="btnApplyRotationFoul">この配置を宣言</button></div>
+  </section>
 </div>
 <script>
 /**
@@ -821,7 +998,18 @@ function makeBall(id, x, y) {
   return { id, p: [x, y, PH.R], v: [0, 0, 0], w: [0, 0, 0], pocketed: false, off: false, strokeElev: 0 };
 }
 function cloneBall(b) {
-  return { id: b.id, p: b.p.slice(), v: b.v.slice(), w: b.w.slice(), pocketed: b.pocketed, off: b.off, strokeElev: b.strokeElev || 0 };
+  // コーチの高速予測は位置だけを持つ軽量スナップショットを返す。
+  // それを試合状態へ引き継ぐ経路（NBAローテーションのノーコール等）でも
+  // 通常の物理球と同じ完全な状態へ安全に正規化する。
+  return {
+    id: b.id,
+    p: (b.p || [0, 0, PH.R]).slice(),
+    v: (b.v || [0, 0, 0]).slice(),
+    w: (b.w || [0, 0, 0]).slice(),
+    pocketed: !!b.pocketed,
+    off: !!b.off,
+    strokeElev: b.strokeElev || 0
+  };
 }
 
 // ---- ショット(撞き) ----
@@ -1231,16 +1419,16 @@ if (typeof module !== 'undefined') {
 const LESSONS = [
 {
   id: 'safety',
-  title: 'セーフティ 負けない選択',
+  title: '攻撃窓 → ツーウェイ → 守備',
   tag: '戦術',
-  desc: '「入れられる気がしない球」を無理に攻めるのが一番の負け筋です。①強攻するとどうなるか ②正しいセーフティ ③相手が受ける苦しさ ④転がり込むチャンス、を一続きで見せます。',
+  desc: '最初に直接・バンク・コンビ・キスまで入れを探し、入れが成立すれば我慢のネクストでも続行。物理的な攻撃窓が残らない時だけ、ツーウェイまたはセーフティへ移る判断順を学びます。',
   balls: [{"id":0,"x":-0.7,"y":0.3},{"id":1,"x":1.02,"y":-0.38},{"id":7,"x":0.22,"y":0.05},{"id":9,"x":0.28,"y":-0.04}],
   shots: [
     { prm: {"speed":4.6,"aim":-0.40364815639538637,"elev":0,"tipX":0,"tipY":0,"pivotLen":0.2},
       reset: true,
       expect: {"contact":1,"noPocket":true},
-      title: "【悪い例】低確率の入れを選ぶ",
-      body: "1番は遠く、角度も甘い(厚み10%・カット64°)。それでも「入るかも」で4.6m/sの強打を選ぶとこうなります。スクラッチこそしませんが入らず、しかも手玉と1番が1.27mで正対 — 相手にはカット19°のやさしい球が残りました。トップレベルで試合が決まるのは、こういう「入らない球を撞いてしまった一撞き」です。次のショットで正解を見せます。" },
+      title: "【比較】攻めるならミス側まで設計",
+      body: "1番は遠く、厚み10%・カット64°。直接・バンク・コンビ・キスを比較したうえで、4.6m/sのこの線は入れ幅が残らず、外すと手玉と1番が1.27mで正対して相手にカット19°を渡します。『薄いから守る』のではなく、入れとミス側を実走査して攻撃窓が無いと確認する工程です。次のショットで勝率を残す線を見ます。" },
     { prm: {"speed":2.3,"aim":-0.3939436269664662,"elev":0,"tipX":0,"tipY":0,"pivotLen":0.2},
       reset: true,
       expect: {"contact":1,"noPocket":true,"hidden":true},
@@ -1328,6 +1516,15 @@ const LESSONS = [
   ]
 },
 {
+  id:'rotation', title:'NBAローテーション実戦判定', tag:'公式',
+  desc:'120／180／240／300点への得点、コール／ノーコール、通常ファウル後の「手球＋最小番号球」配置宣言を、盤面を見たまま練習します。',
+  balls:[{id:0,x:-.6,y:.12},{id:1,x:.18,y:.06},{id:2,x:.72,y:-.24},{id:3,x:.90,y:.26}],
+  shots:[
+    {prm:{speed:3.2,aim:-.11733087416117594,elev:0,tipX:0,tipY:0,pivotLen:.2},reset:true,expect:{pot:1},
+      title:'1番を得点し、次球の側へ出す',body:'最小番号の1番へ先当てし、コールどおり入れば1点。同時に合法に入った球も番号を加算します。本機は120／180／240／300点を明示選択。ノーコールインは大会方式のフットスポット返しを既定とし、NBA 2026本文の現状渡しへも対戦設定から切り替えられます。'}
+  ]
+},
+{
   id:'kairun', title:'カイルン 2・3・5', tag:'台湾式四ツ球', kairun:true,
   desc:'黄＋赤、赤＋赤、3球全部を連続で当てるだけでなく、前のショットで次の配置を作るカイルンの核心を学びます。',
   balls:[{id:0,x:-.88,y:.22},{id:3,x:-.635,y:0},{id:11,x:.635,y:0},{id:1,x:.9525,y:0}],
@@ -1347,6 +1544,26 @@ const LESSONS = [
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
+const APP_VERSION='1.0.1';
+const CLOTH_THEMES={
+  blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
+  green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
+  teal:{label:'チャンピオンシップティール',cloth:'#087e78',cushion:'#066660'},
+  burgundy:{label:'バーガンディ',cloth:'#7a2638',cushion:'#611e2c'},
+  charcoal:{label:'チャコール',cloth:'#35424d',cushion:'#27333d'},
+};
+let clothThemeKey='blue',clothMaterial=null,cushionMaterial=null;
+try{const savedCloth=localStorage.getItem('billiard-cloth-color');if(CLOTH_THEMES[savedCloth])clothThemeKey=savedCloth;}catch(_){ }
+function currentClothTheme(){return CLOTH_THEMES[clothThemeKey]||CLOTH_THEMES.blue;}
+function applyClothTheme(key,persist=true){
+  clothThemeKey=CLOTH_THEMES[key]?key:'blue';
+  const theme=currentClothTheme();
+  if(clothMaterial){clothMaterial.color.copy(new THREE.Color(theme.cloth).convertSRGBToLinear());clothMaterial.needsUpdate=true;}
+  if(cushionMaterial){cushionMaterial.color.copy(new THREE.Color(theme.cushion).convertSRGBToLinear());cushionMaterial.needsUpdate=true;}
+  if($('clothColor'))$('clothColor').value=clothThemeKey;
+  if($('clothColorPreview'))$('clothColorPreview').style.background=theme.cloth;
+  if(persist)try{localStorage.setItem('billiard-cloth-color',clothThemeKey);}catch(_){ }
+}
 
 // ---------- 状態 ----------
 const S = {
@@ -1354,7 +1571,8 @@ const S = {
   balls: [], view: 'top', mode: 'idle',           // idle | running | place
   aim: 0, speed: 3, elev: 0, tipX: 0, tipY: 0, pivot: 0.20,
   slow: false, pred: null,
-  tapTarget: null,
+  tapTarget: null, aimTarget:null, aimPocket:null,
+  rotationPlacementPreview:null,
   rules: null, runEvents: null,
   orbit: { th: -0.6, ph: 0.95, dist: 2.4 },
 };
@@ -1363,16 +1581,23 @@ const MATCH = {
   names: ['YOU', 'PRO AI'], racks: [0, 0], points: [0, 0], fouls: [0, 0],
   groups: [null, null], shotNo: 0, inning: 1, breaker: 0, aiBusy: false,
   call: { ball: null, pocket: null, safety: false },
-  pushDeclared: false, rotationNoCall: false, intentionalFoul: false,
+  pushDeclared: false, rotationNoCall: false, rotationNoCallRule:'spot', rotationTarget:120, intentionalFoul: false,
+  rackMode:'random', nineFoot:'nine',
   optionPending: null, humanError: 0,
   lastActual: null, lastIdeal: null, log: [], rackOver: false,
   coachMode: 'quick', matchTempo: 'fast', autoCoachTimer: null, aiDecision: '',
   aiToken: 0, aiWatchdog: null, aiPlan:null, shotStartedAt: 0, shotForceStop: false,
+  lessonChallenge:null,
 };
 try{
-  const cm=localStorage.getItem('billiard-coach-mode'),mt=localStorage.getItem('billiard-match-tempo');
+  const cm=localStorage.getItem('billiard-coach-mode'),mt=localStorage.getItem('billiard-match-tempo'),nr=localStorage.getItem('billiard-rotation-nocall');
+  const rt=+localStorage.getItem('billiard-rotation-target'),rm=localStorage.getItem('billiard-rack-mode'),nf=localStorage.getItem('billiard-nine-foot');
   if(['quick','manual','off'].includes(cm))MATCH.coachMode=cm;
   if(['fast','normal'].includes(mt))MATCH.matchTempo=mt;
+  if(['spot','current'].includes(nr))MATCH.rotationNoCallRule=nr;
+  if([120,180,240,300].includes(rt))MATCH.rotationTarget=rt;
+  if(['random','standard'].includes(rm))MATCH.rackMode=rm;
+  if(['nine','one'].includes(nf))MATCH.nineFoot=nf;
 }catch(_){ }
 const BALL_DEF = [
   { id: 0, name: '白', color: '#f4f1ea', x: -0.70, y: 0 },
@@ -1444,7 +1669,8 @@ const tableCanvasPad = (w, h) => w <= 720
 // ---------- iOS: 画面ごとスクロール/バウンス防止 ----------
 document.addEventListener('touchmove', e => {
   if (e.target.closest('input[type=range]') || e.target.closest('#advData')
-    || e.target.closest('#lessonChips') || e.target.closest('#ccBody')) return;
+    || e.target.closest('#lessonChips') || e.target.closest('#ccBody') || e.target.closest('#coachPickerGrid')
+    || e.target.closest('.drawerPanel') || e.target.closest('.modalCard') || e.target.closest('.ghostEditorInfo')) return;
   if (e.cancelable) e.preventDefault();
 }, { passive: false });
 document.addEventListener('gesturestart', e => e.preventDefault());
@@ -1459,8 +1685,9 @@ const W = PH.TABLE_W, H = PH.TABLE_H;
   const OX = HX + CUSH_BACK + RAIL_W, OY = HY + CUSH_BACK + RAIL_W;
 
   const C = h => new THREE.Color(h).convertSRGBToLinear();
-  const clothMat = new THREE.MeshPhongMaterial({ color: C(0x1d6aa8), shininess: 3, specular: C(0x0a1a26) });
-  const cushMat  = new THREE.MeshPhongMaterial({ color: C(0x18598f), shininess: 4, specular: C(0x0a1a26) });
+  const initialCloth=currentClothTheme();
+  const clothMat = clothMaterial = new THREE.MeshPhongMaterial({ color: C(initialCloth.cloth), shininess: 3, specular: C(0x0a1a26) });
+  const cushMat  = cushionMaterial = new THREE.MeshPhongMaterial({ color: C(initialCloth.cushion), shininess: 4, specular: C(0x0a1a26) });
   const woodMat  = new THREE.MeshPhongMaterial({ color: C(0x4a3220), shininess: 45, specular: C(0x2a2018) });
   const wellMat  = new THREE.MeshBasicMaterial({ color: C(0x07090c) });
 
@@ -1967,7 +2194,7 @@ glCanvas.addEventListener('pointermove', e => {
     const b = drag.ball;
     let nx = Math.max(-PH.HX, Math.min(PH.HX, p[0]));
     const ny = Math.max(-PH.HY, Math.min(PH.HY, p[1]));
-    if (S.rules && b.id === 0 && (!S.rules.broken || (S.rules.game === 'kairun' && S.rules.opening)))
+    if (S.rules && b.id === 0 && (!S.rules.broken || S.rules.ballInHandRestricted || (S.rules.game === 'kairun' && S.rules.opening)))
       nx = Math.min(nx, -W / 4); // ブレイク／カイルン初球はキッチン内
     for (const o of S.balls)
       if (o !== b && !o.pocketed && Math.hypot(o.p[0] - nx, o.p[1] - ny) < 2 * PH.R) return;
@@ -2017,6 +2244,7 @@ function handleTableTap(e) {
       return;
     }
     S.tapTarget = nearBall.id;
+    S.aimTarget = nearBall.id;
     if (S.rules && S.rules.game === 'kairun') {
       hint('カイルン: ' + nearBall.id + '番を第1的球に選択。盤面をなぞって厚みを調整します');
     } else {
@@ -2032,12 +2260,14 @@ function handleTableTap(e) {
     }
     const ob = S.balls.find(b => b.id === S.tapTarget && !b.pocketed);
     if (pk && ob) {
+      const id = S.tapTarget;
       S.aim = CO.aimTo(cue, ob, pk);
+      S.aimTarget=id;S.aimPocket=pocketKey(pk);
       const travel = Math.hypot(ob.p[0] - cue.p[0], ob.p[1] - cue.p[1])
         + Math.hypot(pk.x - ob.p[0], pk.y - ob.p[1]);
       S.speed = Math.max(1.35, Math.min(3.6, 1.15 + travel * 0.82));
       $('spd').value = S.speed;
-      const id = S.tapTarget; S.tapTarget = null;
+      S.tapTarget = null;
       uiOuts(); schedulePred(0);
       hint(id + '番 → ' + CO.pkName(pk) + '。必要なら±0.1°、撞点、強さを調整');
       return;
@@ -2110,20 +2340,99 @@ pad.addEventListener('pointerup', () => padDrag = false);
 pad.addEventListener('pointercancel', () => padDrag = false);
 
 // ---------- UI ----------
+let aimStepDeg=.1, jogTimer=null, jogDelay=null;
 function uiOuts() {
   $('spdOut').textContent = S.speed.toFixed(1) + ' m/s';
   $('elvOut').textContent = Math.round(S.elev) + '°';
   let deg = S.aim * R2D % 360;
   if (deg > 180) deg -= 360;
   if (deg < -180) deg += 360;
-  $('aimOut').textContent = deg.toFixed(1) + '°';
+  $('aimOut').textContent = deg.toFixed(aimStepDeg===.01?2:1) + '°';
   $('pvOut').textContent = Math.round(S.pivot * 100) + 'cm';
 }
 $('spd').addEventListener('input', e => { S.speed = +e.target.value; uiOuts(); schedulePred(); });
 $('elv').addEventListener('input', e => { S.elev = +e.target.value; uiOuts(); schedulePred(); });
 $('pv').addEventListener('input', e => { S.pivot = +e.target.value / 100; uiOuts(); schedulePred(); });
-for (const b of document.querySelectorAll('#aimRow button'))
-  b.addEventListener('click', () => { S.aim += (+b.dataset.a) * D2R; uiOuts(); schedulePred(); });
+function nudgeAim(deg){S.aim+=deg*D2R;uiOuts();schedulePred(35);}
+function nudgeSpeed(delta){S.speed=Math.max(.5,Math.min(10,Math.round((S.speed+delta)*10)/10));$('spd').value=S.speed;uiOuts();schedulePred(35);}
+function stopJog(){clearTimeout(jogDelay);clearInterval(jogTimer);jogDelay=jogTimer=null;}
+function bindHoldJog(el,step){
+  el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);stopJog();step();
+    jogDelay=setTimeout(()=>{jogTimer=setInterval(step,70);},330);});
+  el.addEventListener('pointerup',stopJog);el.addEventListener('pointercancel',stopJog);el.addEventListener('lostpointercapture',stopJog);
+}
+document.querySelectorAll('#aimRow [data-a]').forEach(b=>b.addEventListener('click',()=>nudgeAim(+b.dataset.a)));
+document.querySelectorAll('#aimRow [data-jog]').forEach(b=>bindHoldJog(b,()=>nudgeAim(+b.dataset.jog*aimStepDeg)));
+document.querySelectorAll('#speedJog [data-speed-jog]').forEach(b=>bindHoldJog(b,()=>nudgeSpeed(+b.dataset.speedJog)));
+$('aimStepBtn').addEventListener('click',()=>{
+  aimStepDeg=aimStepDeg===.1?.01:aimStepDeg===.01?1:.1;
+  $('aimStepBtn').textContent='刻み '+aimStepDeg.toFixed(aimStepDeg===.01?2:1)+'°';uiOuts();
+  hint('狙いの微調整を '+aimStepDeg+'° 刻みに変更。−／＋は長押しできます');
+});
+
+// 的球を中心に拡大し、イメージボール中心を2R円周上で直接動かす。
+const ghostAimCanvas=$('ghostAimCanvas'),ghostAimCtx=ghostAimCanvas.getContext('2d');
+let ghostAimDrag=false,ghostAimState=null;
+function ghostAimTarget(){
+  const ids=[S.tapTarget,S.aimTarget,...(S.rules?legalTargets():[])].filter(Boolean);
+  for(const id of ids){const b=S.balls.find(x=>x.id===id&&!x.pocketed&&!x.off);if(b)return b;}
+  const cue=cueBall();return S.balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off).sort((a,b)=>Math.hypot(a.p[0]-cue.p[0],a.p[1]-cue.p[1])-Math.hypot(b.p[0]-cue.p[0],b.p[1]-cue.p[1]))[0]||null;
+}
+function ghostPhiFromAim(ob){
+  const cue=cueBall(),base=Math.atan2(ob.p[1]-cue.p[1],ob.p[0]-cue.p[0]),dist=Math.hypot(ob.p[0]-cue.p[0],ob.p[1]-cue.p[1]),
+    maxLine=Math.asin(Math.min(.999999,2*PH.R/Math.max(2*PH.R,dist)));let delta=S.aim-base;
+  while(delta>Math.PI)delta-=Math.PI*2;while(delta< -Math.PI)delta+=Math.PI*2;
+  // 的球の見かけ半径より外へ微調整しても、接触可能な接線上で止める。
+  // これにより最大薄みから±0.1°を押しても表示が直球へ飛ばない。
+  delta=Math.max(-maxLine,Math.min(maxLine,delta));S.aim=base+delta;
+  const dx=Math.cos(S.aim),dy=Math.sin(S.aim),ox=cue.p[0]-ob.p[0],oy=cue.p[1]-ob.p[1],
+    B=ox*dx+oy*dy,C=ox*ox+oy*oy-4*PH.R*PH.R,disc=B*B-C;
+  if(disc>=-1e-10){const t=-B-Math.sqrt(Math.max(0,disc));if(t>0)return Math.atan2(cue.p[1]+dy*t-ob.p[1],cue.p[0]+dx*t-ob.p[0]);}
+  return Math.atan2(cue.p[1]-ob.p[1],cue.p[0]-ob.p[0]);
+}
+function applyGhostPhi(phi){
+  if(!ghostAimState)return;const ob=S.balls.find(b=>b.id===ghostAimState.targetId&&!b.pocketed),cue=cueBall();if(!ob||!cue)return;
+  const base=Math.atan2(ob.p[1]-cue.p[1],ob.p[0]-cue.p[0]);let cut=phi+Math.PI-base;
+  while(cut>Math.PI)cut-=Math.PI*2;while(cut< -Math.PI)cut+=Math.PI*2;
+  cut=Math.max(-88*D2R,Math.min(88*D2R,cut));phi=base+cut-Math.PI;
+  ghostAimState.phi=phi;const gx=ob.p[0]+Math.cos(phi)*2*PH.R,gy=ob.p[1]+Math.sin(phi)*2*PH.R;
+  S.aim=Math.atan2(gy-cue.p[1],gx-cue.p[0]);S.aimTarget=ob.id;uiOuts();drawGhostAim();schedulePred(20);
+}
+function drawGhostAim(){
+  const g=ghostAimCtx,c=ghostAimCanvas.width/2,ring=ghostAimCanvas.width*.30,br=ring/2;g.clearRect(0,0,ghostAimCanvas.width,ghostAimCanvas.height);
+  g.fillStyle='#0e2230';g.fillRect(0,0,ghostAimCanvas.width,ghostAimCanvas.height);
+  g.strokeStyle='rgba(99,215,232,.22)';g.lineWidth=2;for(const r of [ring,ring+br*1.45]){g.beginPath();g.arc(c,c,r,0,Math.PI*2);g.stroke();}
+  if(!ghostAimState)return;const ob=S.balls.find(b=>b.id===ghostAimState.targetId&&!b.pocketed),cue=cueBall();if(!ob||!cue)return;
+  const phi=ghostAimState.phi,gx=c+Math.cos(phi)*ring,gy=c+Math.sin(phi)*ring;
+  const pk=POCKETS.find(p=>pocketKey(p)===S.aimPocket);if(pk){const pa=Math.atan2(pk.y-ob.p[1],pk.x-ob.p[0]);g.strokeStyle='rgba(255,179,92,.72)';g.lineWidth=4;g.beginPath();g.moveTo(c,c);g.lineTo(c+Math.cos(pa)*ring*1.48,c+Math.sin(pa)*ring*1.48);g.stroke();}
+  g.strokeStyle='rgba(244,241,234,.55)';g.lineWidth=3;g.setLineDash([8,6]);g.beginPath();g.moveTo(gx+Math.cos(phi)*ring*.62,gy+Math.sin(phi)*ring*.62);g.lineTo(gx,gy);g.stroke();g.setLineDash([]);
+  g.fillStyle=BALL_COLORS[ob.id]||'#eee';g.beginPath();g.arc(c,c,br,0,Math.PI*2);g.fill();g.strokeStyle='#f1f5f8';g.lineWidth=3;g.stroke();
+  g.fillStyle='rgba(248,248,244,.62)';g.beginPath();g.arc(gx,gy,br,0,Math.PI*2);g.fill();g.strokeStyle='#63d7e8';g.lineWidth=4;g.stroke();
+  g.fillStyle='#10151a';g.font='900 '+Math.round(br*.72)+'px '+getComputedStyle(document.documentElement).getPropertyValue('--mono');g.textAlign='center';g.textBaseline='middle';g.fillText(ob.id,c,c);
+  const travel=phi+Math.PI,base=Math.atan2(ob.p[1]-cue.p[1],ob.p[0]-cue.p[0]);let cut=Math.abs((travel-base)*R2D);while(cut>180)cut=Math.abs(cut-360);
+  $('ghostAimTitle').textContent=ob.id+'番を拡大 — 白いイメージ球をドラッグ';
+  $('ghostAimOut').textContent='カット '+cut.toFixed(1)+'° / 狙い '+(S.aim*R2D).toFixed(2)+'° / 接触中心 '+(phi*R2D).toFixed(1)+'°';
+}
+function setGhostAimPointer(e){
+  const r=ghostAimCanvas.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2;if(Math.hypot(dx,dy)<8)return;
+  applyGhostPhi(Math.atan2(dy,dx));
+}
+function openGhostEditor(){
+  if(S.mode!=='idle')return;const ob=ghostAimTarget();if(!ob){hint('先に的球をタップしてください');return;}
+  closeCoachPicker();$('ccard').classList.remove('show');S.aimTarget=ob.id;ghostAimState={targetId:ob.id,startAim:S.aim,phi:ghostPhiFromAim(ob)};
+  uiOuts();schedulePred(20);const p=$('ghostEditor');p.classList.add('show');p.setAttribute('aria-hidden','false');drawGhostAim();
+}
+function closeGhostEditor(keep=true){
+  const p=$('ghostEditor');if(!p)return;if(!keep&&ghostAimState){S.aim=ghostAimState.startAim;uiOuts();schedulePred(0);}p.classList.remove('show');p.setAttribute('aria-hidden','true');ghostAimState=null;
+}
+$('btnGhostAim').addEventListener('click',openGhostEditor);
+$('btnGhostCancel').addEventListener('click',()=>closeGhostEditor(false));
+$('btnGhostUse').addEventListener('click',()=>{closeGhostEditor(true);hint('イメージボールの接触点を狙いへ反映しました');});
+ghostAimCanvas.addEventListener('pointerdown',e=>{e.preventDefault();ghostAimCanvas.setPointerCapture(e.pointerId);ghostAimDrag=true;setGhostAimPointer(e);});
+ghostAimCanvas.addEventListener('pointermove',e=>{if(ghostAimDrag)setGhostAimPointer(e);});
+ghostAimCanvas.addEventListener('pointerup',()=>ghostAimDrag=false);ghostAimCanvas.addEventListener('pointercancel',()=>ghostAimDrag=false);
+document.querySelectorAll('[data-ghost-nudge]').forEach(b=>b.addEventListener('click',()=>{nudgeAim(+b.dataset.ghostNudge);if(ghostAimState){const ob=S.balls.find(x=>x.id===ghostAimState.targetId);ghostAimState.phi=ghostPhiFromAim(ob);uiOuts();drawGhostAim();schedulePred(20);}}));
+document.querySelector('[data-ghost-center]').addEventListener('click',()=>{if(!ghostAimState)return;S.aim=ghostAimState.startAim;const ob=S.balls.find(x=>x.id===ghostAimState.targetId);ghostAimState.phi=ghostPhiFromAim(ob);uiOuts();drawGhostAim();schedulePred(0);});
 
 // スマートフォンでは、常時必要なショットボタンを残し、調整面だけを親指で切り替える。
 function setMobilePane(pane) {
@@ -2242,12 +2551,23 @@ function refreshChips() {
     const sep0 = document.createElement('div');
     sep0.className = 'sep';
     el.appendChild(sep0);
-    for (const [st, label] of [['standard', '標準'], ['random', 'ランダム'], ['self', 'セルフ']]) {
+    for (const [st, label] of [['standard', '固定'], ['random', '毎回ランダム'], ['self', 'セルフ']]) {
       const b = document.createElement('button');
       b.className = 'preset' + (rackStyle === st ? ' on' : '');
       b.textContent = label;
       b.addEventListener('click', () => loadPreset(null, st));
       el.appendChild(b);
+    }
+    if(currentGame==='nine'){
+      const footSep=document.createElement('div');footSep.className='sep';el.appendChild(footSep);
+      for(const [foot,label] of [['nine','9番F'],['one','1番F']]){
+        const b=document.createElement('button');
+        b.className='preset'+(MATCH.nineFoot===foot?' on':'');
+        b.textContent=label;b.dataset.nineFoot=foot;
+        b.setAttribute('aria-label',foot==='nine'?'9番オンフット（WPA現行）':'1番オンフット（従来方式）');
+        b.addEventListener('click',()=>{MATCH.nineFoot=foot;saveRackPreferences();loadPreset(null,null);});
+        el.appendChild(b);
+      }
     }
   }
   const sep = document.createElement('div');
@@ -2358,7 +2678,8 @@ function buildAdvisor() {
     if (['nine','ten','rotation'].includes(S.rules.game)) {
       const t = lowestId();
       const nm = S.rules.game === 'nine' ? '9ボール' : S.rules.game === 'ten' ? '10ボール' : 'ローテーション';
-      if (t !== null) rulePfx = '【' + nm + '】的球 ' + t + '番' + bih + ' <em>|</em> ';
+      if (t !== null) rulePfx = '【' + nm + '】的球 ' + t + '番' + bih
+        +(S.rules.game==='rotation'?' <em>|</em> '+MATCH.points[MATCH.turn]+' / '+MATCH.raceTo+'点':'')+' <em>|</em> ';
     } else if (S.rules.game === 'kairun') {
       const step = ['2: 黄＋赤','3: 赤＋赤','5: 3球全部'][S.rules.kairunStage || 0];
       rulePfx = '【カイルン】STEP ' + step + ' <em>|</em> ' + MATCH.points[MATCH.turn] + '点 / 目標' + MATCH.raceTo + '点 <em>|</em> ';
@@ -2418,6 +2739,9 @@ function actualStroke(base, fromAI) {
   const p = {...base};
   let level = MATCH.humanError;
   if (fromAI) level = MATCH.opponent === 'pro' ? 0.035 : MATCH.opponent === 'a' ? 0.13 : 0.32;
+  // 標準環境ではコーチの物理予測とプレイヤーの実球を完全に一致させる。
+  // 「人間誤差」を上げた時だけ、表示されている幅のストローク散らばりを加える。
+  if(!fromAI&&level<=0){p.miscue=false;MATCH.lastIdeal={...base};MATCH.lastActual={...p};return p;}
   const aimSigma = (0.02 + 0.72 * level * level) * D2R;
   const speedSigma = 0.004 + 0.065 * level;
   const tipSigma = 0.002 + 0.032 * level;
@@ -2481,6 +2805,7 @@ function shoot(fromAI) {
     S.rules.turnAtShot = MATCH.turn;
     S.rules.pushAtShot = MATCH.pushDeclared;
     S.rules.rotationNoCallAtShot = S.rules.game==='rotation'&&MATCH.rotationNoCall;
+    S.rules.rotationNoCallRuleAtShot=MATCH.rotationNoCallRule;
     S.rules.intentionalFoulAtShot = !!MATCH.intentionalFoul;
     S.rules.aliveAtShot = S.balls.filter(b=>b.id!==0&&!b.pocketed).map(b=>b.id);
     if(S.rules.rotationNoCallAtShot)MATCH.call={ball:null,pocket:null,safety:false};
@@ -2526,6 +2851,21 @@ function advanceSinks(dt) {
     if (k >= 1) { m.visible = false; sinks.splice(i, 1); }
   }
 }
+function finishLessonChallenge(){
+  const ch=MATCH.lessonChallenge;if(!ch)return;MATCH.lessonChallenge=null;
+  const A=analyzeRunEvents(S.runEvents||[]),checks=[];let pass=true;
+  if(ch.expect?.pot!==undefined){const ok=A.pocketed.includes(ch.expect.pot);checks.push((ok?'✓':'✕')+' '+ch.expect.pot+'番をポケット');pass=pass&&ok;}
+  if(ch.expect?.contact!==undefined){const ok=A.firstC===ch.expect.contact;checks.push((ok?'✓':'✕')+' '+ch.expect.contact+'番へ先当て');pass=pass&&ok;}
+  if(ch.expect?.noPocket){const ok=!A.pocketed.length;checks.push((ok?'✓':'✕')+' ノーイン');pass=pass&&ok;}
+  if(ch.expect?.kick){let before=0;for(const e of S.runEvents||[]){if(e.type==='ball'&&(e.a===0||e.b===0))break;if(e.type==='cushion'&&e.id===0)before++;}
+    const ok=before>=ch.expect.kick;checks.push((ok?'✓':'✕')+' '+ch.expect.kick+'クッション先当て');pass=pass&&ok;}
+  const actual=MATCH.lastActual||{},aimDiff=Math.abs((((actual.aim||0)-ch.ideal.aim+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI)*R2D,
+    speedDiff=Math.abs((actual.speed||0)-ch.ideal.speed);
+  $('advData').innerHTML='<b>LESSON REVIEW</b> <em>|</em> '+ch.title+' <em>|</em> お手本差 角度 '+aimDiff.toFixed(2)+'° / 速度 '+speedDiff.toFixed(1)+'m/s';
+  $('advMsg').innerHTML=(pass?'<span class="g">課題クリア。</span> ':'<span class="w">未達。軌道と停止位置を比較。</span> ')+checks.join(' / ')
+    +'　🎓コーチを押すと、この結果配置から次の勝ち筋を解析します。';
+  addEventLog(ch.title,pass?'LESSON CLEAR':'LESSON REVIEW');hint(pass?'✓ レッスン課題クリア — 入れ・接触・速度差を実測しました':'レッスン振り返り — お手本との差を確認して再挑戦できます');
+}
 function endShot() {
   S.mode = 'idle';
   MATCH.shotStartedAt=0;MATCH.shotForceStop=false;
@@ -2545,6 +2885,7 @@ function endShot() {
   }
   updateHUD();
   schedulePred(60);
+  if(MATCH.lessonChallenge)setTimeout(finishLessonChallenge,cue.pocketed?680:260);
 }
 // 公式ルール判定(WPA準拠の簡易版) — 9ボール / 8ボール
 function rulesJudge() {
@@ -2675,12 +3016,16 @@ function analyzeRunEvents(ev) {
 function removeSinkFor(ball) {
   for(let i=sinks.length-1;i>=0;i--) if(sinks[i].b===ball) sinks.splice(i,1);
 }
-function spotOne(id, offset) {
-  const b=S.balls.find(x=>x.id===id); if(!b) return;
-  removeSinkFor(b);
-  const x=PH.TABLE_W/4 + (offset||0)*2.05*PH.R;
-  reviveBall(b,Math.min(PH.HX-.02,x),0);
+function officialSpotOpen(id,x,y=0){return Math.abs(x)<=PH.HX-.02&&Math.abs(y)<=PH.HY-.02
+  &&!S.balls.some(o=>o.id!==id&&!o.pocketed&&!o.off&&Math.hypot(o.p[0]-x,o.p[1]-y)<2.04*PH.R);}
+function placeAtOfficialSpot(id,which='foot',offset=0){
+  const b=S.balls.find(x=>x.id===id);if(!b)return null;removeSinkFor(b);
+  const base=which==='center'?0:PH.TABLE_W/4,step=2.05*PH.R,candidates=[];
+  for(let i=Math.max(0,offset);i<48;i++){candidates.push(base+i*step);if(i)candidates.push(base-i*step);}
+  let x=candidates.find(px=>officialSpotOpen(id,px,0));if(x==null)x=Math.max(-PH.HX+.02,Math.min(PH.HX-.02,base));
+  reviveBall(b,x,0);return [x,0];
 }
+function spotOne(id, offset) {return placeAtOfficialSpot(id,'foot',offset||0);}
 function spotMany(ids) { [...new Set(ids)].sort((a,b)=>a-b).forEach((id,i)=>spotOne(id,i)); }
 // Candidate search must evaluate the layout *after* balls have been returned to
 // the foot spot.  This pure version mirrors spotMany without touching live play.
@@ -2759,19 +3104,118 @@ function offerOption(title,text,takeLabel,passLabel,onTake,onPass) {
   $('btnOptionPass').onclick=()=>{closeLayer('optionModal');onPass();};
   openLayer('optionModal');updateHUD();
 }
+function rotationObjectChoices(data,cueChoice){
+  const inKitchen=data.targetBall&&!data.targetPotted&&data.targetBall.p[0]<-PH.TABLE_W/4;
+  const current=!data.targetPotted&&!(cueChoice==='kitchen'&&inKitchen);
+  return [...(current?[['current','現状']]:[]),['center','センタースポット'],['foot','フットスポット']];
+}
+function syncRotationFoulChoices(){
+  const data=MATCH.optionPending;if(!data||data.type!=='rotation-foul')return;
+  const cueSel=$('rotationCueChoice'),objSel=$('rotationObjectChoice'),old=objSel.value;
+  objSel.innerHTML=rotationObjectChoices(data,cueSel.value).map(([v,n])=>'<option value="'+v+'">'+n+'</option>').join('');
+  if([...objSel.options].some(o=>o.value===old))objSel.value=old;
+  previewRotationFoulChoice();
+}
+function previewRotationFoulChoice(){
+  const data=MATCH.optionPending;if(!data||data.type!=='rotation-foul')return;
+  const cue=cueBall(),target=S.balls.find(b=>b.id===data.targetId),cc=$('rotationCueChoice').value,oc=$('rotationObjectChoice').value;
+  const cp=cc==='current'&&cue?[cue.p[0],cue.p[1]]:cc==='free'?[-.70,0]:[-.86,0],
+    op=oc==='current'&&target?[target.p[0],target.p[1]]:oc==='center'?[0,0]:[PH.TABLE_W/4,0];
+  S.rotationPlacementPreview={cue:cp.slice(),object:op.slice()};
+  restMark.position.set(cp[0],.0016,-cp[1]);restMark.visible=true;
+  nextMark.position.set(op[0],.0016,-op[1]);nextMark.visible=true;nextLine.visible=false;
+  const cueText=cc==='current'?'手球現状':cc==='free'?'手球全面フリー':'手球ヘッドライン内',objText=oc==='current'?'最小番号球現状':oc==='center'?'最小番号球センター':'最小番号球フット';
+  hint('配置プレビュー — '+cueText+' / '+objText+'（盤面のリングを確認）');
+}
+function rotationChoicePreview(data,cueChoice,objChoice){
+  const bs=S.balls.map(cloneBall),target=bs.find(b=>b.id===data.targetId),cue=bs.find(b=>b.id===0);
+  if(!target||!cue)return 0;
+  if(objChoice!=='current'||target.pocketed||target.off){target.p=[objChoice==='center'?0:PH.TABLE_W/4,0,PH.R];target.pocketed=false;target.off=false;}
+  let off=0;for(const id of data.returnIds.filter(id=>id!==data.targetId)){
+    const b=bs.find(x=>x.id===id);if(!b)continue;b.p=[PH.TABLE_W/4+(++off)*2.05*PH.R,0,PH.R];b.pocketed=false;b.off=false;}
+  const xs=cueChoice==='free'?[-.95,-.55,0,.55,.95]:cueChoice==='kitchen'?[-1.02,-.82,-.66]:[cue.p[0]],
+    ys=cueChoice==='current'?[cue.p[1]]:[-.43,-.22,0,.22,.43];let best=0;
+  for(const x of xs)for(const y of ys){if(Math.abs(x)>PH.HX-.02||Math.abs(y)>PH.HY-.02||bs.some(b=>b.id!==0&&!b.pocketed&&Math.hypot(b.p[0]-x,b.p[1]-y)<2.08*PH.R))continue;
+    cue.p=[x,y,PH.R];cue.pocketed=false;cue.off=false;best=Math.max(best,tournamentReplyThreat(bs,data.incoming));}
+  return best;
+}
+function chooseRotationFoulForAI(data){
+  const cueChoices=data.three?['free']:(data.cueCurrentAllowed?['current','kitchen']:['kitchen']);let best=null;
+  for(const cue of cueChoices)for(const [object] of rotationObjectChoices(data,cue)){
+    const value=rotationChoicePreview(data,cue,object);if(!best||value>best.value)best={cue,object,value};}
+  return best||{cue:data.three?'free':'kitchen',object:'foot',value:0};
+}
+function applyRotationFoulChoice(data,cueChoice,objChoice){
+  if(!data||MATCH.optionPending!==data)return;closeLayer('rotationFoulModal');MATCH.optionPending=null;
+  S.rotationPlacementPreview=null;
+  restMark.visible=nextMark.visible=nextLine.visible=false;
+  const target=S.balls.find(b=>b.id===data.targetId);
+  if(target&&(objChoice!=='current'||target.pocketed||target.off))placeAtOfficialSpot(data.targetId,objChoice==='center'?'center':'foot',0);
+  let offset=target&&!target.pocketed&&Math.abs(target.p[0]-PH.TABLE_W/4)<.04?1:0;
+  for(const id of data.returnIds.filter(id=>id!==data.targetId))spotOne(id,offset++);
+  const cue=cueBall(),free=cueChoice==='free',kitchen=cueChoice==='kitchen';
+  if(free||kitchen){if(cue){removeSinkFor(cue);reviveBall(cue,kitchen?-.86:-.70,0);}S.rules.ballInHand=true;S.rules.ballInHandRestricted=kitchen;}
+  else {if(cue){cue.pocketed=false;cue.off=false;}S.rules.ballInHand=false;S.rules.ballInHandRestricted=false;}
+  if(data.three)MATCH.fouls[data.shooter]=0;
+  MATCH.turn=data.incoming;S.rules.turn=MATCH.turn;MATCH.aiBusy=false;resetCall();
+  const cueText=free?'手球フリー':kitchen?'手球ヘッドライン内':'手球現状',objText=objChoice==='current'?'最小番号球現状':objChoice==='center'?'最小番号球センター':'最小番号球フット';
+  addEventLog(cueText+' / '+objText,'NBA FOUL CHOICE');hint('NBAローテーション — '+cueText+'、'+objText+'から再開');
+  updateHUD();updateTargetRing();schedulePred(0);
+  if(MATCH.turn===1&&MATCH.mode==='match'&&MATCH.opponent!=='local')scheduleAI();else scheduleAutoCoach(120);
+}
+function startRotationRebreak(turn,label){
+  MATCH.turn=turn;configureGame('rotation',false);MATCH.turn=turn;if(S.rules)S.rules.turn=turn;
+  updateHUD();addEventLog(label,'NBA BREAK OPTION');hint(label+' — ヘッドライン内からブレイク');
+  if(turn===1&&MATCH.mode==='match'&&MATCH.opponent!=='local')scheduleAI();else scheduleAutoCoach(120);
+}
+function resolveRotationBreakFoul(R,A,txt,scratch){
+  const shooter=R.turnAtShot,incoming=1-shooter,invalid=txt.includes('ブレイク不成立');
+  if(invalid){MATCH.turn=incoming;MATCH.aiBusy=true;updateHUD();
+    const ai=MATCH.mode==='match'&&MATCH.opponent!=='local'&&incoming===1;
+    if(ai)return setTimeout(()=>startRotationRebreak(incoming,MATCH.names[incoming]+'が組み直してブレイク'),350);
+    return offerOption('NBAローテーション：ブレイキングファウル','ラックを組み直し、自分でブレイクするか、相手に再ブレイクさせます。','自分がブレイク','相手に再ブレイク',
+      ()=>startRotationRebreak(incoming,MATCH.names[incoming]+'が組み直してブレイク'),
+      ()=>startRotationRebreak(shooter,MATCH.names[shooter]+'に再ブレイクを要求'));
+  }
+  for(const id of A.off.filter(id=>id!==0))spotOne(id,0);
+  MATCH.turn=incoming;S.rules.turn=incoming;MATCH.aiBusy=false;resetCall();setBallInHand(true,true);
+  addEventLog(txt+' — ヘッドライン内フリーボール','NBA BREAK FOUL');hint('NBAローテーション — ブレイクスクラッチ、ヘッドライン内から再開');
+  updateHUD();updateTargetRing();schedulePred(0);
+  if(incoming===1&&MATCH.mode==='match'&&MATCH.opponent!=='local')scheduleAI();else scheduleAutoCoach(120);
+}
+function resolveRotationFoul(R,A,txt,three,scratch){
+  const shooter=R.turnAtShot,incoming=1-shooter,targetId=R.targetAtShot||Math.min(...(R.aliveAtShot||[])),
+    targetBall=S.balls.find(b=>b.id===targetId),returnIds=[...new Set([...A.pocketed,...A.off.filter(id=>id!==0)])],
+    targetPotted=!targetBall||targetBall.pocketed||targetBall.off||returnIds.includes(targetId),cue=cueBall();
+  const data={type:'rotation-foul',shooter,incoming,targetId,targetBall,targetPotted,returnIds,three,
+    cueCurrentAllowed:!scratch&&cue&&!cue.pocketed&&!cue.off};
+  MATCH.turn=incoming;MATCH.aiBusy=true;MATCH.optionPending=data;resetCall();updateHUD();
+  const auto=MATCH.mode==='match'&&MATCH.opponent!=='local'&&incoming===1;
+  if(auto){const pick=chooseRotationFoulForAI(data);addEventLog(txt+' — NBA配置を比較','FOUL');
+    return setTimeout(()=>applyRotationFoulChoice(data,pick.cue,pick.object),380);}
+  const cueSel=$('rotationCueChoice');cueSel.innerHTML=three?'<option value="free">テーブル全面フリー（3ファウル）</option>'
+    :(data.cueCurrentAllowed?'<option value="current">現状</option>':'')+'<option value="kitchen">ヘッドライン内</option>';
+  $('rotationFoulText').textContent=txt+'。手球と最小番号 '+targetId+'番の位置を1回だけ宣言します。ファウルで入った球は番号順にフットスポットへ戻します。';
+  if($('rotationFoulModal').parentElement!==$('deck'))$('deck').appendChild($('rotationFoulModal'));
+  syncRotationFoulChoices();openLayer('rotationFoulModal');previewRotationFoulChoice();
+}
+$('rotationCueChoice').addEventListener('change',syncRotationFoulChoices);
+$('rotationObjectChoice').addEventListener('change',previewRotationFoulChoice);
+$('btnApplyRotationFoul').addEventListener('click',()=>{const data=MATCH.optionPending;if(data?.type==='rotation-foul')applyRotationFoulChoice(data,$('rotationCueChoice').value,$('rotationObjectChoice').value);});
 function foulResult(R,A,fouls,scratch,wasBreak) {
   const shooter=R.turnAtShot;
   MATCH.fouls[shooter]++;
   if(R.game==='nine'&&A.pocketed.includes(9))spotOne(9,0);
   if(R.game==='ten'&&A.pocketed.includes(10))spotOne(10,0);
-  if(R.game==='rotation'&&A.pocketed.length)spotMany(A.pocketed);
-  if(scratch)setBallInHand(true,wasBreak&&R.game==='rotation');
   const three=MATCH.fouls[shooter]>=3;
   if(three&&(R.game==='nine'||R.game==='ten')) { MATCH.turn=1-shooter;finishRack(MATCH.turn,'3連続ファウル');return; }
   const tactical=!!R.intentionalFoulAtShot;
   const txt=(tactical?'戦術的ファウル: ':'ファウル: ')+fouls.join(' / ')
     +(three&&R.game==='rotation'?'（3ファウル・フリーボール）':'');
   if(tactical)addEventLog('通常のキューストロークによる戦術的ファウル — 相手のフリーボール後まで評価済み','TACTICAL');
+  if(R.game==='rotation'&&wasBreak)return resolveRotationBreakFoul(R,A,txt,scratch);
+  if(R.game==='rotation')return resolveRotationFoul(R,A,txt,three,scratch);
+  if(scratch)setBallInHand(true,false);
   hint('⚠ '+txt+' — '+(wasBreak&&R.game==='rotation'?'ヘッドライン内':'テーブル全面')+'フリーボール');
   MATCH.turn=shooter; changeTurn(txt,true,wasBreak&&R.game==='rotation');
 }
@@ -2860,6 +3304,7 @@ function judgeEightPro(R,A,wasBreak) {
 }
 function judgeRotationPro(R,A,wasBreak) {
   const call=R.callAtShot,noCall=!!R.rotationNoCallAtShot;
+  const noCallRule=R.rotationNoCallRuleAtShot||MATCH.rotationNoCallRule;
   const made=wasBreak?A.pocketed.length>0:(!noCall&&callMade(A,call));
   if(made) {
     const gain=A.pocketed.reduce((s,id)=>s+id,0);MATCH.points[MATCH.turn]+=gain;
@@ -2873,9 +3318,11 @@ function judgeRotationPro(R,A,wasBreak) {
     return keepTurn('✓ '+gain+'点獲得。合計 '+MATCH.points[MATCH.turn]+'点');
   }
   if(A.pocketed.length){
-    spotMany(A.pocketed);
-    if(noCall){addEventLog(A.pocketed.join(',')+'番をフットスポットへ戻して難球化','TACTICAL SPOT');
-      return changeTurn('ノーコール・スポット戦術 — 入れた的球をフットスポットへ戻して交代',false,false);}
+    if(noCall){
+      if(noCallRule==='spot')spotMany(A.pocketed);
+      addEventLog(A.pocketed.join(',')+'番は得点せず、'+rotationNoCallModeText(noCallRule),'NO CALL');
+      return changeTurn('ノーコール — ファウルではなく、'+rotationNoCallModeText(noCallRule),false,false);}
+    return changeTurn('コール不成立 — 入った球は戻さず現状から交代',false,false);
   }
   changeTurn('コール不成立／ノーインで交代',false,false);
 }
@@ -2947,6 +3394,7 @@ function aiHasReasonableShot(){
   return best>(MATCH.opponent==='pro'?.46:.58)-Math.max(0,lev.aggression*.22);
 }
 function cuePlacementOpen(balls,x,y){
+  if(S.rules?.ballInHandRestricted&&x>-PH.TABLE_W/4-PH.R*.08)return false;
   return Math.abs(x)<=PH.HX-.025&&Math.abs(y)<=PH.HY-.025
     &&!balls.some(o=>o.id!==0&&!o.pocketed&&Math.hypot(o.p[0]-x,o.p[1]-y)<2.18*PH.R);
 }
@@ -3304,7 +3752,7 @@ function aiPlanPool(detail=false){
       if(currentGame==='eight'&&sim.final.some(x=>x.id===8&&x.pocketed)&&c.ball!==8){missN++;missThreat+=1;continue;}
       if(!tf?.pocketed||tf.off||tf.pocketKey!==c.pocket){missN++;missThreat+=tournamentMissReplyThreat(sim,[c.ball],c.ball);continue;}
       const nextIds=CO.nextChoices(sim.final),shape=nextIds.length?CO.shapeAt(sim.final,[cf.p[0],cf.p[1]],nextIds):null;
-      const shapeCost=nextIds.length?(shape?shape.score:9):0;
+      const shapeCost=nextIds.length?(shape?(shape.patientNext?Math.min(4.1,shape.score):shape.score):9):0;
       ok++;sum+=shapeCost;if(tag==='c'||!center){const breakout=tournamentBreakoutValue(S.balls,sim.final,MATCH.turn,c.ball);
         center={shape,rest:cf.p.slice(),final:sim.final,breakout:breakout.value,breakoutBall:breakout.ball,
           cueRails:sim.events.filter(e=>e.type==='cushion'&&e.id===0).length,
@@ -3324,7 +3772,7 @@ function aiPlanPool(detail=false){
   }
   if(ballInHandPlacement&&!ballInHandPlacement.directPlan){const fallback=ballInHandAggressiveFallback(ballInHandPlacement,MATCH.turn);if(fallback)attacks.push(fallback);}
   attacks.sort((a,b)=>tournamentCandidateWin(b,'attack')-tournamentCandidateWin(a,'attack')||b.rackEV-a.rackEV||a.score-b.score);const attack=attacks[0],
-    spotTactics=rotationSpotCandidatesFromAttacks(S.balls,attacks,MATCH.turn),spotTactic=spotTactics[0];
+    spotTactics=rotationNoCallCandidatesFromAttacks(S.balls,attacks,MATCH.turn),spotTactic=spotTactics[0];
   // A real opponent declines a bad percentage. Search a legal containing safety and
   // verify its margin with the same aim/speed perturbations as the pot.
   const allLegal=legalTargets(),targetIds=allLegal.slice().sort((a,b)=>
@@ -3514,13 +3962,13 @@ function executeAIPlan(plan,token,recovered=false){
     S.aim=plan.prm.aim;S.speed=plan.prm.speed;S.elev=(plan.prm.elev||0)*R2D;S.tipX=plan.prm.tipX||0;S.tipY=plan.prm.tipY||0;
     $('spd').value=S.speed;$('elv').value=S.elev;uiOuts();drawPad();
     if(plan.kind==='pushout')MATCH.pushDeclared=true;
-    MATCH.rotationNoCall=plan.kind==='rotation-spot'||!!plan.rotationNoCall;
+    MATCH.rotationNoCall=plan.kind==='rotation-nocall'||!!plan.rotationNoCall;
     MATCH.intentionalFoul=plan.kind==='intentional-foul'||!!plan.intentionalFoul;
     const callBall=plan.callBall||plan.potId||plan.ball;
     if(MATCH.rotationNoCall)MATCH.call={ball:null,pocket:null,safety:false};
     else if(['ten','eight','rotation'].includes(currentGame)&&callBall){MATCH.call={ball:callBall,pocket:plan.pocket||nearestPocketKey(S.balls.find(b=>b.id===callBall)),safety:plan.kind==='safety'||(plan.escape&&!plan.potId)};}
     const aiRole=plan.escape?'escape':plan.kind==='safety'?'safety':plan.kind==='pushout'?'pushout':
-      plan.kind==='rotation-spot'?'spot':plan.kind==='intentional-foul'?'foul':plan.kind==='pot'?'attack':'special';
+      plan.kind==='rotation-nocall'?'spot':plan.kind==='intentional-foul'?'foul':plan.kind==='pot'?'attack':'special';
     const aiWin=plan.winProb??tournamentCandidateWin(plan,aiRole),confidence=plan.robust??plan.confidence??0;
     if(plan.kind==='break')MATCH.aiDecision='中央へ残すコントロールブレイク';
     else if(plan.kind==='pushout')MATCH.aiDecision='返球まで読んだプッシュアウト';
@@ -3528,7 +3976,7 @@ function executeAIPlan(plan,token,recovered=false){
     else if(plan.kind==='attack-attempt')MATCH.aiDecision='ATTACK TRY '+(plan.attemptLabel||'低確率の勝負球')+' / 成功'+Math.round(confidence*100)+'% — 守備だけに限定せず入れを狙う';
     else if(plan.kind==='kairun')MATCH.aiDecision='STEP '+[2,3,5][S.rules.kairunStage||0]+' '+plan.planLabel+' / '+Math.round(confidence*100)+'%';
     else if(plan.kind==='kairun-attempt')MATCH.aiDecision='NEVER GIVE UP '+(plan.planLabel||'最大接触ライン');
-    else if(plan.kind==='rotation-spot')MATCH.aiDecision='ノーコールで'+plan.spotIds.join('・')+'番をフットスポットへ戻す / 相手脅威'+Math.round(plan.replyThreat*100)+'%';
+    else if(plan.kind==='rotation-nocall')MATCH.aiDecision='ノーコールで'+plan.noCallIds.join('・')+'番を入れ、'+rotationNoCallModeText(plan.noCallRule)+' / 相手脅威'+Math.round(plan.replyThreat*100)+'%';
     else if(plan.kind==='intentional-foul')MATCH.aiDecision='戦術的ファウルで難球化 / 相手フリーボール後の取り切り脅威'+Math.round(plan.replyThreat*100)+'%';
     else if(plan.escape)MATCH.aiDecision='NEVER GIVE UP '+coachKindName(plan)+'で'+(plan.potId?'入れを狙う':'合法ヒットを狙う')+' / 成功'+Math.round(confidence*100)+'%';
     else if(plan.kind==='safety')MATCH.aiDecision=(plan.hid?'完全に隠す':'距離を残す')+'セーフティ / 成功'+Math.round(confidence*100)+'%・ラック勝率'+Math.round(Math.max(0,aiWin)*100)+'%';
@@ -3536,7 +3984,13 @@ function executeAIPlan(plan,token,recovered=false){
     if(plan.ballInHandPlacement)MATCH.aiDecision='フリーボール最適配置 → '+MATCH.aiDecision;
     addEventLog(MATCH.aiDecision,'AI');$('advMsg').textContent=MATCH.names[1]+' — '+MATCH.aiDecision;
     MATCH.aiBusy=true;if(MATCH.matchTempo==='normal')computePred();else{S.pred=null;updatePredVisuals();}
-    setTimeout(()=>{if(token===MATCH.aiToken&&MATCH.turn===1&&S.mode==='idle')shoot(true);},MATCH.matchTempo==='fast'?160:450);
+    const fireDelay=MATCH.matchTempo==='fast'?160:450;
+    setTimeout(()=>{if(token===MATCH.aiToken&&MATCH.turn===1&&S.mode==='idle')shoot(true);},fireDelay);
+    // 計画提示後にWebViewがタイマーを間引いても、相手手番を永久に保持させない二段復旧。
+    setTimeout(()=>{if(token!==MATCH.aiToken||MATCH.turn!==1||MATCH.rackOver||S.mode!=='idle')return;
+      if(MATCH.aiPlan)shoot(true);
+      setTimeout(()=>{if(token===MATCH.aiToken&&MATCH.turn===1&&S.mode==='idle')changeTurn('AIショット開始を復旧 — 手番を進行',false,false);},700);
+    },fireDelay+1100);
   }catch(err){console.error('AI execute error',err);const fallback=quickAIEmergencyPlan();if(fallback&&!recovered){setTimeout(()=>executeAIPlan(fallback,token,true),0);return;}
     MATCH.aiBusy=false;updateHUD();changeTurn('AI処理を復旧し手番を進行',false,false);}
 }
@@ -3578,6 +4032,16 @@ function rotateBalls(h) {
 const H_DT = 1 / 600;
 let last = performance.now(), acc = 0;
 let frameErrShown = false;
+function fastForwardShotTail(){
+  const events=[];let steps=0;
+  // 表示だけ待たせず、予測と同じ1/600秒の物理計算を残り停止まで一括実行する。
+  while(!allStopped(S.balls)&&steps<14400){stepWorld(S.balls,H_DT,events);steps++;}
+  if(S.runEvents&&events.length)S.runEvents.push(...events);
+  for(const ev of events)if((ev.type==='pocket'||ev.type==='off')){
+    const b=S.balls.find(x=>x.id===ev.id);if(b&&!sinks.some(s=>s.b===b))startSink(b);}
+  if(!allStopped(S.balls))for(const b of S.balls){if(!b.pocketed){b.v=[0,0,0];b.w=[0,0,0];b.p[2]=PH.R;}}
+  addEventLog('残りの転がりを1/600秒物理で高速収束 — 判定へ進行','FLOW');
+}
 function frame(now) {
   try {
     frameBody(now);
@@ -3596,10 +4060,14 @@ function frameBody(now) {
   if (S.app === 'lesson') {
     lessonTick(dt);
   } else if (S.mode === 'running') {
-    const shotLimit=MATCH.mode==='match'?(MATCH.matchTempo==='fast'?14000:22000):26000;
-    if(MATCH.shotStartedAt&&!MATCH.shotForceStop&&now-MATCH.shotStartedAt>shotLimit){
-      MATCH.shotForceStop=true;for(const b of S.balls){if(b.pocketed)continue;b.v=[0,0,0];b.w=[0,0,0];b.p[2]=PH.R;}
-      addEventLog('微速域を自動収束 — 判定処理へ進行','FLOW');
+    const elapsed=MATCH.shotStartedAt?now-MATCH.shotStartedAt:0,
+      // 高速対戦は、実際の結果を変えず残りの1/600秒物理を早めに一括計算する。
+      // PRO AIが止まったように見える待ち時間を削り、通常テンポ／フリーは実時間表示を保つ。
+      tailAt=MATCH.mode==='match'?(MATCH.matchTempo==='fast'?3800:7600):6500,
+      hardAt=MATCH.mode==='match'?(MATCH.matchTempo==='fast'?6200:13000):11000,
+      motion=Math.max(0,...S.balls.filter(b=>!b.pocketed).map(b=>Math.max(vlen(b.v),PH.R*vlen(b.w))));
+    if(MATCH.shotStartedAt&&!MATCH.shotForceStop&&(elapsed>hardAt||(elapsed>tailAt&&motion<.30))){
+      MATCH.shotForceStop=true;fastForwardShotTail();
     }
     acc += dt * (S.slow ? 0.3 : 1);
     const events = [];
@@ -3652,7 +4120,7 @@ function drawFallback2D(forceCompat) {
   g.roundRect(X(-PH.TABLE_W / 2) - rail, Y(-PH.TABLE_H / 2) - rail,
     PH.TABLE_W * scale + rail * 2, PH.TABLE_H * scale + rail * 2, 15);
   g.fill();
-  g.fillStyle = '#176493';
+  g.fillStyle = currentClothTheme().cloth;
   g.fillRect(X(-PH.TABLE_W / 2), Y(-PH.TABLE_H / 2), PH.TABLE_W * scale, PH.TABLE_H * scale);
   g.strokeStyle = 'rgba(175,220,244,.28)'; g.lineWidth = 1;
   g.beginPath(); g.moveTo(X(-PH.TABLE_W / 4), Y(-PH.TABLE_H / 2));
@@ -3691,6 +4159,18 @@ function drawFallback2D(forceCompat) {
     }
     g.restore();
   }
+  // NBAローテーションの配置宣言はWebGLリングだけに頼らず、
+  // iPhone/Safariの2D互換表示にも同じ2点を明示する。
+  if(S.rotationPlacementPreview){
+    const ring=(p,color,label)=>{
+      g.save();g.strokeStyle=color;g.lineWidth=3;g.setLineDash([7,5]);
+      g.beginPath();g.arc(X(p[0]),Y(p[1]),PH.R*scale*1.72,0,Math.PI*2);g.stroke();g.setLineDash([]);
+      g.fillStyle=color;g.font='800 10px system-ui';g.textAlign='center';g.textBaseline='bottom';
+      g.fillText(label,X(p[0]),Y(p[1])-PH.R*scale*2.0);g.restore();
+    };
+    ring(S.rotationPlacementPreview.cue,'rgba(255,179,92,.95)','手球');
+    ring(S.rotationPlacementPreview.object,'rgba(99,215,232,.95)','最小球');
+  }
   const cue = cueBall();
   if (cue && !cue.pocketed && S.mode !== 'running') {
     const dx = Math.cos(S.aim), dy = Math.sin(S.aim);
@@ -3711,6 +4191,11 @@ let practiceSave = null;
 const _prevPos = {};
 
 const lessonDefs = les => les.balls.map(b => ballDef(b.id));
+function setLessonMission(phase=0,title='',text=''){
+  const les=LESSONS[L.li];if(!les)return;
+  $('lessonMissionText').innerHTML='<b>'+(title||les.title)+'</b><span>'+(text||les.desc)+'</span>';
+  document.querySelectorAll('#lessonPhases i').forEach((el,i)=>el.classList.toggle('on',i===phase));
+}
 function tipStr(prm) {
   const parts = [];
   if (Math.abs(prm.tipY) >= 0.05) parts.push((prm.tipY > 0 ? '上' : '下') + Math.round(Math.abs(prm.tipY) * 100) + '%');
@@ -3928,6 +4413,7 @@ function setFrame(f, rotate) {
 function updatePlayBtn() { $('btnPlay').textContent = L.playing ? '⏸' : '▶'; }
 
 function openCard(k, isIntro) {
+  dockCoachCard(false);
   const les = LESSONS[L.li];
   if (isIntro) {
     $('ccStep').textContent = les.tag + ' · 全' + L.tl.shots.length + 'ショット';
@@ -3984,6 +4470,7 @@ function showBrief(k) {
     setLine(nextLine, [[sh.next.rx, sh.next.ry, PH.R], [sh.next.bx, sh.next.by, PH.R], [sh.next.px, sh.next.py, PH.R]]);
   } else { restMark.visible = false; nextMark.visible = false; nextLine.visible = false; }
   openCard(k, false);
+  setLessonMission(1,'予測してから見る — '+sh.title,'手球の停止位置と次球の角度を先に想像し、解説と軌道で答え合わせします。');
   updatePlayBtn();
 }
 function showIntro() {
@@ -3991,6 +4478,7 @@ function showIntro() {
   L.playing = false;
   hideAimVis();
   openCard(0, true);
+  setLessonMission(0,null,'①お手本を観察 → ②手球の行先を予測 → ③同じ局面を自分で撞く → ④実測差を振り返る実戦レッスンです。');
   updatePlayBtn();
 }
 function lessonPlay(dir) {
@@ -4001,6 +4489,7 @@ function lessonPlay(dir) {
   $('ccard').classList.remove('show');
   ghost.visible = false;
   restMark.visible = nextMark.visible = nextLine.visible = false;
+  setLessonMission(0,'お手本を観察中','入れだけでなく、手球の速度変化・クッション進入・次球の正しい側を追ってください。');
   updatePlayBtn();
 }
 function lessonTick(dt) {
@@ -4040,6 +4529,7 @@ function selectLesson(i) {
   L.playing = false; L.dir = 1; L.shown = -1;
   document.querySelectorAll('#lessonChips button').forEach((b, j) => b.classList.toggle('on', j === i));
   const les = LESSONS[i];
+  setLessonMission(0,les.title,'到達目標: '+les.desc);
   ENV.carom = false;
   compatCanvas.style.display = 'none';
   setBallSet(lessonDefs(les));
@@ -4193,6 +4683,8 @@ function tryFromLesson() {
   const k = L.brief >= 0 ? L.brief : Math.max(0, shotAt(L.f));
   const sh = L.tl.shots[k];
   const les = LESSONS[L.li];
+  MATCH.lessonChallenge={title:les.title+' / '+sh.title,expect:{...(les.shots[k].expect||{})},ideal:{...sh.prm}};
+  setLessonMission(2,'実践 — '+sh.title,'お手本の数値を丸写しするだけでなく、狙い・速度・撞点を変えて許容幅を体で確認します。');
   // ショット開始状態(f64)から生きてる球だけを練習セットへ移植
   const alive = sh.startState.filter(b => !b.pocketed);
   practiceLayout = alive.map(b => ({ id: b.id, x: b.x, y: b.y }));
@@ -4222,6 +4714,10 @@ function tryFromLesson() {
   } else if (les.id === 'eight') {
     currentGame = 'eight';
     rulesTemplate = () => ({ game: 'eight', broken: true, ballInHand: false, group: 'solid', won: false, lost: false });
+  } else if (les.id === 'rotation') {
+    currentGame='rotation';MATCH.points=[0,0];MATCH.raceTo=120;
+    rulesTemplate=()=>({game:'rotation',broken:true,ballInHand:false,ballInHandRestricted:false,targetAtShot:null,
+      won:false,lost:false,pushAvailable:false});
   } else if (les.kairun) {
     currentGame = 'kairun';
     ENV.carom = false; compatCanvas.style.display = 'none';
@@ -4252,6 +4748,7 @@ function tryFromLesson() {
   hint('「' + les.title + '」の局面を移植しました。お手本の構えはセット済み — 変えて撞くのも自由です。撞いたら🎓コーチが続きを解きます');
 }
 $('ccTry').addEventListener('click', tryFromLesson);
+$('btnLessonTry').addEventListener('click',tryFromLesson);
 $('ccPlay').addEventListener('click', () => {
   if (S.app === 'practice' && Coach.active) $('ccard').classList.remove('show');
 });
@@ -4383,6 +4880,7 @@ const CO = {
         futureZones.push({ ...z, id });
       for (const opt of options) {
         const hasFuture = futureIds.length > 0;
+        const nextPotProb=tournamentPotProbability(opt),patientNext=nextPotProb>=.26&&opt.cut<=64&&opt.cueDist<=2.35;
         const targetCut = hasFuture ? 27 : 12;
         const sign = Math.sign(opt.signedCut) || 1;
         const idealVin = CO.rotate(opt.u, -sign * targetCut * D2R);
@@ -4411,10 +4909,11 @@ const CO = {
         const railCost = rail < 0.065 ? 2.4 : rail < 0.12 ? 0.9 : rail < 0.20 ? 0.22 : 0;
         const pocketCost = pocketGap < 0.14 ? 1.8 : pocketGap < 0.22 ? 0.35 : 0;
         const score = opt.difficulty + cutCost + railCost + pocketCost + posDist * 0.55
-          + wrongSide * (hasFuture ? 0.75 : 0) - Math.min(0.35, options.length * 0.055);
+          + wrongSide * (hasFuture ? 0.75 : 0) - Math.min(0.35, options.length * 0.055)-(patientNext?.55:0);
         const rec = { score, nextId, futureId, nextPk: opt.pk, nextPkN: CO.pkName(opt.pk),
           nextCut: opt.cut, nextDist: opt.cueDist, idealPos, posDist, wrongSide,
-          optionCount: options.length, futureZone };
+          optionCount: options.length, futureZone,nextPotProb,patientNext,
+          laneClear:true,distanceWindow:opt.cueDist<=1.45?'理想':opt.cueDist<=2.35?'我慢':'長距離' };
         if (!best || score < best.score) best = rec;
       }
     }
@@ -4587,7 +5086,7 @@ function tournamentLeverage(){
   return {hill,trailing,aggression:Math.max(-.08,Math.min(.18,trailing*.050+(hill&&trailing<0?-.01:0)))};
 }
 const TOURNAMENT_PROFILE=Object.freeze({
-  families:['DIRECT','BREAKOUT','COMBINATION','CANNON','KISS','BANK','KICK','RAIL-FIRST / HIKKAKE','JUMP','JUMP-BANK','MASSE','TWO-WAY','SAFETY','TACTICAL SPOT','TACTICAL FOUL'],
+  families:['DIRECT-STUN','DIRECT-FOLLOW','DIRECT-DRAW','DIRECT-SIDE','ONE-RAIL SHAPE','MULTI-RAIL SHAPE','BREAKOUT','COMBINATION','CANNON','KISS','THIN BANK','REVERSE BANK','KICK','RAIL-FIRST / HIKKAKE','JUMP','JUMP-BANK','MASSE','TWO-WAY','SAFETY','TACTICAL NO CALL','TACTICAL FOUL'],
   // 十分に入る球を守備へ倒すには、この差以上のラック勝率上昇が必要。
   attackTolerance:{elite:.20,open:.18,route:.14,thin:.050}
 });
@@ -4606,15 +5105,22 @@ function tournamentPlayablePot(r,targetId=null){
 }
 function tournamentAttackFamily(r){
   if(!r)return 'NONE';
-  if(r.kind==='pot')return (r.breakout||0)>.12?'BREAKOUT':(r.twoWay||0)>=.58?'TWO-WAY':'DIRECT';
+  if(r.kind==='pot'){
+    if((r.breakout||0)>.12)return 'BREAKOUT';if((r.twoWay||0)>=.58)return 'TWO-WAY';
+    if((r.cueRails||0)>=2)return 'DIRECT-MULTI-RAIL';if((r.cueRails||0)===1)return 'DIRECT-ONE-RAIL';
+    const tx=Math.abs(r.prm?.tipX||0),ty=r.prm?.tipY||0;
+    if(ty<=-.16)return 'DIRECT-DRAW';if(ty>=.16)return 'DIRECT-FOLLOW';if(tx>=.14)return 'DIRECT-SIDE';
+    return 'DIRECT-STUN';
+  }
   if(r.kind==='attack-attempt')return 'ATTEMPT-'+(r.attemptKind||'DIRECT');
   if(r.kind==='jump-bank')return 'JUMP-BANK';
   if(r.kind==='hikkake')return 'HIKKAKE';
+  if(r.kind==='bank-reverse')return 'REVERSE-BANK';
   if((r.kind||'').startsWith('bank'))return 'BANK-'+(r.targetRails||1);
   if((r.kind||'').startsWith('kick'))return 'KICK-'+(r.cushionsBefore||1);
   return String(r.kind||'OTHER').toUpperCase();
 }
-function tournamentAttackSpectrum(list,cap=7){
+function tournamentAttackSpectrum(list,cap=10){
   const sorted=list.filter(Boolean).slice().sort((a,b)=>{
     const ar=a.kind==='pot'?'attack':'special',br=b.kind==='pot'?'attack':'special';
     return tournamentCandidateWin(b,br)-tournamentCandidateWin(a,ar)||(b.robust??0)-(a.robust??0)||(a.score??0)-(b.score??0);
@@ -4663,15 +5169,17 @@ function tournamentReplyThreatWithBallInHand(balls,turn){
   }
   return clamp01(best);
 }
-function rotationSpotCandidatesFromAttacks(balls,attacks,turn){
+function rotationNoCallModeText(rule=MATCH.rotationNoCallRule){return rule==='spot'?'フットスポットへ戻して交代':'入ったまま現状から交代';}
+function rotationNoCallCandidatesFromAttacks(balls,attacks,turn){
   if(!(S.rules&&S.rules.game==='rotation'))return [];
   const alive=new Set(balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off).map(b=>b.id)),out=[];
   for(const a of attacks.slice(0,8)){
     if(!a.final||!(a.robust>0))continue;
-    const spotIds=a.final.filter(b=>b.id!==0&&b.pocketed&&alive.has(b.id)).map(b=>b.id);if(!spotIds.length)continue;
-    const final=spottedState(a.final,spotIds),replyThreat=tournamentReplyThreat(final,1-turn),cluster=tournamentClusterReport(final,1-turn,null),
+    const noCallIds=a.final.filter(b=>b.id!==0&&b.pocketed&&alive.has(b.id)).map(b=>b.id);if(!noCallIds.length)continue;
+    // NBA本文の現状渡しと、国内大会で使われるスポットバックを試合設定どおり比較する。
+    const spotBack=MATCH.rotationNoCallRule==='spot',final=spotBack?spottedState(a.final,noCallIds):a.final.map(cloneBall),replyThreat=tournamentReplyThreat(final,1-turn),cluster=tournamentClusterReport(final,1-turn,null),
       clusterPressure=clamp01(cluster.severity/6),robust=clamp01(a.robust),control=1-replyThreat;
-    const r={...a,kind:'rotation-spot',rotationNoCall:true,spotIds,final,robust,confidence:robust,
+    const r={...a,kind:'rotation-nocall',rotationNoCall:true,noCallIds,noCallRule:spotBack?'spot':'current',final,robust,confidence:robust,
       replyThreat,clusterPressure,runoutProb:0,twoWay:control,
       rackEV:robust*(.30+control*.72+clusterPressure*.12)-(1-robust)*.42,
       score:(a.score||0)+(1-control)*5.2-clusterPressure*1.2};
@@ -4747,7 +5255,7 @@ function tournamentCreativePenalty(kind){
 function tournamentCandidateWin(r,role){
   if(!r)return -9;const robust=clamp01(r.robust??r.confidence??0),lev=tournamentLeverage();
   if(role==='escape'||r.escape)return escapeCandidateValue(r);
-  if(role==='spot'||r.kind==='rotation-spot'){
+  if(role==='spot'||r.kind==='rotation-nocall'){
     const control=1-clamp01(r.replyThreat??.65),cluster=clamp01(r.clusterPressure??0);
     return clamp01(robust*(.28+control*.58+cluster*.08)+(1-robust)*.06+lev.aggression*.02);
   }
@@ -4788,16 +5296,16 @@ function tournamentDecisionMatrix({attack=null,safety=null,special=null,push=nul
     primary=offense;decision=offense===special?'super':'runout';
     reason=(offense.twoWay||0)>=.58?'入れを狙い、外れ側も相手へ簡単な始球を渡さないツーウェイ':
       (offense.breakout||0)>.12?'入れながらクラスターを崩し、そのまま取り切る':'物理検証済みの入れを最優先し、手番を渡さず取り切る';
-  // プッシュアウト／スポット罠は「攻撃窓なし」の時だけ比較する。
+  // プッシュアウト／ノーコール現状渡しは「攻撃窓なし」の時だけ比較する。
   }else if(spot&&spotWin>=Math.max(offenseWin+.025,safetyWin+.012)){
-    primary=spot;decision='spot';reason='得点せずスポットへ戻す方が相手の取り切り率を下げる';
+    primary=spot;decision='spot';reason='得点せず、入った球を戻さない現状渡しが相手の取り切り率を下げる';
   }else if(push&&make<.54&&pushWin>=Math.max(offenseWin+.025,safetyWin-.015)){primary=push;decision='pushout';reason='攻撃窓なし／返されても戦える配置';}
   else if(offense&&(!safety||safetyWin<=offenseWin+(openAttack?tol:.018))){
     primary=offense;decision=offense===special?'super':'runout';
     reason=playableThin?'薄さは許容範囲 — 相手を過小評価せず取り切りへ行く':openAttack?'攻撃可能域 — 手番を維持する価値が最大':'攻守差が小さいため先手を取る';
   }else if(safety){primary=safety;decision='safety';reason='攻撃成功幅が不足し、守備の勝率差が明確';}
   else if(offense){primary=offense;decision=offense===special?'super':'runout';reason='合法な攻撃候補を採用';}
-  else if(spot){primary=spot;decision='spot';reason='ノーコール・スポットで難球を作る';}
+  else if(spot){primary=spot;decision='spot';reason='ノーコールで得点せず、'+rotationNoCallModeText(spot.noCallRule)+'';}
   else if(push){primary=push;decision='pushout';reason='攻撃候補なし';}
   // A tactical foul is a last resort, never a shortcut around an available pot
   // or reproducible safety.  It also disappears automatically on two fouls.
@@ -4816,7 +5324,7 @@ function tournamentVision(r){
   if(r.escape)return r.potId?coachKindName(r)+'で入れまで狙う':coachKindName(r)+'で合法ヒットを最大化';
   if(r.kind==='safety')return r.hid?'完全に隠して選択肢を奪う':'距離と薄さを残して難球化';
   if(r.kind==='pushout')return '返されても受けても戦える場所を交換条件にする';
-  if(r.kind==='rotation-spot')return 'ノーコールで入れ、フットスポットへ戻して相手の始球を難しくする';
+  if(r.kind==='rotation-nocall')return 'ノーコールで得点せず、'+rotationNoCallModeText(r.noCallRule);
   if(r.kind==='intentional-foul')return '通常ストロークで難球化し、相手のフリーボール後の取り切りまで抑える';
   if(r.kind==='attack-attempt')return (r.attemptLabel||'低確率の勝負球')+'も消さず、入れに行く可能性を残す';
   if(r.kind==='kairun'||r.kind==='kairun-attempt')return '当て筋を諦めず、直接・捻り・カーブ・ジャンプ・マッセ・多クッションを比較';
@@ -4865,6 +5373,7 @@ function finishCoachIdle(){
 }
 function clearQuickCoach(){
   const q=$('quickCoach');if(q){q.classList.remove('show');q.innerHTML='';}
+  closeCoachPicker();
   if($('advData'))$('advData').style.display='';
   if($('advMsg'))$('advMsg').style.display='';
 }
@@ -5113,7 +5622,7 @@ function coachThink(options={}) {
     const nextIds = CO.nextChoices(r.bs);
     const shape = nextIds.length ? CO.shapeAt(r.bs, [cb.p[0], cb.p[1]], nextIds) : null;
     // 入った事実とポジション品質は別に評価する。次球が苦しくても「入れ」自体を候補から消さない。
-    const shapeCost=nextIds.length?(shape?shape.score:9):0;
+    const shapeCost=nextIds.length?(shape?(shape.patientNext?Math.min(4.1,shape.score):shape.score):9):0;
     const cueRails = r.ev.filter(e => e.type === 'cushion' && e.id === 0).length;
     const breakout=tournamentBreakoutValue(balls,r.bs,MATCH.turn,tid);
     const movement = Math.hypot(cb.p[0] - cue.p[0], cb.p[1] - cue.p[1]);
@@ -5172,7 +5681,7 @@ function coachFine(balls, targetId, coarse, risk) {
         others.some(id => id === 8 || (S.rules.group && GROUP_OF(id) !== S.rules.group))) {miss(1);return;}
     const nextIds = CO.nextChoices(sim.final);
     const shape = nextIds.length ? CO.shapeAt(sim.final, [cf.p[0], cf.p[1]], nextIds) : null;
-    const shapeCost=nextIds.length?(shape?shape.score:9):0;
+    const shapeCost=nextIds.length?(shape?(shape.patientNext?Math.min(4.1,shape.score):shape.score):9):0;
     const cueRails = sim.events.filter(e => e.type === 'cushion' && e.id === 0).length;
     const breakout=tournamentBreakoutValue(balls,sim.final,MATCH.turn,tid);
     const stroke=tournamentStrokeModel(tk.prm,tk.base.potOpt.cueDist,tk.base.potOpt.cut);
@@ -5213,16 +5722,17 @@ function coachFine(balls, targetId, coarse, risk) {
         nextPkN: sh ? sh.nextPkN : '', nextCut: sh ? sh.nextCut : 0,
         nextDist: sh ? sh.nextDist : 0, wrongSide: sh ? sh.wrongSide : 0,
         optionCount: sh ? sh.optionCount : 0, idealPos: sh ? sh.idealPos : null,
-        shapeScore: sh ? sh.score : 0 });
+        shapeScore: sh ? sh.score : 0,nextPotProb:sh?.nextPotProb||0,patientNext:!!sh?.patientNext,
+        distanceWindow:sh?.distanceWindow||'' });
     }
     if (!recs.length) { coachSpecial(balls, targetId, risk, preliminaryAttacks); return; }
     recs.sort((a, b) => tournamentCandidateWin(b,'attack')-tournamentCandidateWin(a,'attack') || a.score - b.score);
     const picks = [], seen2 = new Set();
-    for (const r of recs) {
+    for (const r of tournamentAttackSpectrum(recs,8)) {
       const k = r.tid + '|' + r.pkN + '|' + Math.round(r.prm.tipX * 10) + '|' + Math.round(r.prm.tipY * 10);
       if (seen2.has(k)) continue;
       seen2.add(k); picks.push(r);
-      if (picks.length >= 4) break;
+      if (picks.length >= 8) break;
     }
     Coach.busy = false;
     updateCoachButton();
@@ -5258,7 +5768,7 @@ function analyzeSpecialResult(sim, tk, legalSet) {
   let potId = tk.secondary && potted.includes(tk.secondary) ? tk.secondary
     : potted.includes(first) ? first : potted[0];
   if (tk.intent === 'combo' && !potted.includes(tk.secondary)) return null;
-  if ((tk.intent === 'jump' || tk.intent === 'jump-bank' || tk.intent === 'masse' || tk.intent === 'bank'||tk.intent==='hikkake') && !potted.includes(first)) return null;
+  if ((tk.intent === 'jump' || tk.intent === 'jump-bank' || tk.intent === 'masse' || tk.intent === 'bank'||tk.intent==='reverse-bank'||tk.intent==='hikkake') && !potted.includes(first)) return null;
   if (tk.intent === 'kick' && (!potted.includes(first) || cushionsBefore < 1)) return null;
   if (tk.intent === 'hikkake' && cushionsBefore !== 1) return null;
   if(tk.intent==='hikkake'&&tk.rail&&cueRailBefore!==({'上長':'+y','下長':'-y','右短':'+x','左短':'-x'}[tk.rail]))return null;
@@ -5280,8 +5790,10 @@ function analyzeSpecialResult(sim, tk, legalSet) {
     }
   }
   if(tk.intent==='jump-bank'&&targetRails<1)return null;
+  if(tk.intent==='reverse-bank'&&targetRails<2)return null;
   let kind = null;
   if (tk.intent === 'jump-bank') kind = 'jump-bank';
+  else if (tk.intent === 'reverse-bank') kind = 'bank-reverse';
   else if (tk.intent === 'jump') kind = 'jump';
   else if (tk.intent === 'masse') kind = 'masse';
   else if (tk.intent === 'hikkake') kind = 'hikkake';
@@ -5293,7 +5805,7 @@ function analyzeSpecialResult(sim, tk, legalSet) {
   else if (targetRails >= 1 && potted.includes(first)) kind = 'bank' + Math.min(3, targetRails);
   if (!kind) return null; // 普通の入れはここへ混ぜない
   const pb = sim.bs.find(b => b.id === potId), pocket = pb && pb.pocket;
-  const riskBase = { combination: 2.0, cannon: 3.0, kiss: 3.1, bank1: 2.6, bank2: 3.5,
+  const riskBase = { combination: 2.0, cannon: 3.0, kiss: 3.1, bank1: 2.6, bank2: 3.5, 'bank-reverse':3.65,
     bank3: 4.2, kick1: 3.1, kick2: 4.0, kick3: 4.8, hikkake:3.0,
     jump: 5.1, 'jump-bank':5.7, masse: 6.0 }[kind] || 4;
   return { kind, potId, first, secondaryId: tk.secondary || firstHitOther || cueSecond,
@@ -5322,7 +5834,7 @@ function analyzeAttackAttempt(sim,tk,legalSet){
   if(first===null||!legalSet.includes(first)||(tk.first&&first!==tk.first))return null;
   const focus=tk.secondary&&sim.bs.some(b=>b.id===tk.secondary&&!b.pocketed)?tk.secondary:first,
     target=sim.bs.find(b=>b.id===focus&&!b.pocketed&&!b.off);if(!target)return null;
-  const gap=CO.pocketClearance([target.p[0],target.p[1]]),family={combo:'コンビネーション',creative:'キャノン／キス／バンク',
+  const gap=CO.pocketClearance([target.p[0],target.p[1]]),family={combo:'コンビネーション',bank:'薄球バンク','reverse-bank':'逆バンク',creative:'キャノン／キス／バンク',
     kick:'空クッション・イン',hikkake:'ヒッカケ・イン',jump:'ジャンプイン','jump-bank':'ジャンプバンク',masse:'マッセイン'}[tk.intent]||'勝負球';
   return {kind:'attack-attempt',attemptKind:tk.intent,attemptLabel:family,first,targetId:first,potId:focus,
     cushionsBefore,prm:tk.prm,cueRest:cue.p.slice(),final:sim.bs,gap,
@@ -5382,6 +5894,52 @@ function buildSpecialTasks(balls) {
     for (const speed of [2.2, 3.1, 4.1, 5.0]) for (const ty of [0, 0.20])
       for (const da of [-0.35, 0, 0.35]) tasks.push({ intent: 'combo', first: s.first, secondary: s.secondary,
         prm: { speed, aim: aim + da * D2R, elev: 0, tipX: 0, tipY: ty, pivotLen: S.pivot } });
+  });
+  // 1クッションバンクは偶然の広角走査に任せず、各ポケットをレールの外へ鏡映して逆算する。
+  // 直接入れがある局面でも「別ポケット＋別ポジション」を作れる攻撃案として常時残す。
+  const directBankRails=[{axis:'x',v:PH.TABLE_W/2},{axis:'x',v:-PH.TABLE_W/2},{axis:'y',v:PH.TABLE_H/2},{axis:'y',v:-PH.TABLE_H/2}];
+  for(const first of legalIds.slice(0,4)){
+    const ob=balls.find(b=>b.id===first);if(!ob)continue;
+    for(const pk of POCKETS)for(const rail of directBankRails){
+      const mirror=rail.axis==='x'?[2*rail.v-pk.x,pk.y]:[pk.x,2*rail.v-pk.y],
+        den=rail.axis==='x'?mirror[0]-ob.p[0]:mirror[1]-ob.p[1];if(Math.abs(den)<1e-6)continue;
+      const t=(rail.v-(rail.axis==='x'?ob.p[0]:ob.p[1]))/den;if(t<=.04||t>=.96)continue;
+      const hit=[ob.p[0]+(mirror[0]-ob.p[0])*t,ob.p[1]+(mirror[1]-ob.p[1])*t];
+      if(Math.abs(hit[0])>PH.TABLE_W/2-.065||Math.abs(hit[1])>PH.TABLE_H/2-.065)continue;
+      if(!CO.lineClear(balls,[ob.p[0],ob.p[1]],hit,new Set([first]))||!CO.lineClear(balls,hit,[pk.x,pk.y],new Set([first])))continue;
+      const d=Math.hypot(hit[0]-ob.p[0],hit[1]-ob.p[1]);if(d<.10)continue;
+      const u=[(hit[0]-ob.p[0])/d,(hit[1]-ob.p[1])/d],ghost=[ob.p[0]-u[0]*2*PH.R,ob.p[1]-u[1]*2*PH.R];
+      if(!CO.lineClear(balls,[cue.p[0],cue.p[1]],ghost,new Set([0,first])))continue;
+      const base=Math.atan2(ghost[1]-cue.p[1],ghost[0]-cue.p[0]);
+      // 薄い入射でも消さない。速度・横回転・狙い幅を広げ、逆側へ切るバンクも残す。
+      for(const speed of [1.9,2.35,3.15,4.15,5.25,6.0])for(const da of [-1.1,-.55,0,.55,1.1])for(const tipX of [-.20,0,.20])
+        tasks.push({intent:'bank',first,bankPocket:pk,bankHit:hit,prm:{speed,aim:base+da*D2R,elev:0,tipX,tipY:.04,pivotLen:S.pivot}});
+    }
+  }
+  // 逆バンク: 的球をポケットと反対側へ送り、直交する2レールを使って戻す。
+  // 2回鏡映したポケットへ直線を引き、両クッション位置と手球の薄い当てを逆算する。
+  const reverseSeeds=[],reflectRail=(p,r)=>r.axis==='x'?[2*r.v-p[0],p[1]]:[p[0],2*r.v-p[1]];
+  for(const first of legalIds.slice(0,3)){
+    const ob=balls.find(b=>b.id===first);if(!ob)continue;
+    for(const pk of POCKETS)for(const r1 of directBankRails)for(const r2 of directBankRails){
+      if(r1===r2||r1.axis===r2.axis)continue;
+      const m2=reflectRail([pk.x,pk.y],r2),mirror=reflectRail(m2,r1),vx=mirror[0]-ob.p[0],vy=mirror[1]-ob.p[1],
+        den1=r1.axis==='x'?vx:vy,den2=r2.axis==='x'?vx:vy;if(Math.abs(den1)<1e-6||Math.abs(den2)<1e-6)continue;
+      const t1=(r1.v-(r1.axis==='x'?ob.p[0]:ob.p[1]))/den1,t2=(r2.v-(r2.axis==='x'?ob.p[0]:ob.p[1]))/den2;
+      if(t1<=.025||t2<=t1+.035||t2>=.975)continue;
+      const h1=[ob.p[0]+vx*t1,ob.p[1]+vy*t1],virtual2=[ob.p[0]+vx*t2,ob.p[1]+vy*t2],h2=reflectRail(virtual2,r1);
+      if(Math.abs(h1[0])>PH.TABLE_W/2-.055||Math.abs(h1[1])>PH.TABLE_H/2-.055||Math.abs(h2[0])>PH.TABLE_W/2-.055||Math.abs(h2[1])>PH.TABLE_H/2-.055)continue;
+      if(!CO.lineClear(balls,[ob.p[0],ob.p[1]],h1,new Set([first]))||!CO.lineClear(balls,h1,h2,new Set([first]))||!CO.lineClear(balls,h2,[pk.x,pk.y],new Set([first])))continue;
+      const d=Math.hypot(h1[0]-ob.p[0],h1[1]-ob.p[1]);if(d<.12)continue;
+      const u=[(h1[0]-ob.p[0])/d,(h1[1]-ob.p[1])/d],ghost=[ob.p[0]-u[0]*2*PH.R,ob.p[1]-u[1]*2*PH.R];
+      if(!CO.lineClear(balls,[cue.p[0],cue.p[1]],ghost,new Set([0,first])))continue;
+      reverseSeeds.push({first,pk,h1,h2,ghost,score:d+Math.hypot(h2[0]-h1[0],h2[1]-h1[1])+Math.hypot(pk.x-h2[0],pk.y-h2[1])});
+    }
+  }
+  reverseSeeds.sort((a,b)=>a.score-b.score).slice(0,28).forEach(s=>{
+    const base=Math.atan2(s.ghost[1]-cue.p[1],s.ghost[0]-cue.p[0]);
+    for(const speed of [2.4,3.2,4.2,5.4])for(const da of [-1,-.5,0,.5,1])for(const tipX of [-.16,0,.16])
+      tasks.push({intent:'reverse-bank',first:s.first,bankPocket:s.pk,bankRoute:[s.h1,s.h2],prm:{speed,aim:base+da*D2R,elev:0,tipX,tipY:.02,pivotLen:S.pivot}});
   });
   // キャノン／キス／バンク: 第1的球への厚みと速度を広く振り、実衝突列から技名を判定。
   for (const first of legalIds.slice(0, 3)) {
@@ -5452,10 +6010,11 @@ function buildSpecialTasks(balls) {
 function coachSpecial(balls, targetId, risk, attackRecs) {
   const built = buildSpecialTasks(balls), legalSet = S.rules ? legalTargets() : built.legalIds;
   if (!built.tasks.length) { coachSafety(balls, targetId, risk, attackRecs, []); return; }
-  let specialTasks=built.tasks;
-  if(Coach.auto){const by={};for(const t of built.tasks)(by[t.intent]||(by[t.intent]=[])).push(t);
-    specialTasks=interleaveShotFamilies([evenlySample(by.combo||[],52),evenlySample(by.creative||[],60),evenlySample(by.kick||[],44),
-      evenlySample(by.hikkake||[],30),evenlySample(by.jump||[],30),evenlySample(by['jump-bank']||[],24),evenlySample(by.masse||[],24)]);}
+  const by={};for(const t of built.tasks)(by[t.intent]||(by[t.intent]=[])).push(t);
+  const cap=Coach.auto?{combo:64,bank:128,reverse:112,creative:84,kick:64,hikkake:30,jump:30,jumpBank:24,masse:24}
+    :{combo:100,bank:180,reverse:180,creative:120,kick:120,hikkake:60,jump:54,jumpBank:42,masse:42};
+  const specialTasks=interleaveShotFamilies([evenlySample(by.combo||[],cap.combo),evenlySample(by.bank||[],cap.bank),evenlySample(by['reverse-bank']||[],cap.reverse),evenlySample(by.creative||[],cap.creative),evenlySample(by.kick||[],cap.kick),
+    evenlySample(by.hikkake||[],cap.hikkake),evenlySample(by.jump||[],cap.jump),evenlySample(by['jump-bank']||[],cap.jumpBank),evenlySample(by.masse||[],cap.masse)]);
   Coach.busy = true; updateCoachButton();
   const cands = [], attempts=[];
   coachChunks(specialTasks, tk => {
@@ -5464,20 +6023,27 @@ function coachSpecial(balls, targetId, risk, attackRecs) {
     if (x)cands.push({ ...x, ...tk });
     else {const attempt=analyzeAttackAttempt(sim,tk,legalSet);if(attempt)attempts.push(attempt);}
   }, p => {
-    $('advMsg').innerHTML = '🎓 VISION探索… '+(60+Math.round(p*24))+'%（コンビ・キャノン・キス・バンク・空クッション・ヒッカケ・ジャンプバンク・マッセ）';
+    $('advMsg').innerHTML = '🎓 VISION探索… '+(60+Math.round(p*24))+'%（薄球バンク・逆バンク・コンビ・キャノン・キス・空クッション・ヒッカケ・ジャンプバンク・マッセ）';
   }, () => coachSpecialFine(balls, targetId, risk, attackRecs, cands, legalSet,attempts));
 }
 function coachSpecialFine(balls, targetId, risk, attackRecs, cands, legalSet,attempts=[]) {
   const unique = [], seen = new Set();
   cands.sort((a, b) => a.score - b.score);
-  for (const c of cands) {
+  const familyFirst=[],familySeen=new Set();
+  for(const c of cands){const f=tournamentAttackFamily(c);if(!familySeen.has(f)){familySeen.add(f);familyFirst.push(c);}}
+  for (const c of [...familyFirst,...cands]) {
     const k = c.kind + '|' + c.potId + '|' + (c.pocket ? pocketKey(c.pocket) : '') + '|' + Math.round(c.prm.aim * R2D);
     if (seen.has(k)) continue;
     seen.add(k); unique.push(c);
-    if (unique.length >= 14) break;
+    if (unique.length >= 24) break;
   }
-  const lowAttack=attempts.slice().sort((a,b)=>a.score-b.score).filter((r,i,a)=>
-    i===a.findIndex(x=>x.attemptKind===r.attemptKind&&x.first===r.first)).slice(0,3);
+  const lowPool=attempts.slice().sort((a,b)=>a.score-b.score).filter((r,i,a)=>
+    i===a.findIndex(x=>x.attemptKind===r.attemptKind&&x.first===r.first)),
+    ideaOrder=['bank','reverse-bank','combo','creative','hikkake','kick','jump-bank','jump','masse'],lowAttack=[];
+  // 中心線がまだ入っていない低確率案も、技法ごとに最大6案まで比較欄へ残す。
+  // 「候補ゼロ」として隠さず、4%等の実測成功率を明示してユーザーへ選択権を渡す。
+  for(const kind of ideaOrder){const r=lowPool.find(x=>x.attemptKind===kind);if(r)lowAttack.push(r);if(lowAttack.length>=6)break;}
+  for(const r of lowPool){if(!lowAttack.includes(r))lowAttack.push(r);if(lowAttack.length>=6)break;}
   if (!unique.length) { Coach.busy = false; updateCoachButton(); coachSafety(balls, targetId, risk, attackRecs, lowAttack); return; }
   const groups = new Map(), tasks = [];
   const vars = [{tag:'center',da:0,sm:1},{tag:'a-',da:-.12,sm:1},{tag:'a+',da:.12,sm:1},{tag:'s-',da:0,sm:.95},{tag:'s+',da:0,sm:1.05}];
@@ -5503,7 +6069,7 @@ function coachSpecialFine(balls, targetId, risk, attackRecs, cands, legalSet,att
         score:g.center.score+(1-robust)*6.8-pattern.completion*1.6-breakout.value-twoWay*.55});}
     specials.sort((a,b)=>tournamentCandidateWin(b,'special')-tournamentCandidateWin(a,'special')||a.score-b.score);
     Coach.busy=false;updateCoachButton();
-    coachSafety(balls,targetId,risk,attackRecs,specials.length?tournamentAttackSpectrum(specials,7):lowAttack);
+    coachSafety(balls,targetId,risk,tournamentAttackSpectrum(attackRecs,16),tournamentAttackSpectrum([...specials,...lowAttack],16));
   });
 }
 
@@ -5737,24 +6303,27 @@ function finishCoachDecision(targetId,risk,attackRecs,specialRecs,safeties){
   const lastChance=!attack.length&&!specialRecs.length?lastChanceAttackAttempt(S.balls,targetId):null;
   const special=[...specialRecs,...(lastChance?[lastChance]:[])].sort((a,b)=>tournamentCandidateWin(b,'special')-tournamentCandidateWin(a,'special')||a.score-b.score);
   const safety=safeties.slice().sort((a,b)=>tournamentCandidateWin(b,'safety')-tournamentCandidateWin(a,'safety')||a.score-b.score), pressure=pressureMoment(targetId);
-  const spotTactics=rotationSpotCandidatesFromAttacks(S.balls,attack,MATCH.turn),spot=spotTactics[0],
+  const spotTactics=rotationNoCallCandidatesFromAttacks(S.balls,attack,MATCH.turn),spot=spotTactics[0],
     a=attack[0],s=safety[0],x=special[0],p=Coach.pushOption,
-    foul=(!a||(a.robust??0)<.42)&&(!s||(s.robust??0)<.50)?planIntentionalFoul(S.balls,MATCH.turn,Coach.auto):null;
+    tacticalTime=!(Coach.forAI&&Coach.deadline&&performance.now()>Coach.deadline-90),
+    foul=tacticalTime&&(!a||(a.robust??0)<.42)&&(!s||(s.robust??0)<.50)?planIntentionalFoul(S.balls,MATCH.turn,Coach.auto):null;
   const matrix=tournamentDecisionMatrix({attack:a,safety:s,special:x,push:p,spot,foul,targetId});let primary=matrix.primary,decision=matrix.decision;
   if(forcedBIH){primary=forcedBIH;decision='runout';forcedBIH.winProb=tournamentCandidateWin(forcedBIH,forcedBIH.kind==='pot'?'attack':'special');
     matrix.reason=forcedBIH.kind==='pot'?'フリーボールを最適配置し、空クッションを使わず直接取り切る':
       'フリーボールから守らず、合法な先球へ入れてクラスターを崩し取り切りを継続する';}
   if(!primary){Coach.active=false;finishCoachIdle();$('advMsg').innerHTML='🎓 攻め・守りとも合法かつ再現可能な候補が見つかりません。配置を見直してください。';return;}
   const mixed=[primary],recKey=r=>r.kind==='pot'?tournamentAttackFamily(r)+'|'+(r.tid||r.ball)+'|'+(r.pkN||r.pocket):
-    r.kind==='safety'?'safety|'+(r.hid?'hook':'distance'):r.kind==='rotation-spot'?'rotation-spot|'+(r.spotIds||[]).join('-'):(r.kind||'other');
+    r.kind==='safety'?'safety|'+(r.hid?'hook':'distance'):r.kind==='rotation-nocall'?'rotation-nocall|'+(r.noCallIds||[]).join('-'):(r.kind||'other');
   const add=r=>{if(r&&!mixed.includes(r)&&!mixed.some(x=>recKey(x)===recKey(r)))mixed.push(r);};
   // クイック画面の先頭5枠にも、直球だけでない攻撃の発想を優先して残す。
   // 同一技法の微差で埋めず、DIRECT / COMBI / BANK / KICK / JUMP...を家族別に並べる。
-  const attackSpectrum=tournamentAttackSpectrum([...attack,...special],7);
-  attackSpectrum.slice(0,4).forEach(add);add(s);attackSpectrum.slice(4).forEach(add);
+  const attackSpectrum=tournamentAttackSpectrum([...attack,...special],16);
+  // 攻撃窓がある時は、直球の撞点違い・別ポケット・薄球バンク・逆バンク等を最大10案先に並べる。
+  // セーフティは比較用として残すが、攻撃案を2枠だけで押し出さない。
+  attackSpectrum.slice(0,10).forEach(add);add(s);attackSpectrum.slice(10).forEach(add);
   add(spot);add(p);add(foul);
   [...safety.slice(1),...spotTactics.slice(1)].forEach(add);
-  Coach.recs=mixed.slice(0,8);Coach.ctx={targetId,risk,decision,pressure,kind:primary.kind,matrix,reason:matrix.reason,
+  Coach.recs=mixed.slice(0,16);Coach.ctx={targetId,risk,decision,pressure,kind:primary.kind,matrix,reason:matrix.reason,
     scannedFamilies:TOURNAMENT_PROFILE.families.slice(),ballInHandPlacement:Coach.ballInHandPlacement};
   Coach.active=true;presentCoach(0);
 }
@@ -5765,8 +6334,11 @@ function applyRec(r) {
   S.elev = (r.prm.elev || 0) * R2D;
   S.tipX = r.prm.tipX;
   S.tipY = r.prm.tipY;
+  S.aimTarget=r.tid||r.first||r.ball||r.targetId||Coach.ctx?.targetId||S.aimTarget;
+  const aimPk=r.pk||r.pocket;
+  if(typeof aimPk==='string')S.aimPocket=aimPk;else if(aimPk)S.aimPocket=pocketKey(aimPk);
   if(S.rules&&S.rules.pushAvailable)MATCH.pushDeclared=r.kind==='pushout';
-  MATCH.rotationNoCall=r.kind==='rotation-spot'||!!r.rotationNoCall;
+  MATCH.rotationNoCall=r.kind==='rotation-nocall'||!!r.rotationNoCall;
   MATCH.intentionalFoul=r.kind==='intentional-foul'||!!r.intentionalFoul;
   $('spd').value = S.speed;
   $('elv').value = Math.round(S.elev);
@@ -5785,6 +6357,13 @@ function applyRec(r) {
   computePred();
 }
 
+function coachPotPlanName(r){
+  const family=tournamentAttackFamily(r),next=r.nextId?'→'+r.nextId+'番':'';
+  const label={'BREAKOUT':'入れて崩す','TWO-WAY':'攻めながらセーフ','DIRECT-MULTI-RAIL':'直入れ・多レール出し',
+    'DIRECT-ONE-RAIL':'直入れ・1レール出し','DIRECT-DRAW':'直入れ・ドロー','DIRECT-FOLLOW':'直入れ・フォロー',
+    'DIRECT-SIDE':'直入れ・捻り','DIRECT-STUN':'直入れ・スタン'}[family]||'取り切り';
+  return label+(r.patientNext?'・我慢'+next:'');
+}
 function coachKindName(r) {
   const k = r.kind || '';
   const attackPrefix=r.escape&&r.potId?'入れ狙い・':'';
@@ -5792,11 +6371,11 @@ function coachKindName(r) {
   if (k === 'pushout') return 'プッシュアウト';
   if (k === 'kairun') return 'カイルン '+(r.planLabel||'成功ライン');
   if (k === 'kairun-attempt') return 'カイルン '+(r.planLabel||'最大接触');
-  if (k === 'pot') return '取り切り';
+  if (k === 'pot') return coachPotPlanName(r);
   if (k === 'breakout-attack') return 'クラスター攻撃';
-  if (k === 'attack-attempt') return '入れトライ';
+  if (k === 'attack-attempt') return (r.attemptLabel||'入れ')+'（低確率トライ）';
   if (k === 'safety') return 'セーフティ';
-  if (k === 'rotation-spot') return 'ノーコール・スポット';
+  if (k === 'rotation-nocall') return 'ノーコール・'+(r.noCallRule==='spot'?'スポット返し':'現状渡し');
   if (k === 'intentional-foul') return '戦術的ファウル';
   if (k === 'combination') return 'コンビネーション';
   if (k === 'cannon') return 'キャノン';
@@ -5809,10 +6388,45 @@ function coachKindName(r) {
   if (k === 'hikkake') return attackPrefix+'ヒッカケ（クッション先）';
   if (k === 'masse') return attackPrefix+'マッセ';
   if (k.startsWith('kick')) return attackPrefix+(r.cushionsBefore || +k.slice(-1) || 1) + 'クッション空クッション';
+  if (k === 'bank-reverse') return '逆バンク（2レール）';
   if (k.startsWith('bank') || k === 'bank') return (r.targetRails || r.rails || 1) + 'クッションバンク';
   return k || '候補';
 }
 function coachProb(r) { return r.robust === undefined ? '—' : Math.round(r.robust * 100); }
+
+function dockCoachCard(forCoach){
+  const card=$('ccard'),host=forCoach?$('deck'):$('playfield');
+  if(card.parentElement!==host)host.appendChild(card);
+  card.classList.toggle('coachDocked',!!forCoach);
+}
+function closeCoachPicker(){const p=$('coachPicker');if(!p)return;p.classList.remove('show');p.setAttribute('aria-hidden','true');}
+function coachChoiceRole(r){const k=r.kind||'';return r.escape?'escape':k==='safety'?'safety':k==='pushout'?'pushout':k==='rotation-nocall'?'spot':k==='intentional-foul'?'foul':k==='pot'?'attack':'special';}
+function coachChoiceWin(r){return r.winProb??tournamentCandidateWin(r,coachChoiceRole(r));}
+function coachChoiceLine(r){
+  if(r.nextId)return '次'+r.nextId+'番 '+(r.patientNext?'我慢可':Math.round((r.nextPotProb||0)*100)+'%')+(routeLabel(r)?' · '+routeLabel(r):'');
+  if(routeLabel(r))return routeLabel(r);
+  if(r.kind==='safety')return r.hid?'完全遮蔽':'距離 '+(r.dist||0).toFixed(1)+'m';
+  if((r.kind||'').startsWith('bank'))return (r.targetRails||1)+'レール → '+(r.potId||r.first||'的球')+'番';
+  return tournamentVision(r);
+}
+function renderCoachPicker(sel=Coach.selected||0,preserveScroll=false){
+  if(!Coach.active||!Coach.recs.length)return;
+  closeGhostEditor(true);$('ccard').classList.remove('show');
+  Coach.selected=Math.max(0,Math.min(sel,Coach.recs.length-1));
+  const offence=Coach.recs.filter(a=>!['safety','pushout','intentional-foul','rotation-nocall'].includes(a.kind)).length;
+  const grid=$('coachPickerGrid'),previousScroll=preserveScroll?grid.scrollTop:0;
+  $('coachPickerTitle').textContent='攻撃 '+offence+'案 / 全'+Coach.recs.length+'案';
+  $('coachPickerSummary').textContent='上下スワイプ — 成功幅・勝率・ネクストを比較';
+  grid.innerHTML=Coach.recs.map((a,i)=>'<button class="coachPick'+(i===Coach.selected?' on':'')+'" data-coach-pick="'+i+'" aria-label="候補'+(i+1)+' '+coachKindName(a)+'"><b>'+(i+1)+'. '+coachKindName(a)+'</b><small>成功'+coachProb(a)+'% · 勝率'+Math.round(Math.max(0,coachChoiceWin(a))*100)+'% · '+coachChoiceLine(a)+'</small></button>').join('');
+  const p=$('coachPicker');p.classList.add('show');p.setAttribute('aria-hidden','false');
+  requestAnimationFrame(()=>{
+    if(preserveScroll)grid.scrollTop=previousScroll;
+    else{
+      const chosen=grid.querySelector('.coachPick.on');
+      if(chosen)grid.scrollTop=Math.max(0,chosen.offsetTop-grid.clientHeight/2+chosen.offsetHeight/2);
+    }
+  });
+}
 
 function renderCoachQuick(sel=0){
   const r=Coach.recs[sel],ctx=Coach.ctx||{};if(!r)return;
@@ -5824,27 +6438,31 @@ function renderCoachQuick(sel=0){
     if(nb){nextMark.position.set(nb.p[0],.0016,-nb.p[1]);nextMark.visible=true;}
   }
   const k=r.kind||ctx.kind,decision=r.escape?'ESCAPE':k==='safety'?'DEFENCE':(tournamentVerifiedPot(r)||k==='pot'||k==='breakout-attack'||k==='attack-attempt')?'ATTACK':k==='break'?'BREAK':
-    k==='pushout'?'PUSH OUT':k==='kairun'?'BUILD':k==='rotation-spot'?'SPOT TRAP':k==='intentional-foul'?'LAST RESORT':'TACTICAL';
+    k==='pushout'?'PUSH OUT':k==='kairun'?'BUILD':k==='rotation-nocall'?'NO CALL':k==='intentional-foul'?'LAST RESORT':'TACTICAL';
   let summary=r.escape?'':routeLabel(r);
   if(!summary&&k==='pot')summary=(r.tid||ctx.targetId)+'番 → '+(r.pkN||'ポケット');
   if(!summary&&k==='safety')summary=r.hid?'完全に隠す':'距離 '+(r.dist||0).toFixed(1)+'m';
   if(!summary&&r.escape)summary=coachKindName(r)+' → '+(r.first||ctx.targetId)+'番へ当てる';
   if(!summary)summary=coachKindName(r);
   if(ctx.ballInHandPlacement)summary='フリーボール最適配置 → '+summary;
-  const role=r.escape?'escape':k==='safety'?'safety':k==='pushout'?'pushout':k==='rotation-spot'?'spot':
+  const role=r.escape?'escape':k==='safety'?'safety':k==='pushout'?'pushout':k==='rotation-nocall'?'spot':
     k==='intentional-foul'?'foul':k==='pot'?'attack':'special';
   const win=r.winProb??tournamentCandidateWin(r,role),vision=tournamentVision(r);
+  const offenceCount=Coach.recs.filter(a=>a.kind!=='safety'&&a.kind!=='pushout'&&a.kind!=='intentional-foul'&&a.kind!=='rotation-nocall').length;
   const q=$('quickCoach');q.innerHTML='<div class="qcLead"><b>'+decision+' 成功'+coachProb(r)+'% · WIN '+Math.round(win*100)+'%</b><span>'+summary+'</span><em>VISION '+vision+'</em></div>'
-    +Coach.recs.slice(0,5).map((a,i)=>'<button class="qcChoice'+(i===sel?' on':'')+'" data-qc="'+i+'">'+coachKindName(a)
-      +'<small>成功'+coachProb(a)+' · 勝率'+Math.round(((a.winProb??tournamentCandidateWin(a,a.escape?'escape':a.kind==='safety'?'safety':a.kind==='pushout'?'pushout':a.kind==='rotation-spot'?'spot':a.kind==='intentional-foul'?'foul':a.kind==='pot'?'attack':'special'))||0)*100)
+    +'<span class="qcCount">攻撃 '+offenceCount+'案 / 全'+Coach.recs.length+'案 ↔</span>'
+    +Coach.recs.map((a,i)=>'<button class="qcChoice'+(i===sel?' on':'')+'" data-qc="'+i+'" aria-label="候補'+(i+1)+' '+coachKindName(a)+'">'+coachKindName(a)
+      +'<small>成功'+coachProb(a)+'% · 勝率'+Math.round(((a.winProb??tournamentCandidateWin(a,a.escape?'escape':a.kind==='safety'?'safety':a.kind==='pushout'?'pushout':a.kind==='rotation-nocall'?'spot':a.kind==='intentional-foul'?'foul':a.kind==='pot'?'attack':'special'))||0)*100)+'%'
+      +(a.nextId?' · 次'+a.nextId+'番 '+(a.patientNext?'我慢可':Math.round((a.nextPotProb||0)*100)+'%'):'')
       +(!a.escape&&routeLabel(a)?' · '+routeLabel(a):'')+'</small></button>').join('')
-    +'<button class="qcDetail" data-qc-detail="1">解説</button>';
+    +'<button class="qcDetail" data-qc-detail="1">全候補 '+Coach.recs.length+'</button>';
   q.classList.add('show');$('advData').style.display='none';$('advMsg').style.display='none';
   hint(decision==='ESCAPE'?'隠されても諦めない — 最も当たる脱出ラインをセット済み':decision==='DEFENCE'?'守って主導権を取る構えをセット済み':'最善ルートをセット済み — そのままショット、または候補をタップ');
 }
 
 function renderCoach(sel) {
   const r = Coach.recs[sel], ctx = Coach.ctx;
+  dockCoachCard(true);closeCoachPicker();
   const kind = r.kind || ctx.kind;
   applyRec(r);
   restMark.visible = nextMark.visible = nextLine.visible = false;
@@ -5852,7 +6470,7 @@ function renderCoach(sel) {
     : ctx.decision === 'break' ? 'コーチ推奨 — コントロールブレイク'
       : ctx.decision === 'kairun' ? 'コーチ推奨 — 2・3・5の作り'
         : ctx.decision === 'escape' ? 'コーチ推奨 — 隠されても最後まで当てに行く'
-        : ctx.decision === 'spot' ? 'コーチ推奨 — ノーコールでスポット難球化'
+        : ctx.decision === 'spot' ? 'コーチ推奨 — ノーコールで配置を作る'
         : ctx.decision === 'foul' ? 'コーチ推奨 — 最後の戦術的ファウル'
         : ctx.decision === 'safety' ? 'コーチ推奨 — 攻めずに主導権を残す'
           : ctx.decision === 'super' ? 'コーチ推奨 — ここぞの勝負球'
@@ -5863,13 +6481,13 @@ function renderCoach(sel) {
     strokeInfo=r.prm?(r.stroke||tournamentStrokeModel(r.prm,strokeDist,r.cut||0)):null,
     actionInfo=r.prm?tournamentBallAction(r):null;
   if(!['break','kairun','kairun-attempt'].includes(kind)){
-    const role=r.escape?'escape':kind==='safety'?'safety':kind==='pushout'?'pushout':kind==='rotation-spot'?'spot':
+    const role=r.escape?'escape':kind==='safety'?'safety':kind==='pushout'?'pushout':kind==='rotation-nocall'?'spot':
       kind==='intentional-foul'?'foul':kind==='pot'?'attack':'special';
     const win=r.winProb??tournamentCandidateWin(r,role),reason=sel===0?(ctx.reason||ctx.matrix?.reason||'全候補を同一基準で比較'):'主推奨と比較できる別構想';
     lines.push('<div class="visionStrip"><b>◆ 盤面の構想:</b> '+tournamentVision(r)+'<br><b>ラック勝率 '+Math.round(win*100)+'%</b> — '+reason+'</div>');
     if(strokeInfo)lines.push('<div class="whyLine"><b>◆ キュー出し:</b> レスト <b>'+Math.round(strokeInfo.bridge*100)+'cm</b>、ストローク <b>'+Math.round(strokeInfo.strokeLength*100)+'cm</b>、キュースピード <b>'+strokeInfo.cueSpeed.toFixed(1)+'m/s</b>。'+strokeInfo.delivery+'。力任せではなく、必要な手球速度から逆算しています。</div>');
     if(actionInfo)lines.push('<div class="whyLine"><b>◆ ボールアクション:</b> 手球は'+actionInfo.cue+'。的球は'+actionInfo.object+'。</div>');
-    if(ctx.scannedFamilies)lines.push('<div class="scanLine">'+(ctx.escape?'脱出探索: '+ctx.scannedFamilies.join(' / '):'常時比較: DIRECT / COMBI / CANNON / KISS / BANK / KICK 1–3 / HIKKAKE / JUMP / JUMP-BANK / MASSE / TWO-WAY / SAFETY')+'</div>');
+    if(ctx.scannedFamilies)lines.push('<div class="scanLine">'+(ctx.escape?'脱出探索: '+ctx.scannedFamilies.join(' / '):'常時比較: DIRECT / COMBI / CANNON / KISS / THIN BANK / REVERSE BANK / KICK 1–3 / HIKKAKE / JUMP / JUMP-BANK / MASSE / TWO-WAY / SAFETY')+'</div>');
     if(ctx.ballInHandPlacement){const p=ctx.ballInHandPlacement;
       lines.push('<div class="whyLine"><b>◆ フリーボール:</b> 手玉を最適位置へ置き、'+(p.attackable?'直接ポケットできる':'少なくとも直接合法ヒットできる')+'ラインを作りました。途中のクラスターも検出し、入れながら崩せる速度・撞点まで比較しています。フリーボールで空クッションやジャンプへ逃げる候補は主推奨から除外しています。</div>');}
   }
@@ -5883,11 +6501,11 @@ function renderCoach(sel) {
     $('ccData').textContent='再現幅 '+coachProb(r)+'%  |  撞点 '+tipStr(r.prm)+'  |  '+r.prm.speed.toFixed(1)+' m/s';
     lines.push('<div class="whyLine"><b>◆ 判断:</b> 現在の攻めはラックを取り切る確率が低いため、無理なキックや薄球を選びません。相手が取っても難しく、返されてもこちらが戦える難度へ手玉を送ります。</div>');
     lines.push('<div class="whyLine"><b>◆ 交渉:</b> 相手の直接シュート脅威を約 <b>'+Math.round((r.replyThreat||0)*100)+'%</b> に調整。単に隠すのではなく「受けるか返すか」で相手が迷う配置です。</div>');
-  } else if (kind === 'rotation-spot') {
-    $('ccTitle').textContent='ノーコール・スポット — '+(r.spotIds||[]).join('・')+'番を戻す';
+  } else if (kind === 'rotation-nocall') {
+    $('ccTitle').textContent='ノーコール — '+(r.noCallIds||[]).join('・')+'番を入れ、'+rotationNoCallModeText(r.noCallRule);
     $('ccData').textContent='成立幅 '+coachProb(r)+'%  |  撞点 '+tipStr(r.prm)+'  |  '+r.prm.speed.toFixed(1)+' m/s';
-    lines.push('<div class="whyLine"><b>◆ 意図:</b> この球は得点をコールしません。合法に最小番号へ先当てして入れ、的球をフットスポットへ戻したうえで相手へ渡します。</div>');
-    lines.push('<div class="whyLine"><b>◆ 配置:</b> スポット後の盤面を作り直して再計算し、相手の取り切り脅威を <b>'+Math.round((r.replyThreat||0)*100)+'%</b> まで下げる候補です。偶然のノーインとは別物です。</div>');
+    lines.push('<div class="whyLine"><b>◆ 意図:</b> この球は得点をコールしません。合法に最小番号へ先当てして入れ、設定中の<b>'+rotationNoCallModeText(r.noCallRule)+'</b>を適用します。</div>');
+    lines.push('<div class="whyLine"><b>◆ 配置:</b> '+(r.noCallRule==='spot'?'入った球を番号順にフットへ戻した盤面':'入った球を除いた現状盤面')+'で再計算し、相手の取り切り脅威を <b>'+Math.round((r.replyThreat||0)*100)+'%</b> まで下げる候補です。ファウルではありません。</div>');
     lines.push('<div class="whyLine"><b>◆ 採用条件:</b> 通常の得点、クラスター崩し、セーフティと比較し、点を取らない代わりに相手を不利にする価値が上回った時だけ主推奨になります。</div>');
   } else if (kind === 'intentional-foul') {
     $('ccTitle').textContent='戦術的ファウル — 相手の取り切りを壊す';
@@ -5940,7 +6558,8 @@ function renderCoach(sel) {
           : '中心のスタンで、タンジェントライン方向へ自然に流す';
       lines.push('<div class="whyLine"><b>◆ ポジション:</b> 次は<b>' + r.nextId + '番→' + r.nextPkN + '</b>。'
         + tipWord + '。手玉は' + CO.zone(r.cueRest) + 'へ入り、次球はカット' + r.nextCut.toFixed(0)
-        + '°。ほぼ真っ直ぐにせず、手玉を動かせる角度を残します。</div>');
+        + '°・距離'+(r.nextDist||0).toFixed(2)+'m・推定入れ幅'+Math.round((r.nextPotProb||0)*100)+'%。ほぼ真っ直ぐにせず、手玉を動かせる角度を残します。</div>');
+      if(r.patientNext)lines.push('<div class="whyLine"><b>◆ 我慢のネクスト:</b> 理想点ではありませんが、障害のない入れ筋と許容距離は残っています。ここで手番を捨てず、<b>入れて次も入れる</b>方を採用します。</div>');
       if (r.futureId) lines.push('<div class="whyLine"><b>◆ その次:</b> ' + r.futureId
         + '番へ向かう自然なタンジェント方向の側に手玉を置きます。逆側へ出す候補は評価で落としています。</div>');
       const nb = S.balls.find(b => b.id === r.nextId);
@@ -6000,9 +6619,10 @@ function renderCoach(sel) {
     if((r.twoWay||0)>.35)lines.push('<div class="whyLine"><b>◆ アンドセーフ:</b> 外れ側で相手へ簡単な始球を渡さない度合いは <b>'+Math.round(r.twoWay*100)+'%</b>。攻めと保険を同じショットで成立させます。</div>');
   } else if (kind === 'bank' || kind.startsWith('bank')) {
     const rails=r.targetRails||r.rails||1;
-    $('ccTitle').textContent = rails + 'クッションバンク → ' + (r.potId||ctx.targetId) + '番';
+    $('ccTitle').textContent = (kind==='bank-reverse'?'逆バンク（2レール）':rails+'クッションバンク') + ' → ' + (r.potId||ctx.targetId) + '番';
     $('ccData').textContent = '成功幅 ' + coachProb(r) + '%  |  撞点 ' + tipStr(r.prm) + '  |  ' + r.prm.speed.toFixed(1) + ' m/s';
-    lines.push('<div class="whyLine"><b>◆ 状況:</b> 直接入れの確率やポジションが足りない時、トッププレイヤーは逃げるだけでなく<b>バンク</b>も勝負球として比較します。</div>');
+    lines.push('<div class="whyLine"><b>◆ 状況:</b> 直接入れの確率やポジションが足りない時、トッププレイヤーは逃げるだけでなく<b>'+(kind==='bank-reverse'?'逆バンク':'薄球を含むバンク')+'</b>も勝負球として比較します。</div>');
+    if(kind==='bank-reverse')lines.push('<div class="whyLine"><b>◆ 経路:</b> 的球をポケットの反対側へ薄く送り、直交する2クッションで戻します。2回鏡映したポケットから第1・第2クッション位置を逆算し、両レール通過と入球を実衝突履歴で確認しています。</div>');
     lines.push('<div class="whyLine"><b>◆ 精度:</b> バンクは入射角の誤差が反射角に乗ります。この手は実機誤差条件で <b>' + coachProb(r) + '%</b> 成功します。</div>');
     lines.push('<div class="whyLine"><b>◆ 撞き方:</b> ' + r.prm.speed.toFixed(1) + 'm/s。速すぎるとクッションが潰れて反射角が浅くなり、遅すぎると転がりで曲がります。</div>');
   } else if (kind === 'kick' || kind.startsWith('kick')) {
@@ -6072,8 +6692,15 @@ $('btnCoach').addEventListener('click', () => {
 $('quickCoach').addEventListener('click',e=>{
   const b=e.target.closest('[data-qc]');
   if(b&&Coach.active){renderCoachQuick(+b.dataset.qc);return;}
-  if(e.target.closest('[data-qc-detail]')&&Coach.active)renderCoach(Coach.selected||0);
+  if(e.target.closest('[data-qc-detail]')&&Coach.active)renderCoachPicker(Coach.selected||0);
 });
+$('coachPickerGrid').addEventListener('click',e=>{
+  const b=e.target.closest('[data-coach-pick]');if(!b||!Coach.active)return;
+  const i=+b.dataset.coachPick;renderCoachQuick(i);renderCoachPicker(i,true);
+});
+$('btnCoachPickerClose').addEventListener('click',closeCoachPicker);
+$('btnCoachPickerUse').addEventListener('click',()=>{closeCoachPicker();hint('選択した構えをセット済み — 盤面を確認してショットできます');});
+$('btnCoachPickerExplain').addEventListener('click',()=>{if(Coach.active)renderCoach(Coach.selected||0);});
 $('ccBody').addEventListener('click', e => {
   const b = e.target.closest('[data-alt]');
   if (!b || !Coach.active) return;
@@ -6082,8 +6709,9 @@ $('ccBody').addEventListener('click', e => {
 
 // ---- レイアウトプリセット ----
 // ---------- ラック生成 ----------
-let rackStyle = 'standard';   // standard | random | self
+let rackStyle = 'random';   // standard | random | self
 const FOOT_X = PH.TABLE_W / 4;
+const rackOrderHistory = { nine:'', ten:'' };
 function shuffled(a) {
   const r = a.slice();
   for (let i = r.length - 1; i > 0; i--) {
@@ -6091,6 +6719,17 @@ function shuffled(a) {
     [r[i], r[j]] = [r[j], r[i]];
   }
   return r;
+}
+function randomizedRackOrder(a,key) {
+  const r=shuffled(a);
+  let signature=r.join(',');
+  // 偶然の同一配列も避け、「新ラック」で必ず並びが変わったと分かるようにする。
+  if(signature===rackOrderHistory[key]&&r.length>1){[r[0],r[1]]=[r[1],r[0]];signature=r.join(',');}
+  rackOrderHistory[key]=signature;
+  return r;
+}
+function saveRackPreferences(){
+  try{localStorage.setItem('billiard-rack-mode',MATCH.rackMode);localStorage.setItem('billiard-nine-foot',MATCH.nineFoot);}catch(_){ }
 }
 // 三角形の格子座標(row=0が先頭)を返す
 function rackSlots(rows) {
@@ -6102,17 +6741,19 @@ function rackSlots(rows) {
   return out;
 }
 // 9ボール: ダイヤ型9球(1=先頭, 9=中心)
-function rack9Layout(style) {
+function rack9Layout(style,footBall=MATCH.nineFoot) {
   const dx = 2 * PH.R * Math.cos(Math.PI / 6) + 0.0004, R = PH.R + 0.0002;
+  // 1番は常に先頭、9番は常に中央。WPA現行は中央の9番をフットスポットへ置く。
+  const shift=footBall==='nine'?-2*dx:0;
   const slots = [
-    [FOOT_X, 0],
-    [FOOT_X + dx, R], [FOOT_X + dx, -R],
-    [FOOT_X + 2 * dx, 2 * R], [FOOT_X + 2 * dx, 0], [FOOT_X + 2 * dx, -2 * R],
-    [FOOT_X + 3 * dx, R], [FOOT_X + 3 * dx, -R],
-    [FOOT_X + 4 * dx, 0],
+    [FOOT_X+shift, 0],
+    [FOOT_X + shift + dx, R], [FOOT_X + shift + dx, -R],
+    [FOOT_X + shift + 2 * dx, 2 * R], [FOOT_X + shift + 2 * dx, 0], [FOOT_X + shift + 2 * dx, -2 * R],
+    [FOOT_X + shift + 3 * dx, R], [FOOT_X + shift + 3 * dx, -R],
+    [FOOT_X + shift + 4 * dx, 0],
   ];
-  // 規定: 1番が先頭(index0)、9番が中心(index4)。残りは任意 → 標準は昇順、ランダムはシャッフル
-  const rest = style === 'random' ? shuffled([2, 3, 4, 5, 6, 7, 8]) : [2, 3, 4, 5, 6, 7, 8];
+  // 規定球だけ固定し、2〜8番は意図的なパターンを作らず毎ラック再抽選する。
+  const rest = style === 'random' ? randomizedRackOrder([2, 3, 4, 5, 6, 7, 8],'nine') : [2, 3, 4, 5, 6, 7, 8];
   const ids = [1, rest[0], rest[1], rest[2], 9, rest[3], rest[4], rest[5], rest[6]];
   const out = [{ id: 0, x: -0.85, y: 0 }];
   slots.forEach((p, i) => out.push({ id: ids[i], x: p[0], y: p[1] }));
@@ -6147,7 +6788,7 @@ function rack8Layout(style) {
 // 10ボール: 三角形10球(1=先頭、10=中央)
 function rack10Layout(style) {
   const slots = rackSlots(4);
-  const rest = style === 'random' ? shuffled([2,3,4,5,6,7,8,9]) : [2,3,4,5,6,7,8,9];
+  const rest = style === 'random' ? randomizedRackOrder([2,3,4,5,6,7,8,9],'ten') : [2,3,4,5,6,7,8,9];
   const ids = new Array(10).fill(null);
   ids[0] = 1; ids[4] = 10;
   let k = 0; for (let i = 0; i < ids.length; i++) if (ids[i] === null) ids[i] = rest[k++];
@@ -6182,9 +6823,12 @@ let currentGame = 'set4';       // set4 | nine | ten | eight | rotation | kairun
 function loadPreset(game, style) {
   if (S.mode === 'running') return;
   if (game) currentGame = game;
-  if (style) rackStyle = style;
+  if(style){
+    rackStyle=style;
+    if(['nine','ten'].includes(currentGame)&&['random','standard'].includes(style)){MATCH.rackMode=style;saveRackPreferences();}
+  }else if(['nine','ten'].includes(currentGame))rackStyle=MATCH.rackMode;
   if (currentGame === 'nine') {
-    practiceLayout = rack9Layout(rackStyle);
+    practiceLayout = rack9Layout(rackStyle,MATCH.nineFoot);
     rulesTemplate = () => ({ game:'nine', broken:false, ballInHand:true, targetAtShot:null, won:false, lost:false, pushAvailable:false });
   } else if (currentGame === 'ten') {
     practiceLayout = rack10Layout(rackStyle);
@@ -6241,12 +6885,13 @@ function loadPreset(game, style) {
     hint('カイルン初球: 手球をキッチン内で動かし、黄(1番)→赤の順に当てます。次は赤＋赤、最後に3球全部で1点');
     return;
   }
-  const sname = rackStyle === 'random' ? 'ランダムラック' : rackStyle === 'self' ? 'セルフラック' : '標準ラック';
+  const sname = rackStyle === 'random' ? '規定球固定・毎ラックランダム' : rackStyle === 'self' ? 'セルフラック' : '固定配列（練習用）';
   if (rackStyle === 'self') {
     enterPlace();
     hint(gname + ' セルフラック: 球をドラッグして自分で組んでください。終わったら「配置」を解除');
   } else {
-    hint(gname + ' ' + sname + '(公式ルール適用)。手玉はヘッドライン(青線)より後ろに置いてブレイク');
+    const foot=currentGame==='nine'?(MATCH.nineFoot==='nine'?' · 9番オンフット':' · 1番オンフット'):currentGame==='ten'?' · 1番オンフット／10番中央':'';
+    hint(gname + ' ' + sname + foot + '。手玉はヘッドライン(青線)より後ろに置いてブレイク');
   }
 }
 
@@ -6254,10 +6899,10 @@ function loadPreset(game, style) {
 const GAME_LABEL = {set4:'ショットラボ',nine:'9-BALL',ten:'10-BALL',eight:'8-BALL',rotation:'ROTATION',kairun:'カイルン 2・3・5'};
 const POCKET_LABEL = {tl:'左上',tm:'上サイド',tr:'右上',br:'右下',bm:'下サイド',bl:'左下'};
 const RULE_TEXT = {
-  nine: `<h3>ナインボール</h3><ul><li>手球は常にテーブル上の最小番号へ最初に当てる。</li><li>合法ブレイクは、的球インまたは4球以上のクッション到達。WPAスリーボール・ブレイク条件も判定する。</li><li>ブレイク直後のみプッシュアウトを宣言できる。</li><li>合法ショットで9番を入れるとラック勝利。ファウル時の9番はスポットへ戻る。</li><li>3連続ファウルはラック敗北。</li></ul>`,
-  ten: `<h3>テンボール</h3><ul><li>最小番号へ先当てするコールショット競技。</li><li>10番は、他の的球がすべて無くなった後の合法なコールショットでのみ勝利。</li><li>早い10番、ファウル時の10番、場外の10番はスポットへ戻る。</li><li>コール不成立で球が入った場合、相手に「現状を撞く／返す」の選択権。</li><li>ブレイク直後のみプッシュアウト可能。3連続ファウルはラック敗北。</li></ul>`,
+  nine: `<h3>ナインボール</h3><ul><li>現行WPA配列は1番を先頭、9番を中央かつフットスポットに置き、残りを意図的なパターンなしで配置する。本機は9番オンフットを既定とし、1番オンフットの従来方式も選べる。</li><li>手球は常にテーブル上の最小番号へ最初に当てる。</li><li>合法ブレイクは、的球インまたは4球以上のクッション到達。WPAスリーボール・ブレイク条件も判定する。</li><li>ブレイク直後のみプッシュアウトを宣言できる。</li><li>合法ショットで9番を入れるとラック勝利。ファウル時の9番はスポットへ戻る。</li><li>3連続ファウルはラック敗北。</li></ul>`,
+  ten: `<h3>テンボール</h3><ul><li>現行WPA配列は1番を先頭かつフットスポット、10番を中央に置き、残りを意図的なパターンなしで配置する。</li><li>最小番号へ先当てするコールショット競技。</li><li>10番は、他の的球がすべて無くなった後の合法なコールショットでのみ勝利。</li><li>早い10番、ファウル時の10番、場外の10番はスポットへ戻る。</li><li>コール不成立で球が入った場合、相手に「現状を撞く／返す」の選択権。</li><li>ブレイク直後のみプッシュアウト可能。3連続ファウルはラック敗北。</li></ul>`,
   eight: `<h3>エイトボール</h3><ul><li>ブレイク後、合法に最初のコール球を入れた時点でソリッド／ストライプを決める。</li><li>自分の7球をすべて処理してから8番をコールして入れる。</li><li>早い8番、8番と同時のファウル、別ポケットへの8番はラック敗北。</li><li>ブレイクでの8番インは勝敗ではなく、本機はスポットへ戻して続行する。</li><li>通常ファウル後は相手のテーブル全面フリーボール。</li></ul>`,
-  rotation: `<h3>ローテーション</h3><ul><li>最小番号へ先当てし、合法なコールショットで入った球の番号を得点にする。</li><li>1〜15番の合計は120点。標準は61点先取。</li><li>合法なコール球と同時に入った他球も得点。</li><li>ノーコールで入れた球は得点せずフットスポットへ戻り、相手へ手番が移る。これを利用したスポット難球化も戦術候補に含む。</li><li>ファウルで入った球は番号順にスポットへ戻す。</li><li>本機は日本式競技ローテーションを基準に判定する。</li></ul>`,
+  rotation: `<h3>NBAローテーション（2026年6月規定）</h3><ul><li>最小番号へ先当てし、合法に入った球の番号を得点にする。合法なコール球と同時に入った他球も得点。</li><li>公式規定は「定められた点数」への到達を勝敗条件とする。本機は<b>120／180／240／300点</b>から選択する。</li><li>ノーコールはファウルではなく、得点せず交代する。NBA 2026本文の「入ったまま現状」と、国内大会で用いられる「番号順にフットスポットへ戻す」を対戦設定で選択可能。本機の既定は<b>フットスポット返し</b>。</li><li>通常ファウル後は、手球を現状／ヘッドライン内から、テーブル上の最小番号球を現状／センター／フットから1回だけ宣言する。手球をヘッドライン内へ移し、最小番号球もその内側にある場合はセンター／フットのみ。</li><li>ファウルで入った球は、最小番号球の選択配置後に番号の小さい順でフットスポットへ戻す。3ファウルは相手のフリーボールとなり、最小番号球を現状／センター／フットから選べる。</li><li>ブレイキングファウルはラックを組み直し、自分でブレイク／相手に再ブレイクを選ぶ。ブレイクスクラッチはヘッドライン内から再開する。</li></ul>`,
   kairun: `<h3>カイルン（台湾式四ツ球／2・3・5）</h3><ul><li>ポケット台で、白手球と1番（黄）、3番・11番（赤）の4球を使う。</li><li>STEP 2「黄＋赤」→ STEP 3「赤＋赤」→ STEP 5「黄＋赤＋赤」を同じ撞き番で順に成功させ、初めて1点。</li><li>初球だけはキッチン内の手球から黄→赤の順。以後のSTEP 2は黄・赤どちらが先でもよい。</li><li>STEP 2・3で3球全部へ当てるとニセカイルン。本機の標準設定は−1点で交代。</li><li>ノークッション、スクラッチ、的球イン自体はファウルではない。落ちた球はフット→ヘッド→センター→黄スポットの順で戻す。</li><li>STEP 2・3の核心は、次のショットが易しくなるよう赤2球、次に3球を寄せて配置を「作る」こと。</li></ul>`,
   common: `<h3>共通判定</h3><ul><li>スクラッチ／場外、先当たり違反、無接触、接触後ノークッション、二度撞き相当を判定対象とする。</li><li>合法な攻撃もセーフティも成立しない局面では、通常のキューストロークによる戦術的ファウルを、相手のフリーボール後まで実走査して比較する。</li><li>意図的なミスキュー、手や衣服で球を動かす行為、ヘッドライン規定の故意違反などWPAの非スポーツマン的行為は候補生成しない。</li><li>物理ステップは1/600秒。球・クッション衝突、滑り→転がり遷移、スピン、スロウ、ジョー、シェルフを計算。</li><li>足が床から離れる、衣服の球触り等、画面外の身体行為はシミュレーターでは発生しない。</li></ul>`
 };
@@ -6272,7 +6917,7 @@ function closeLayer(id) {
   if (id === 'mobileMenuDrawer') $('btnMobileMenu').setAttribute('aria-expanded','false');
 }
 document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeLayer(b.dataset.close)));
-document.querySelectorAll('.drawer,.modalLayer').forEach(el => el.addEventListener('pointerdown', e => { if (e.target === el) closeLayer(el.id); }));
+document.querySelectorAll('.drawer,.modalLayer').forEach(el => el.addEventListener('pointerdown', e => { if (e.target === el&&el.id!=='rotationFoulModal') closeLayer(el.id); }));
 $('btnLab').addEventListener('click', () => openLayer('labDrawer'));
 $('btnRules').addEventListener('click', () => { buildRuleTabs(currentGame === 'set4' ? 'common' : currentGame); openLayer('rulesDrawer'); });
 $('btnHowTo').addEventListener('click', () => openLayer('guideModal'));
@@ -6290,21 +6935,37 @@ function syncMatchSetupModal() {
   race.value = $('raceSelect').value;
   $('mobileCoachMode').value=MATCH.coachMode;
   $('mobileMatchTempo').value=MATCH.matchTempo;
+  $('mobileRotationNoCallRule').value=MATCH.rotationNoCallRule;
+  $('mobileRackMode').value=MATCH.rackMode;
+  $('mobileNineFoot').value=MATCH.nineFoot;
+  $('rotationNoCallRuleRow').style.display=currentGame==='rotation'?'':'none';
+  $('rackModeRow').style.display=['nine','ten'].includes(currentGame)?'':'none';
+  $('nineFootRow').style.display=currentGame==='nine'?'':'none';
 }
 $('btnMatchSetup').addEventListener('click', () => {
   syncMatchSetupModal();
   openLayer('matchSetupModal');
 });
 $('btnApplyMatchSetup').addEventListener('click', () => {
+  const rackChanged=MATCH.rackMode!==$('mobileRackMode').value||MATCH.nineFoot!==$('mobileNineFoot').value;
   $('opponentSelect').value = $('mobileOpponentSelect').value;
   $('raceSelect').value = $('mobileRaceSelect').value;
   $('opponentSelect').dispatchEvent(new Event('change', { bubbles: true }));
   $('raceSelect').dispatchEvent(new Event('change', { bubbles: true }));
   MATCH.coachMode=$('mobileCoachMode').value;
   MATCH.matchTempo=$('mobileMatchTempo').value;
-  try{localStorage.setItem('billiard-coach-mode',MATCH.coachMode);localStorage.setItem('billiard-match-tempo',MATCH.matchTempo);}catch(_){ }
-  cancelCoach(true);updateHUD();if(MATCH.coachMode==='quick'&&MATCH.turn===0)scheduleAutoCoach(80);
+  MATCH.rotationNoCallRule=$('mobileRotationNoCallRule').value;
+  MATCH.rackMode=$('mobileRackMode').value;
+  MATCH.nineFoot=$('mobileNineFoot').value;
+  rackStyle=MATCH.rackMode;saveRackPreferences();
+  try{localStorage.setItem('billiard-coach-mode',MATCH.coachMode);localStorage.setItem('billiard-match-tempo',MATCH.matchTempo);localStorage.setItem('billiard-rotation-nocall',MATCH.rotationNoCallRule);}catch(_){ }
   closeLayer('matchSetupModal');
+  if(rackChanged&&['nine','ten'].includes(currentGame)){
+    configureGame(currentGame,false);
+    addEventLog('ラック設定を反映 — '+(MATCH.rackMode==='random'?'毎ラックランダム':'固定配列'),'RACK');
+  }else{
+    cancelCoach(true);updateHUD();if(MATCH.coachMode==='quick'&&MATCH.turn===0)scheduleAutoCoach(80);
+  }
 });
 
 function syncMobileMenu() {
@@ -6389,35 +7050,83 @@ function applyEnvironment() {
   $('cushionOut').textContent = (+$('cushionLive').value) + '%';
   $('rollOut').textContent = roll ? Math.round(roll * 100) + '%' : '水平';
   $('cueMassOut').textContent = (+$('cueMass').value).toFixed(1) + 'oz';
-  $('accuracyOut').textContent = MATCH.humanError ? '誤差 ' + Math.round(MATCH.humanError * 100) + '%' : 'OFF（理論値）';
+  $('accuracyOut').textContent = MATCH.humanError ? '散らばり ' + Math.round(MATCH.humanError * 100) + '%' : '0%（予測一致）';
+  scheduleEnvironmentImpact();
   schedulePred(0);
+}
+let envImpactTimer=null;
+function tournamentEnvSnapshot(){return {muS:PH.MU_S,muR:PH.MU_R,muSpin:PH.MU_SP,bbE:PH.BB_E,bbMu:PH.BB_MU,
+  cushE:PH.CU_E,cushMu:PH.CU_MU,cueMass:19*.0283495231,tipEnergy:1,chalkGrip:1,pocketScale:1,shelfScale:1,
+  grain:.010,tableRollX:0,tableRollY:0,humidity:45,swerve:1,carom:ENV.carom,guide:ENV.guide};}
+function signedPct(x){const n=Math.round(x);return (n>0?'+':'')+n+'%';}
+function scheduleEnvironmentImpact(){clearTimeout(envImpactTimer);envImpactTimer=setTimeout(updateEnvironmentImpact,90);}
+function updateEnvironmentImpact(){
+  const box=$('envImpact');if(!box)return;
+  const rollDelta=(PH.MU_R/ENV.muR-1)*100,cushDelta=(ENV.cushE/PH.CU_E-1)*100,pocketDelta=(ENV.pocketScale-1)*100;
+  let outcome='現在の構えを変えると、ここに手球停止差と入れ判定差が出ます。';
+  if(S.mode==='idle'&&cueBall()&&!cueBall().pocketed){
+    const saved={...ENV};let now=null,base=null;
+    try{
+      now=simulateShot(S.balls,prm(),{maxT:12,dt:1/300});Object.assign(ENV,tournamentEnvSnapshot());
+      base=simulateShot(S.balls,prm(),{maxT:12,dt:1/300});
+    }finally{Object.assign(ENV,saved);}
+    const cn=now?.final?.find(b=>b.id===0),cb=base?.final?.find(b=>b.id===0);
+    if(cn&&cb){const shift=Math.hypot(cn.p[0]-cb.p[0],cn.p[1]-cb.p[1])*100,
+      np=now.final.filter(b=>b.id!==0&&b.pocketed).map(b=>b.id).join('・')||'なし',
+      bp=base.final.filter(b=>b.id!==0&&b.pocketed).map(b=>b.id).join('・')||'なし';
+      outcome='この構え: 手球停止差 '+shift.toFixed(1)+'cm / 入る球 標準['+bp+'] → 現在['+np+']';}
+  }
+  const exact=MATCH.humanError<=0;
+  box.innerHTML='<strong>'+(exact?'COACH MATCH · 予測一致 ON':'HUMAN VARIANCE · 実行誤差 '+Math.round(MATCH.humanError*100)+'%')+'</strong>'
+    +'<span>転がり '+signedPct(rollDelta)+' / クッション出口 '+signedPct(cushDelta)+' / ポケット受容幅 '+signedPct(pocketDelta)+'<br>'+outcome+'</span>';
 }
 for (const id of ['clothSpeed','humidity','cushionLive','pocketPreset','tableRoll','ballCondition','cueMass','tipType','chalk','humanError','seedInput','guideMode'])
   $(id).addEventListener($(id).tagName === 'SELECT' ? 'change' : 'input', applyEnvironment);
+$('clothColor').value=clothThemeKey;
+$('clothColor').addEventListener('change',e=>{
+  applyClothTheme(e.target.value,true);
+  hint('ラシャ色を「'+currentClothTheme().label+'」へ変更しました');
+});
+$('btnEnvStandard').addEventListener('click',()=>{
+  const values={clothSpeed:100,humidity:45,cushionLive:100,pocketPreset:'wpa',tableRoll:0,ballCondition:'match',
+    cueMass:19,tipType:'medium',chalk:'fresh',humanError:0,seedInput:20260711,guideMode:'full',clothColor:'blue'};
+  for(const [id,value] of Object.entries(values))$(id).value=value;
+  applyClothTheme('blue',true);
+  applyEnvironment();hint('競技標準へ復帰 — コーチ予測と実際のショットは同じ物理結果になります');
+});
+applyClothTheme(clothThemeKey,false);
 applyEnvironment();
 
 function addEventLog(text, strong) {
   MATCH.log.unshift({text, strong, t:Date.now()}); MATCH.log = MATCH.log.slice(0,4);
   $('eventLog').innerHTML = MATCH.log.map(x => `<div class="eventLine">${x.strong ? '<b>'+x.strong+'</b> ' : ''}${x.text}</div>`).join('');
 }
+function syncRotationTargetQuick(){
+  const q=$('rotationTargetQuick');
+  q.classList.toggle('show',currentGame==='rotation'&&MATCH.mode==='match');
+  q.value=String(MATCH.rotationTarget);
+}
 function configureRace() {
   const s = $('raceSelect');
-  const old = MATCH.raceTo;
+  const old = currentGame==='rotation'?MATCH.rotationTarget:MATCH.raceTo;
   const sets = currentGame === 'kairun' ? [[3,'3点'],[5,'5点'],[7,'7点'],[10,'10点']]
-    : currentGame === 'rotation' ? [[61,'61点'],[120,'120点'],[180,'180点']]
+    : currentGame === 'rotation' ? [[120,'120点'],[180,'180点'],[240,'240点'],[300,'300点']]
     : [[3,'3先'],[5,'5先'],[7,'7先'],[9,'9先']];
-  const chosen = sets.some(x=>x[0]===old) ? old : sets[Math.min(1,sets.length-1)][0];
+  const chosen = sets.some(x=>x[0]===old) ? old : sets[0][0];
   s.innerHTML = sets.map(x => `<option value="${x[0]}"${x[0]===chosen?' selected':''}>${x[1]}</option>`).join('');
   MATCH.raceTo = +s.value;
+  if(currentGame==='rotation')MATCH.rotationTarget=MATCH.raceTo;
+  syncRotationTargetQuick();
 }
 function updateHUD() {
   if (S.rules && S.rules.game === 'eight') S.rules.group = MATCH.groups[MATCH.turn];
   $('matchControls').classList.toggle('show', MATCH.mode === 'match');
   $('scoreBoard').classList.toggle('show', MATCH.mode === 'match');
+  syncRotationTargetQuick();
   $('p0Name').textContent = MATCH.names[0]; $('p1Name').textContent = MATCH.names[1];
   const pointGame = currentGame === 'rotation' || currentGame === 'kairun';
-  $('p0Score').textContent = pointGame ? MATCH.points[0] : MATCH.racks[0];
-  $('p1Score').textContent = pointGame ? MATCH.points[1] : MATCH.racks[1];
+  $('p0Score').textContent = pointGame ? MATCH.points[0]+' / '+MATCH.raceTo : MATCH.racks[0];
+  $('p1Score').textContent = pointGame ? MATCH.points[1]+' / '+MATCH.raceTo : MATCH.racks[1];
   $('p0Fouls').textContent = '●'.repeat(MATCH.fouls[0]); $('p1Fouls').textContent = '●'.repeat(MATCH.fouls[1]);
   $('p0Plate').classList.toggle('turn', MATCH.turn === 0); $('p1Plate').classList.toggle('turn', MATCH.turn === 1);
   let state = MATCH.rackOver ? 'RACK END' : (S.rules && !S.rules.broken ? 'BREAK' : 'TURN ' + (MATCH.turn + 1));
@@ -6425,7 +7134,8 @@ function updateHUD() {
   if (S.rules && S.rules.pushAvailable) state = 'PUSH OUT OK';
   if (currentGame === 'eight' && MATCH.groups[MATCH.turn]) state += ' · ' + (MATCH.groups[MATCH.turn] === 'solid' ? 'SOLID' : 'STRIPE');
   if (currentGame === 'kairun' && S.rules) state = 'STEP ' + [2,3,5][S.rules.kairunStage || 0];
-  if(currentGame==='rotation'&&MATCH.rotationNoCall)state+=' · NO CALL SPOT';
+  if(currentGame==='rotation')state='NBA '+MATCH.raceTo+'点 · '+state;
+  if(currentGame==='rotation'&&MATCH.rotationNoCall)state+=' · NO CALL '+(MATCH.rotationNoCallRule==='spot'?'SPOT':'CURRENT');
   $('gameState').textContent = state;
   $('btnPushOut').disabled = !(S.rules && S.rules.pushAvailable) || S.mode === 'running' || MATCH.aiBusy;
   $('btnPushOut').classList.toggle('on', MATCH.pushDeclared);
@@ -6438,13 +7148,22 @@ function updateHUD() {
 function configureGame(game, resetScore) {
   clearAIWatchdog();MATCH.aiToken++;
   cancelCoach(true);
+  // AI思考中／微速転がり中でも「新ラック」は必ず旧ショットを破棄して完全再生成する。
+  if(S.mode==='running'){
+    for(const b of S.balls){if(!b.pocketed){b.v=[0,0,0];b.w=[0,0,0];b.p[2]=PH.R;}}
+    S.mode='idle';MATCH.shotStartedAt=0;MATCH.shotForceStop=false;acc=0;sinks.length=0;syncAuxButton();
+  }
   currentGame = game;
   $('gameSelect').value = game;
   ENV.carom = false; compatCanvas.style.display = 'none';
   if (resetScore) { MATCH.racks = [0,0]; MATCH.points = [0,0]; MATCH.breaker = 0; MATCH.turn = 0; }
   else if (MATCH.rackOver && !['rotation','kairun'].includes(game)) { MATCH.breaker = 1 - MATCH.breaker; MATCH.turn = MATCH.breaker; }
   MATCH.fouls = [0,0]; MATCH.groups = [null,null]; MATCH.call = {ball:null,pocket:null,safety:false};
+  S.tapTarget=null;S.aimTarget=null;S.aimPocket=null;closeGhostEditor(false);closeCoachPicker();
   MATCH.pushDeclared = false;MATCH.rotationNoCall=false;MATCH.intentionalFoul=false;
+  MATCH.optionPending=null;closeLayer('rotationFoulModal');
+  S.rotationPlacementPreview=null;restMark.visible=nextMark.visible=nextLine.visible=false;
+  MATCH.lessonChallenge=null;
   MATCH.rackOver = false; MATCH.aiBusy = false; MATCH.log = [];
   MATCH.aiDecision='';
   $('eventLog').innerHTML = '';
@@ -6471,7 +7190,16 @@ function setPlayMode(mode) {
 
 $('gameSelect').addEventListener('change', e => configureGame(e.target.value, MATCH.mode === 'match'));
 $('opponentSelect').addEventListener('change', e => { MATCH.opponent = e.target.value; MATCH.names[1] = e.target.value === 'local' ? 'PLAYER 2' : e.target.value === 'pro' ? 'PRO AI' : e.target.value === 'a' ? 'A級 AI' : 'B級 AI'; updateHUD(); });
-$('raceSelect').addEventListener('change', e => { MATCH.raceTo = +e.target.value; updateHUD(); });
+$('raceSelect').addEventListener('change', e => {
+  MATCH.raceTo=+e.target.value;
+  if(currentGame==='rotation'){MATCH.rotationTarget=MATCH.raceTo;try{localStorage.setItem('billiard-rotation-target',MATCH.rotationTarget);}catch(_){ }}
+  updateHUD();
+});
+$('rotationTargetQuick').addEventListener('change',e=>{
+  MATCH.rotationTarget=+e.target.value;MATCH.raceTo=MATCH.rotationTarget;$('raceSelect').value=String(MATCH.rotationTarget);
+  try{localStorage.setItem('billiard-rotation-target',MATCH.rotationTarget);}catch(_){ }
+  updateHUD();
+});
 $('btnNewRack').addEventListener('click', () => configureGame(currentGame, false));
 $('btnPushOut').addEventListener('click', () => { if (!S.rules || !S.rules.pushAvailable) return; MATCH.pushDeclared = !MATCH.pushDeclared; updateHUD(); addEventLog(MATCH.pushDeclared ? 'プッシュアウトを宣言' : 'プッシュアウトを取消'); });
 
@@ -6503,7 +7231,8 @@ $('btnCall').addEventListener('click', () => {
   $('callPocket').value = MATCH.call.pocket || 'tr'; $('btnSafetyCall').classList.toggle('on', MATCH.call.safety);
   $('btnSafetyCall').style.display = currentGame === 'eight'||currentGame==='rotation' ? '' : 'none';
   if(currentGame==='rotation'){
-    $('btnSafetyCall').textContent=MATCH.rotationNoCall?'✓ ノーコール・スポット':'ノーコール・スポット';
+    const n='ノーコール（'+(MATCH.rotationNoCallRule==='spot'?'フットへ戻す':'現状渡し')+'）';
+    $('btnSafetyCall').textContent=MATCH.rotationNoCall?'✓ '+n:n;
     $('btnSafetyCall').classList.toggle('on',MATCH.rotationNoCall);
   }else $('btnSafetyCall').textContent='セーフティ';
   openLayer('callModal');
@@ -6512,7 +7241,8 @@ $('btnSafetyCall').addEventListener('click', () => {
   if(currentGame==='rotation'){
     MATCH.rotationNoCall=!MATCH.rotationNoCall;MATCH.call.safety=false;
     if(MATCH.rotationNoCall)MATCH.call={ball:null,pocket:null,safety:false};else autoCall();
-    $('btnSafetyCall').textContent=MATCH.rotationNoCall?'✓ ノーコール・スポット':'ノーコール・スポット';
+    const n='ノーコール（'+(MATCH.rotationNoCallRule==='spot'?'フットへ戻す':'現状渡し')+'）';
+    $('btnSafetyCall').textContent=MATCH.rotationNoCall?'✓ '+n:n;
     $('btnSafetyCall').classList.toggle('on',MATCH.rotationNoCall);return;
   }
   MATCH.call.safety = !MATCH.call.safety; $('btnSafetyCall').classList.toggle('on', MATCH.call.safety);
@@ -6520,7 +7250,7 @@ $('btnSafetyCall').addEventListener('click', () => {
 $('btnConfirmCall').addEventListener('click', () => {
   if(currentGame==='rotation'&&MATCH.rotationNoCall){
     MATCH.call={ball:null,pocket:null,safety:false};closeLayer('callModal');
-    addEventLog('ノーコール・スポット戦術を選択 — 入ればフットスポットへ戻して交代','TACTICAL');
+    addEventLog('ノーコールを選択 — 入っても得点せず、'+rotationNoCallModeText(),'NO CALL');
     updateHUD();return;
   }
   MATCH.call.ball = +$('callBall').value; MATCH.call.pocket = $('callPocket').value;
@@ -6571,7 +7301,8 @@ window.__api = { S, PH, ENV, MATCH, POCKETS, CO, coachBank, coachKick, coachSpec
   buildSpecialTasks, analyzeSpecialResult, evaluateSafety, finishCoachDecision, shoot, computePred, cueBall, prm,
   L, LESSONS, enterLesson, exitLesson, selectLesson, showBrief, setFrame, Coach, loadPreset, configureGame,
   setPlayMode, rulesJudgePro, simulateShot, applyRec, aiPlanPool, aiPlanKairun,
-  kairunContacts, kairunShotResult, kairunBuildTasks, evaluateKairunSim };
+  kairunContacts, kairunShotResult, kairunBuildTasks, evaluateKairunSim,
+  rack9Layout, rack10Layout, randomizedRackOrder, APP_VERSION, CLOTH_THEMES, applyClothTheme };
 })();
 
 </script>
