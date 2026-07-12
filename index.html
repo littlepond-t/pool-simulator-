@@ -266,6 +266,11 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 .playerPlate i{font-style:normal;color:var(--red);letter-spacing:-2px}
 #gameState{font:700 10px var(--mono);color:var(--cyan);max-width:190px;overflow:hidden;text-overflow:ellipsis}
 #gameStateWrap{display:grid;place-items:center;gap:2px;min-width:0}
+#nineFootQuick{display:none;align-items:stretch;gap:3px;flex:0 0 auto;padding:3px;border:1px solid rgba(99,215,232,.48);border-radius:8px;background:#0c1217}
+#nineFootQuick.show{display:flex}
+#nineFootQuick button{min-width:54px;min-height:28px;padding:4px 6px;border:0;border-radius:5px;background:transparent;color:var(--dim);font:800 10px var(--sans);white-space:nowrap;cursor:pointer}
+#nineFootQuick button.on{background:var(--amber);color:#211403;box-shadow:0 2px 8px rgba(255,179,92,.18)}
+#nineFootQuick button:disabled{opacity:.45;cursor:default}
 #rotationTargetQuick{display:none;width:68px;min-height:24px;padding:2px 18px 2px 6px;border:1px solid rgba(99,215,232,.6);border-radius:6px;
   background:#0c1217;color:var(--cyan);font:800 9px var(--mono);cursor:pointer}
 #rotationTargetQuick.show{display:block}
@@ -367,6 +372,8 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   .hudBtn{min-height:44px;padding:7px 10px}
   #btnNewRack{grid-column:2;grid-row:1}
   #btnCall{grid-column:3;grid-row:1}
+  #nineFootQuick{grid-column:3;grid-row:1;width:122px;min-height:44px;padding:3px}
+  #nineFootQuick button{flex:1;min-width:0;min-height:36px;padding:3px 4px;font-size:10px}
   #btnPushOut{grid-column:1/-1;grid-row:3}
   #btnPushOut:disabled{display:none}
   #matchControls.show{display:none}
@@ -595,7 +602,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">BILLIARD LAB PRO <small>v1.0.1</small></span>
+      <span id="proBadge">BILLIARD LAB PRO <small>v1.0.2</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
         <option value="set4">ショットラボ</option>
@@ -605,6 +612,10 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
         <option value="rotation">ローテーション（120・180・240・300点）</option>
         <option value="kairun">カイルン（台湾式四ツ球 2・3・5）</option>
       </select>
+      <div id="nineFootQuick" role="group" aria-label="ナインボールのフットスポット">
+        <button type="button" data-nine-foot="one" aria-pressed="false" aria-label="1番オンフット">①フット</button>
+        <button type="button" data-nine-foot="nine" aria-pressed="true" aria-label="9番オンフット">⑨フット</button>
+      </div>
       <div id="matchControls">
         <span class="hudLabel">VS</span>
         <select id="opponentSelect" class="hudSelect" aria-label="対戦相手">
@@ -740,7 +751,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③強さを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.0.1</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.0.2</b><span>Created by littlepond</span></div>
   </section>
 </div>
 
@@ -767,7 +778,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <label>コーチ<select id="mobileCoachMode" aria-label="コーチ動作"><option value="quick" selected>QUICK AUTO</option><option value="manual">手動</option><option value="off">OFF</option></select></label>
       <label>試合テンポ<select id="mobileMatchTempo" aria-label="試合テンポ"><option value="fast" selected>FAST</option><option value="normal">標準</option></select></label>
       <label id="rackModeRow">9・10ボール配列<select id="mobileRackMode" aria-label="9・10ボールのラック配列"><option value="random" selected>規定球固定・毎ラックランダム</option><option value="standard">固定配列（練習用）</option></select></label>
-      <label id="nineFootRow">9ボールのフット位置<select id="mobileNineFoot" aria-label="9ボールのフットスポット"><option value="nine" selected>9番オンフット（WPA現行）</option><option value="one">1番オンフット（従来方式）</option></select></label>
+      <label id="nineFootRow">9ボールのフット位置<select id="mobileNineFoot" aria-label="9ボールのフットスポット"><option value="one">①オンフット（1番を先頭・フットスポット）</option><option value="nine" selected>⑨オンフット（9番を中央・フットスポット／WPA）</option></select></label>
       <label id="rotationNoCallRuleRow">ノーコールイン<select id="mobileRotationNoCallRule" aria-label="ローテーションのノーコールイン処理"><option value="spot" selected>フットへ戻す（大会方式）</option><option value="current">入ったまま（NBA 2026本文）</option></select></label>
     </div>
     <div class="modalActions"><button data-close="matchSetupModal">取消</button><button class="primary" id="btnApplyMatchSetup">適用</button></div>
@@ -785,7 +796,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <div class="settingRow"><label>ラシャ速度 <output id="clothOut">トーナメント</output></label><input id="clothSpeed" type="range" min="75" max="125" value="100"></div>
       <div class="settingRow"><label>湿度 <output id="humidityOut">45%</output></label><input id="humidity" type="range" min="20" max="90" value="45"></div>
       <div class="settingRow"><label>クッション反発 <output id="cushionOut">競技基準</output></label><input id="cushionLive" type="range" min="75" max="110" value="100"></div>
-      <div class="settingRow"><label>ポケット難度</label><select id="pocketPreset"><option value="wpa">WPA 4.50in</option><option value="pro">PRO TIGHT 4.25in</option><option value="club">CLUB 4.75in</option></select></div>
+      <div class="settingRow"><label>ポケット難度</label><select id="pocketPreset"><option value="wpa">WPA 4.50in・棚1.50in</option><option value="pro">PRO 4.25in・棚1.75in</option><option value="club">CLUB 4.75in・棚1.25in</option></select></div>
       <div class="settingRow"><label>テーブルの微傾斜 <output id="rollOut">水平</output></label><input id="tableRoll" type="range" min="0" max="100" value="0"></div>
     </div>
     <div class="settingGroup"><h3>球・キュー</h3>
@@ -799,7 +810,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.0.1</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.0.2</b><span>Created by littlepond</span></div>
     <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
@@ -897,15 +908,19 @@ const RNG = {
 // ポケットの穴は鼻先の線より外側にある。穴が競技面へ食い込むことはない。
 //   コーナーポケット開口 4.5in = 114.3mm / サイドポケット開口 5.0in = 127mm
 //   ジョー(口の開き)角  コーナー 142° / サイド 104°
-//   シェルフ(球が落ちるまでの棚) コーナー 42mm / サイド 10mm
+//   シェルフ(球が落ちるまでの棚) WPA範囲: コーナー25.4〜57.15mm / サイド0〜9.525mm
+//   標準は現代トーナメント台の中庸値としてコーナー1.50in、サイド上限0.375inを採用。
+//   垂直バックドラフトは規定12〜15°の中央値13.5°、フェーシング厚は推奨上限1/8in。
 const TBL = {
   CORNER_MOUTH: 0.1143,
   SIDE_MOUTH: 0.127,
   CORNER_JAW: 142 * Math.PI / 180,
   SIDE_JAW: 104 * Math.PI / 180,
-  CORNER_SHELF: 0.042,
-  SIDE_SHELF: 0.010,
-  JAW_LEN: 0.095,
+  CORNER_SHELF: 0.0381,
+  SIDE_SHELF: 0.009525,
+  BACK_DRAFT: 13.5 * Math.PI / 180,
+  FACING_THICKNESS: 0.003175,
+  JAW_LEN: 0.0508,
 };
 
 const POCKETS = (() => {
@@ -925,11 +940,10 @@ const POCKETS = (() => {
     // T1 は接線 -t 側、T2 は +t 側になるよう並べ替え
     const s1 = (T1[0] - M[0]) * t[0] + (T1[1] - M[1]) * t[1];
     const A = s1 < 0 ? T1 : T2, B = s1 < 0 ? T2 : T1;
-    // ジョー面(facing)の向き。
-    // 規定の「ポケット角」(コーナー142°/サイド104°)は、開口部から見た2面の挟角。
-    // よって面は法線から φ = 90° - jaw/2 だけ内側へ傾き、奥へ向かって僅かに絞り込む(逆ハの字)。
-    // これがジョーでの「暴れ(ラトル)」を生む。
-    const phi = Math.PI / 2 - jaw / 2;
+    // WPAの水平カット角は「左右ジョーの挟角」ではなく、クッション鼻先から
+    // フェーシングへ折れる内角。コーナー142°はポケット軸から7°、
+    // サイド104°は同14°となる。旧式の挟角解釈は入口を過剰に絞り、穴を深く見せていた。
+    const phi = type === 'corner' ? jaw - 3 * Math.PI / 4 : jaw - Math.PI / 2;
     const fA = rot(n, phi), fB = rot(n, -phi);      // A=-t側は+t方向へ、B=+t側は-t方向へ寄る
     // 面の長さは、対面との隙間が球径を下回らない範囲まで(球が通れなくなるのを防ぐ)
     const gapLimit = 2 * PH.R + 0.004;
@@ -940,7 +954,7 @@ const POCKETS = (() => {
     // 穴の中心(描画・沈み込み用): 口の奥。半径 mouth/2 の円が口の線を越えないよう back > mouth/2
     const back = shelf + mouth * 0.5;
     list.push({
-      type, mouth, shelf,
+      type, mouth, shelf, faceBias: phi, backDraft: TBL.BACK_DRAFT,
       T1: A, T2: B, J1, J2, M, n, t,
       x: M[0], y: M[1],                      // 狙点 = 口の中心
       cx: M[0] + n[0] * back, cy: M[1] + n[1] * back,
@@ -1178,10 +1192,12 @@ function collideBalls(b1, b2) {
 }
 
 // ---- クッション ----
-function resolveCushion(b, n) {
+function resolveCushion(b, n, facing) {
   const vn = vdot(b.v, n);
   if (vn >= 0) return;
-  const eCush = Math.max(0.68, Math.min(0.91, ENV.cushE - 0.015 * Math.max(0, Math.abs(vn) - 3)));
+  // WPAはポケットのフェーシングを通常クッションより硬く指定している。
+  const facingBoost = facing ? 0.025 : 0;
+  const eCush = Math.max(0.68, Math.min(0.93, ENV.cushE + facingBoost - 0.015 * Math.max(0, Math.abs(vn) - 3)));
   const Jn = -(1 + eCush) * PH.M * vn;
   b.v = vsub(b.v, vscale(n, (1 + eCush) * vn));
   // ノーズ接触点: 外向き水平 + 中心より少し上
@@ -1191,7 +1207,8 @@ function resolveCushion(b, n) {
   u[2] *= 0.2; // ノーズは垂直方向をほぼ拘束しない(過大ホップ防止)
   const ul = vlen(u);
   if (ul > 1e-6) {
-    const Jt = Math.min(ENV.cushMu * Jn, (2 / 7) * PH.M * ul);
+    const surfaceMu = ENV.cushMu * (facing ? 0.90 : 1);
+    const Jt = Math.min(surfaceMu * Jn, (2 / 7) * PH.M * ul);
     const P = vscale(vscale(u, 1 / ul), -Jt);
     b.v = vadd(b.v, vscale(P, 1 / PH.M));
     b.w = vadd(b.w, vscale(vcross(r, P), 1 / PH.I));
@@ -1200,15 +1217,27 @@ function resolveCushion(b, n) {
   if (b.v[2] > 0.25) b.v[2] = 0.25;
 }
 
+function pocketCaptureWindow(pk, depth, speed) {
+  const mouth = pk.mouth * ENV.pocketScale;
+  const shelf = pk.shelf * ENV.shelfScale;
+  const d = Math.max(0, Math.min(depth, shelf));
+  // 球の中心が通れる幅 = その深さでのジョー間隔/2 - 球半径。
+  // 推奨1/8inフェーシングとベベルの丸み分だけ現実的な受けを残す。
+  const throatHalf = mouth / 2 - Math.tan(pk.faceBias) * d;
+  const speedPenalty = Math.max(0, speed - 3.2) * 0.0017;
+  return Math.max(0, throatHalf - PH.R + TBL.FACING_THICKNESS - speedPenalty);
+}
+
 function checkPockets(b) {
   if (ENV.carom) return false;
   for (const pk of POCKETS) {
     const rx = b.p[0] - pk.M[0], ry = b.p[1] - pk.M[1];
     const s = rx * pk.n[0] + ry * pk.n[1];      // 口の線からの外向き距離
-    if (s <= pk.shelf * ENV.shelfScale) continue; // シェルフを越えていない
+    const shelf = pk.shelf * ENV.shelfScale;
+    if (s <= shelf) continue;                    // スレート垂直カットを越えていない
     const lat = Math.abs(rx * pk.t[0] + ry * pk.t[1]);
-    const speedPenalty = Math.max(0, hyp2(b.v[0], b.v[1]) - 3.2) * 0.0017;
-    if (lat > pk.mouth * ENV.pocketScale / 2 + 0.035 - speedPenalty) continue;
+    const speed = hyp2(b.v[0], b.v[1]);
+    if (lat > pocketCaptureWindow(pk, shelf, speed)) continue;
     b.pocketed = true; b.pocket = pk; return true;
   }
   return false;
@@ -1259,7 +1288,7 @@ function cushionsAndPockets(b, events) {
     if (b.v[0] * nx + b.v[1] * ny >= 0) continue;      // 離れていく方向なら無視
     b.p[0] = qx + nx * PH.R;
     b.p[1] = qy + ny * PH.R;
-    resolveCushion(b, [nx, ny, 0]);
+    resolveCushion(b, [nx, ny, 0], c.rail === 'jaw');
     if (events) events.push({ type: 'cushion', id: b.id, rail: c.rail });
     return;
   }
@@ -1405,7 +1434,8 @@ function kairunShotResult(stage,opening,ev) {
 if (typeof module !== 'undefined') {
   module.exports = { PH, POCKETS, CUSHIONS, TBL, v3, vadd, vsub, vscale, vdot, vcross, vlen, vnorm,
     makeBall, cloneBall, strike, stepBall, stepWorld, collideBalls, resolveCushion,
-    bounceSlate, allStopped, simulateShot, cushionsAndPockets, kairunContacts, kairunShotResult };
+    bounceSlate, allStopped, simulateShot, cushionsAndPockets, checkPockets, pocketCaptureWindow,
+    kairunContacts, kairunShotResult };
 }
 
 </script>
@@ -1544,7 +1574,7 @@ const LESSONS = [
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='1.0.1';
+const APP_VERSION='1.0.2';
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
   green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
@@ -1721,7 +1751,7 @@ const W = PH.TABLE_W, H = PH.TABLE_H;
   };
 
   // --- 布: 競技面(八角形) ---
-  const a = 0.1143 / Math.SQRT2;
+  const a = TBL.CORNER_MOUTH / Math.SQRT2;
   const bed = [[-(HX - a), HY], [HX - a, HY], [HX, HY - a], [HX, -(HY - a)],
                [HX - a, -HY], [-(HX - a), -HY], [-HX, -(HY - a)], [-HX, HY - a]];
   prism(bed, -0.03, 0, clothMat, false);
@@ -2565,7 +2595,7 @@ function refreshChips() {
         b.className='preset'+(MATCH.nineFoot===foot?' on':'');
         b.textContent=label;b.dataset.nineFoot=foot;
         b.setAttribute('aria-label',foot==='nine'?'9番オンフット（WPA現行）':'1番オンフット（従来方式）');
-        b.addEventListener('click',()=>{MATCH.nineFoot=foot;saveRackPreferences();loadPreset(null,null);});
+        b.addEventListener('click',()=>setNineFootPreference(foot,false));
         el.appendChild(b);
       }
     }
@@ -4127,7 +4157,11 @@ function drawFallback2D(forceCompat) {
   g.lineTo(X(-PH.TABLE_W / 4), Y(PH.TABLE_H / 2)); g.stroke();
   if (!ENV.carom) for (const pk of POCKETS) {
       g.fillStyle = '#030405'; g.beginPath();
-      g.arc(X(pk.cx), Y(pk.cy), pk.r * scale * 1.04, 0, Math.PI * 2); g.fill();
+      if(pk._render&&pk._render.length){
+        pk._render.forEach((p,i)=>(i?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1]))));
+        g.closePath();
+      }else g.arc(X(pk.cx),Y(pk.cy),pk.r*scale,0,Math.PI*2);
+      g.fill();
     }
   if (S.pred && S.mode !== 'place') {
     const drawPath = (path, color, dash) => {
@@ -7030,8 +7064,8 @@ function applyEnvironment() {
   ENV.cushE = PH.CU_E * (+$('cushionLive').value / 100) * (1 - Math.max(0, hum - 55) * 0.0015);
   ENV.cushMu = PH.CU_MU * humidFactor;
   const pc = $('pocketPreset').value;
-  ENV.pocketScale = pc === 'pro' ? 0.944 : pc === 'club' ? 1.055 : 1;
-  ENV.shelfScale = pc === 'pro' ? 1.18 : pc === 'club' ? 0.82 : 1;
+  ENV.pocketScale = pc === 'pro' ? 4.25/4.50 : pc === 'club' ? 4.75/4.50 : 1;
+  ENV.shelfScale = pc === 'pro' ? 1.75/1.50 : pc === 'club' ? 1.25/1.50 : 1;
   const bc = $('ballCondition').value;
   const cond = {polished:[0.88,1.01,0.86],match:[1,1,1],used:[1.18,.985,1.12],dirty:[1.48,.96,1.28]}[bc];
   ENV.bbMu = PH.BB_MU * cond[0]; ENV.bbE = PH.BB_E * cond[1]; ENV.muS *= cond[2];
@@ -7062,7 +7096,8 @@ function signedPct(x){const n=Math.round(x);return (n>0?'+':'')+n+'%';}
 function scheduleEnvironmentImpact(){clearTimeout(envImpactTimer);envImpactTimer=setTimeout(updateEnvironmentImpact,90);}
 function updateEnvironmentImpact(){
   const box=$('envImpact');if(!box)return;
-  const rollDelta=(PH.MU_R/ENV.muR-1)*100,cushDelta=(ENV.cushE/PH.CU_E-1)*100,pocketDelta=(ENV.pocketScale-1)*100;
+  const rollDelta=(PH.MU_R/ENV.muR-1)*100,cushDelta=(ENV.cushE/PH.CU_E-1)*100,pocketDelta=(ENV.pocketScale-1)*100,
+    shelfDelta=(ENV.shelfScale-1)*100;
   let outcome='現在の構えを変えると、ここに手球停止差と入れ判定差が出ます。';
   if(S.mode==='idle'&&cueBall()&&!cueBall().pocketed){
     const saved={...ENV};let now=null,base=null;
@@ -7078,7 +7113,7 @@ function updateEnvironmentImpact(){
   }
   const exact=MATCH.humanError<=0;
   box.innerHTML='<strong>'+(exact?'COACH MATCH · 予測一致 ON':'HUMAN VARIANCE · 実行誤差 '+Math.round(MATCH.humanError*100)+'%')+'</strong>'
-    +'<span>転がり '+signedPct(rollDelta)+' / クッション出口 '+signedPct(cushDelta)+' / ポケット受容幅 '+signedPct(pocketDelta)+'<br>'+outcome+'</span>';
+    +'<span>転がり '+signedPct(rollDelta)+' / クッション出口 '+signedPct(cushDelta)+' / ポケット受容幅 '+signedPct(pocketDelta)+' / 棚深さ '+signedPct(shelfDelta)+'<br>'+outcome+'</span>';
 }
 for (const id of ['clothSpeed','humidity','cushionLive','pocketPreset','tableRoll','ballCondition','cueMass','tipType','chalk','humanError','seedInput','guideMode'])
   $(id).addEventListener($(id).tagName === 'SELECT' ? 'change' : 'input', applyEnvironment);
@@ -7106,6 +7141,30 @@ function syncRotationTargetQuick(){
   q.classList.toggle('show',currentGame==='rotation'&&MATCH.mode==='match');
   q.value=String(MATCH.rotationTarget);
 }
+function syncNineFootQuick(){
+  const wrap=$('nineFootQuick');if(!wrap)return;
+  wrap.classList.toggle('show',currentGame==='nine');
+  wrap.querySelectorAll('[data-nine-foot]').forEach(button=>{
+    const active=button.dataset.nineFoot===MATCH.nineFoot;
+    button.classList.toggle('on',active);
+    button.setAttribute('aria-pressed',String(active));
+    button.disabled=S.mode==='running'||MATCH.aiBusy;
+  });
+}
+function setNineFootPreference(foot,rerack){
+  if(!['one','nine'].includes(foot))return;
+  const changed=MATCH.nineFoot!==foot;
+  MATCH.nineFoot=foot;saveRackPreferences();
+  if($('mobileNineFoot'))$('mobileNineFoot').value=foot;
+  syncNineFootQuick();
+  if(!changed||currentGame!=='nine')return;
+  if(rerack){
+    configureGame('nine',false);
+    addEventLog((foot==='one'?'①':'⑨')+'オンフットで新ラック','RACK');
+  }else{
+    loadPreset(null,null);updateHUD();
+  }
+}
 function configureRace() {
   const s = $('raceSelect');
   const old = currentGame==='rotation'?MATCH.rotationTarget:MATCH.raceTo;
@@ -7122,6 +7181,7 @@ function updateHUD() {
   if (S.rules && S.rules.game === 'eight') S.rules.group = MATCH.groups[MATCH.turn];
   $('matchControls').classList.toggle('show', MATCH.mode === 'match');
   $('scoreBoard').classList.toggle('show', MATCH.mode === 'match');
+  syncNineFootQuick();
   syncRotationTargetQuick();
   $('p0Name').textContent = MATCH.names[0]; $('p1Name').textContent = MATCH.names[1];
   const pointGame = currentGame === 'rotation' || currentGame === 'kairun';
@@ -7200,6 +7260,9 @@ $('rotationTargetQuick').addEventListener('change',e=>{
   try{localStorage.setItem('billiard-rotation-target',MATCH.rotationTarget);}catch(_){ }
   updateHUD();
 });
+document.querySelectorAll('#nineFootQuick [data-nine-foot]').forEach(button=>button.addEventListener('click',()=>{
+  setNineFootPreference(button.dataset.nineFoot,true);
+}));
 $('btnNewRack').addEventListener('click', () => configureGame(currentGame, false));
 $('btnPushOut').addEventListener('click', () => { if (!S.rules || !S.rules.pushAvailable) return; MATCH.pushDeclared = !MATCH.pushDeclared; updateHUD(); addEventLog(MATCH.pushDeclared ? 'プッシュアウトを宣言' : 'プッシュアウトを取消'); });
 
