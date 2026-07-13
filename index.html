@@ -642,7 +642,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">BILLIARD LAB PRO <small>v1.1.7</small></span>
+      <span id="proBadge">BILLIARD LAB PRO <small>v1.1.8</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
         <option value="set4">ショットラボ</option>
@@ -792,7 +792,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③強さを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.1.7</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.1.8</b><span>Created by littlepond</span></div>
   </section>
 </div>
 
@@ -870,7 +870,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.1.7</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.1.8</b><span>Created by littlepond</span></div>
     <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
@@ -1929,7 +1929,7 @@ const LESSON_CATALOG=[...LESSONS,...PRO_SHOTS.filter(x=>x.replayable)];
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='1.1.7';
+const APP_VERSION='1.1.8';
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
   green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
@@ -2383,12 +2383,20 @@ const targetRings = [targetRing];
 const restMark = new THREE.Mesh(new THREE.RingGeometry(PH.R * 0.72, PH.R * 1.0, 28),
   new THREE.MeshBasicMaterial({ color: 0x63d7e8, transparent: true, opacity: 0.95, side: THREE.DoubleSide }));
 restMark.rotation.x = -Math.PI / 2; restMark.visible = false; scene.add(restMark);
-// 緑の大きなリングは「止まった場所」ではなく、次球からその次へつなぐ模範ゾーン。
-// 青い restMark と同時表示し、出しの成否を盤面だけで比較できるようにする。
+// 緑のマークは「止まった一点」ではなく、次球ラインへ入っていく方向を持つ模範ゾーン。
+// ライン方向は速度誤差に広く、横切る方向は角度誤差に狭い楕円で表示する。
 const COACH_POSITION_ZONE_R=.25;
 const idealMark = new THREE.Mesh(new THREE.RingGeometry(COACH_POSITION_ZONE_R*.88, COACH_POSITION_ZONE_R, 54),
   new THREE.MeshBasicMaterial({ color: 0x69e69a, transparent: true, opacity: 0.82, side: THREE.DoubleSide }));
 idealMark.rotation.x = -Math.PI / 2; idealMark.visible = false; scene.add(idealMark);
+const CoachZoneVisual={long:COACH_POSITION_ZONE_R,lat:COACH_POSITION_ZONE_R,angle:0};
+function applyCoachZoneVisual(rec){
+  const r=rec?.shape||rec||{},long=Math.max(.16,r.zoneLongR||COACH_POSITION_ZONE_R),
+    lat=Math.max(.075,r.zoneLatR||COACH_POSITION_ZONE_R),angle=r.zoneAngle||0;
+  CoachZoneVisual.long=long;CoachZoneVisual.lat=lat;CoachZoneVisual.angle=angle;
+  idealMark.scale.set(long/COACH_POSITION_ZONE_R,lat/COACH_POSITION_ZONE_R,1);
+  idealMark.rotation.set(-Math.PI/2,0,angle);
+}
 const nextMark = new THREE.Mesh(new THREE.RingGeometry(PH.R * 1.3, PH.R * 1.65, 30),
   new THREE.MeshBasicMaterial({ color: 0xffb35c, transparent: true, opacity: 0.95, side: THREE.DoubleSide }));
 nextMark.rotation.x = -Math.PI / 2; nextMark.visible = false; scene.add(nextMark);
@@ -4008,10 +4016,14 @@ function findTournamentBallInHandPlacement(balls,turn=MATCH.turn,options={}){
     cuts=fast?[0,-6,6,-12,12,-20,20,-30,30]:[0,-4,4,-8,8,-12,12,-18,18,-24,24,-32,32,-40,40],
     distances=fast?[.12,.18,.26,.38,.54]:[.10,.14,.18,.24,.32,.42,.55,.70];
   placementSearch: for(const id of selected){const ob=balls.find(b=>b.id===id&&!b.pocketed);if(!ob)continue;
-    const problem=tournamentProblemScore(balls,id,[cue.p[0],cue.p[1]]);
-    for(const pk of POCKETS){const od=hyp2(pk.x-ob.p[0],pk.y-ob.p[1]);if(od<.08)continue;
-      const u=[(pk.x-ob.p[0])/od,(pk.y-ob.p[1])/od],ghost=[ob.p[0]-u[0]*2*PH.R,ob.p[1]-u[1]*2*PH.R];
-      if(!CO.lineClear(balls,[ob.p[0],ob.p[1]],[pk.x,pk.y],new Set([id])))continue;
+    const problem=tournamentProblemScore(balls,id,[cue.p[0],cue.p[1]]),pocketRoutes=[];
+    for(const pk of POCKETS){const od=hyp2(pk.x-ob.p[0],pk.y-ob.p[1]);if(od<.08||!CO.lineClear(balls,[ob.p[0],ob.p[1]],[pk.x,pk.y],new Set([id])))continue;
+      const u=[(pk.x-ob.p[0])/od,(pk.y-ob.p[1])/od],ghost=[ob.p[0]-u[0]*2*PH.R,ob.p[1]-u[1]*2*PH.R],
+        entryAngle=Math.acos(Math.max(-1,Math.min(1,u[0]*pk.n[0]+u[1]*pk.n[1])))*R2D;
+      pocketRoutes.push({pk,od,u,ghost,entryAngle,sharpSide:pk.type==='side'&&entryAngle>48});}
+    const naturalRoutes=pocketRoutes.filter(r=>!r.sharpSide),closestPocketDist=pocketRoutes.length
+      ?Math.min(...(naturalRoutes.length?naturalRoutes:pocketRoutes).map(r=>r.od)):9;
+    for(const route of pocketRoutes){const {pk,od,u,ghost,entryAngle,sharpSide}=route,nearestDelta=Math.max(0,od-closestPocketDist);
       for(const cut of cuts)for(const dist of distances){if(performance.now()>=deadline)break placementSearch;
         const vin=CO.rotate(u,-cut*D2R),x=ghost[0]-vin[0]*dist,y=ghost[1]-vin[1]*dist;
         if(!cuePlacementOpen(balls,x,y)||!CO.lineClear(balls,[x,y],ghost,new Set([0,id])))continue;
@@ -4021,9 +4033,13 @@ function findTournamentBallInHandPlacement(balls,turn=MATCH.turn,options={}){
         let transition=zones.length?9:0;
         for(const z of zones){const vx=z[0]-ob.p[0],vy=z[1]-ob.p[1],along=vx*tangent[0]+vy*tangent[1];
           transition=Math.min(transition,Math.abs(vx*tangent[1]-vy*tangent[0])+(along<0?Math.abs(along)+.8:0));}
-        const potProb=tournamentPotProbability({cut:Math.abs(cut),cueDist:dist,objDist:od,pk});
-        const angleCost=Math.abs(Math.abs(cut)-14)*.010,score=(1-potProb)*5.2+angleCost+dist*.07+transition*1.18-problem*.10;
-        placements.push({x,y,id,pk,ghost,score,potProb,cut:Math.abs(cut),direct:true,attackable:true});
+        const cueRail=CO.railClearance([x,y]),obRail=CO.railClearance([ob.p[0],ob.p[1]]),
+          longRail=PH.HY-Math.abs(ob.p[1])<=PH.R+.042&&Math.abs(u[1])<.24,
+          railRisk=clamp01((cueRail<.105?(.105-cueRail)/.077*.48:0)+(obRail<PH.R+.052?.34:0)+(longRail?Math.min(1,od/1.25)*.50:0)),
+          potProb=tournamentPotProbability({cut:Math.abs(cut),cueDist:dist,objDist:od,pk,entryAngle,railRisk});
+        const angleCost=Math.abs(Math.abs(cut)-14)*.010,score=(1-potProb)*5.2+angleCost+dist*.07+transition*1.18
+          +nearestDelta*.42+(sharpSide?2.4:0)+railRisk*.80-problem*.10;
+        placements.push({x,y,id,pk,ghost,score,potProb,cut:Math.abs(cut),entryAngle,nearestDelta,railRisk,direct:true,attackable:true});
       }
     }
   }
@@ -4087,7 +4103,7 @@ function verifyBallInHandDirectPlans(balls,placements,turn,options={}){
       nextId:shape?.nextId||null,futureId:shape?.futureId||null,nextPk:shape?.nextPk||null,nextPkN:shape?.nextPkN||'',
       nextCut:shape?.nextCut||0,nextDist:shape?.nextDist||0,nextPotProb:shape?.nextPotProb||0,
       wrongSide:shape?.wrongSide||0,idealPos:shape?.idealPos||null,shapeScore:shape?.score||0,
-      positionQuality:position.quality,positionRobust,positionGrade:shape?tournamentPositionGrade(position.quality,positionRobust,position.inIdealZone,position.correctSide):'完了',
+      positionQuality:position.quality,positionRobust,positionGrade:shape?tournamentPositionGrade(position.quality,positionRobust,position.inIdealZone,position.correctSide,position.pocketQ,position.railRisk):'完了',
       patientNext:position.patient,correctSide:position.correctSide,
       rackEV:robust*(.40+pattern.completion*1.55+position.quality*.72+positionRobust*.42+breakout.value*.42),
       score:s.score+(1-robust)*5+(1-position.quality)*4+(1-positionRobust)*2.4-breakout.value*1.4};
@@ -4393,7 +4409,7 @@ function aiPlanPool(detail=false){
         const breakout=tournamentBreakoutValue(S.balls,sim.final,MATCH.turn,id);
         const scoringValue=tournamentShotScoringValue(S.balls,sim.final,MATCH.turn,id),
           routeScore=opt.difficulty*1.95+shapeScore*4.4+natural+(1-position.quality)*3.2-breakout.value*3.1-scoringValue;
-        coarse.push({prm:prm0,lineAim,ball:id,pocket:pocketKey(opt.pk),pk:opt.pk,kind:'pot',rest:cf.p,
+        coarse.push({prm:prm0,lineAim,ball:id,pocket:pocketKey(opt.pk),pk:opt.pk,kind:'pot',rest:cf.p,shape,
           routeScore,shapeScore,nextId:shape?.nextId||null,futureId:shape?.futureId||null,
           nextPkN:shape?.nextPkN||'',nextCut:shape?.nextCut||0,wrongSide:shape?.wrongSide||0,
           idealPos:shape?.idealPos||null,positionQuality:position.quality,positionGrade:position.grade,
@@ -4426,11 +4442,11 @@ function aiPlanPool(detail=false){
       const pattern=tournamentPattern(center.final,[center.rest[0],center.rest[1]],MATCH.turn,4,plannedGroupForShot(MATCH.turn,c.ball));
       const replyRisk=missN?missThreat/missN:0,twoWay=1-replyRisk;
       const positionQuality=positionQualities.length?positionQualities.reduce((s,x)=>s+x,0)/positionQualities.length:0,
-        positionRobust=positionOk/5,positionGrade=center.shape?tournamentPositionGrade(positionQuality,positionRobust,center.position.inIdealZone,center.position.correctSide):'完了',
+        positionRobust=positionOk/5,positionGrade=center.shape?tournamentPositionGrade(positionQuality,positionRobust,center.position.inIdealZone,center.position.correctSide,center.position.pocketQ,center.position.railRisk):'完了',
         rackEV=robust*(.30+pattern.completion*1.55+positionQuality*.75+positionRobust*.45)+(1-robust)*(twoWay*.30-replyRisk*.88);
       const route=[c.ball,...(center.shape?.nextId?[center.shape.nextId]:[]),...pattern.route]
         .filter((id,i,a)=>id!=null&&a.indexOf(id)===i);
-      attacks.push({...c,tid:c.ball,pkN:CO.pkName(c.pk),cueRest:center.rest,rest:center.rest,final:center.final,
+      attacks.push({...c,shape:center.shape,tid:c.ball,pkN:CO.pkName(c.pk),cueRest:center.rest,rest:center.rest,final:center.final,
         cut:center.cut,full:center.full,state:center.state,confidence:robust,robust,shapeScore:meanShape,
         positionQuality,positionRobust,positionGrade,patientNext:positionGrade==='我慢',
         correctSide:center.shape?.correctSide!==false,idealPos:center.shape?.idealPos||null,
@@ -4826,9 +4842,14 @@ function drawFallback2D(forceCompat) {
       if(!mark.visible)return;
       const x=mark.position.x,y=-mark.position.z;
       g.save();g.strokeStyle=color;g.fillStyle=color;g.lineWidth=2.2;g.setLineDash(dash);
-      g.beginPath();g.arc(X(x),Y(y),radius*scale,0,Math.PI*2);g.stroke();g.setLineDash([]);
+      g.beginPath();
+      if(mark===idealMark)g.ellipse(X(x),Y(y),CoachZoneVisual.long*scale,CoachZoneVisual.lat*scale,
+        CoachZoneVisual.angle,0,Math.PI*2);
+      else g.arc(X(x),Y(y),radius*scale,0,Math.PI*2);
+      g.stroke();g.setLineDash([]);
       g.font='800 10px system-ui';g.textAlign='center';g.textBaseline='bottom';
-      g.fillText(label,X(x),Y(y)-radius*scale-4);g.restore();
+      const labelR=mark===idealMark?Math.max(CoachZoneVisual.long,CoachZoneVisual.lat):radius;
+      g.fillText(label,X(x),Y(y)-labelR*scale-4);g.restore();
     };
     guideRing(idealMark,'rgba(105,230,154,.95)',COACH_POSITION_ZONE_R,'模範ゾーン',[7,5]);
     guideRing(restMark,'rgba(99,215,232,.98)',PH.R*1.15,'予測停止');
@@ -5620,7 +5641,7 @@ const CO = {
   potOptions(balls, cuePos, targetId) {
     const ob = balls.find(b => b.id === targetId && !b.pocketed);
     if (!ob) return [];
-    const out = [];
+    const out = [],clip=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
     for (const pk of POCKETS) {
       const odx = pk.x - ob.p[0], ody = pk.y - ob.p[1], objDist = Math.hypot(odx, ody);
       if (objDist < 0.075) continue;
@@ -5634,29 +5655,70 @@ const CO = {
       const cut = Math.abs(signedCut);
       if (cut > 68) continue;
       const cueDist = Math.hypot(ghost[0] - cuePos[0], ghost[1] - cuePos[1]);
-      const difficulty = Math.pow(cut / 48, 2) * 1.7 + Math.max(0, cueDist - 0.85) * 0.45
-        + objDist * 0.22 + (pk.type === 'side' ? 0.08 : 0);
-      out.push({ pk, u, ghost, vin, signedCut, cut, cueDist, objDist, difficulty });
+      // ポケットの中心が見えていても、進入角が寝たサイドは有効開口が急減する。
+      // さらに手球／的球が長クッション際なら、ブリッジと厚みの誤差を別リスクにする。
+      const entryCos=clip(u[0]*pk.n[0]+u[1]*pk.n[1],-1,1),entryAngle=Math.acos(entryCos)*R2D,
+        cueRailClearance=CO.railClearance(cuePos),objectRailClearance=CO.railClearance([ob.p[0],ob.p[1]]),
+        cueBridgeRoom=Math.max(0,cueRailClearance-PH.R),
+        longRailBall=PH.HY-Math.abs(ob.p[1])<=PH.R+.042,
+        railParallel=longRailBall&&Math.abs(u[1])<.24,
+        bridgeRisk=clip((.105-cueRailClearance)/.077),
+        objectRailRisk=clip((PH.R+.052-objectRailClearance)/.052)*(.42+.38*clip(cueDist/1.55)),
+        longRailRisk=railParallel?clip(Math.max(0,objDist-.38)/1.10+Math.max(0,cueDist-.72)/2.20):0,
+        railRisk=clip(bridgeRisk*.48+objectRailRisk*.38+longRailRisk*.56),
+        sharpSide=pk.type==='side'&&entryAngle>48,
+        difficulty=Math.pow(cut/48,2)*1.7+Math.max(0,cueDist-.85)*.45+objDist*.22
+          +(pk.type==='side'?.05:0)+Math.max(0,entryAngle-(pk.type==='side'?24:52))*.012+railRisk*.72;
+      out.push({pk,u,ghost,vin,signedCut,cut,cueDist,objDist,difficulty,entryAngle,sharpSide,
+        cueRailClearance,objectRailClearance,cueBridgeRoom,longRailBall,railParallel,longRailRisk,railRisk});
+    }
+    if(!out.length)return out;
+    const natural=out.filter(o=>!o.sharpSide),pool=natural.length?natural:out,
+      closestPocketDist=Math.min(...pool.map(o=>o.objDist));
+    for(const o of out){
+      o.closestPocketDist=closestPocketDist;o.nearestDelta=Math.max(0,o.objDist-closestPocketDist);
+      o.nearestPocket=o.nearestDelta<=.14;
+      const nearestQ=Math.exp(-Math.max(0,o.nearestDelta-.06)/.55),
+        entryQ=o.pk.type==='side'?Math.exp(-Math.pow(Math.max(0,o.entryAngle-18)/29,2)*.82):1,
+        railQ=clamp01(1-o.railRisk*.78);
+      o.pocketPractical=clamp01(nearestQ*.46+entryQ*.32+railQ*.22);
+      o.dominatedSide=o.sharpSide&&out.some(a=>a!==o&&!a.sharpSide&&a.objDist<=o.objDist+.80
+        &&tournamentPotProbability(a)>=tournamentPotProbability(o)-.12);
+      o.difficulty+=(1-o.pocketPractical)*1.35+o.nearestDelta*.22+(o.dominatedSide?3.2:0);
     }
     return out.sort((a, b) => a.difficulty - b.difficulty);
   },
   preferredZones(balls, targetId) {
     const ob = balls.find(b => b.id === targetId && !b.pocketed);
     if (!ob) return [];
-    const zones = [];
+    const zones = [],routes=[];
     for (const pk of POCKETS) {
       const d = CO.norm2(pk.x - ob.p[0], pk.y - ob.p[1]);
       const objDist = Math.hypot(pk.x - ob.p[0], pk.y - ob.p[1]);
       if (!CO.lineClear(balls, [ob.p[0], ob.p[1]], [pk.x, pk.y], new Set([targetId]))) continue;
       const ghost = [ob.p[0] - d[0] * 2 * PH.R, ob.p[1] - d[1] * 2 * PH.R];
+      const entryAngle=Math.acos(Math.max(-1,Math.min(1,d[0]*pk.n[0]+d[1]*pk.n[1])))*R2D,
+        sharpSide=pk.type==='side'&&entryAngle>48;
+      routes.push({pk,d,objDist,ghost,entryAngle,sharpSide});
+    }
+    if(!routes.length)return zones;
+    const natural=routes.filter(r=>!r.sharpSide),closestPocketDist=Math.min(...(natural.length?natural:routes).map(r=>r.objDist));
+    for(const route of routes){
+      const {pk,d,objDist,ghost,entryAngle,sharpSide}=route,nearestDelta=Math.max(0,objDist-closestPocketDist),
+        entryQ=pk.type==='side'?Math.exp(-Math.pow(Math.max(0,entryAngle-18)/29,2)*.82):1,
+        nearestQ=Math.exp(-Math.max(0,nearestDelta-.06)/.55);
       for (const sign of [-1, 1]) for (const cut of [18, 27, 36]) {
         const vin = CO.rotate(d, -sign * cut * D2R);
         const pos = [ghost[0] - vin[0] * 0.55, ghost[1] - vin[1] * 0.55];
         if (Math.abs(pos[0]) > PH.HX - 0.025 || Math.abs(pos[1]) > PH.HY - 0.025) continue;
         if (!CO.lineClear(balls, pos, ghost, new Set([0, targetId]))) continue;
-        const rail = CO.railClearance(pos);
-        zones.push({ pos, pk, cut, sign, score: Math.abs(cut - 27) * 0.018 + objDist * 0.12
-          + (rail < 0.10 ? 1.3 : rail < 0.18 ? 0.35 : 0) });
+        const rail=CO.railClearance(pos),obRail=CO.railClearance([ob.p[0],ob.p[1]]),
+          longRail=PH.HY-Math.abs(ob.p[1])<=PH.R+.042&&Math.abs(d[1])<.24,
+          railRisk=clamp01((rail<.105?(.105-rail)/.077*.48:0)+(obRail<PH.R+.052?.34:0)+(longRail?Math.min(1,objDist/1.25)*.50:0)),
+          pocketPractical=clamp01(nearestQ*.46+entryQ*.32+(1-railRisk*.78)*.22);
+        zones.push({pos,pk,cut,sign,entryAngle,sharpSide,nearestDelta,pocketPractical,railRisk,
+          score:Math.abs(cut-27)*.018+objDist*.10+nearestDelta*.38+(1-pocketPractical)*1.55
+            +(rail<.10?1.3:rail<.18?.35:0)+(sharpSide?2.6:0)});
       }
     }
     return zones.sort((a, b) => a.score - b.score);
@@ -5679,11 +5741,32 @@ const CO = {
       for (const opt of options) {
         const hasFuture = futureIds.length > 0;
         const nextPotProb=tournamentPotProbability(opt);
-        const targetCut = hasFuture ? 27 : 12;
-        const sign = Math.sign(opt.signedCut) || 1;
-        const idealVin = CO.rotate(opt.u, -sign * targetCut * D2R);
-        const idealPos = [opt.ghost[0] - idealVin[0] * (hasFuture ? 0.55 : 0.42),
-          opt.ghost[1] - idealVin[1] * (hasFuture ? 0.55 : 0.42)];
+        // 世界トップの「一点へ出す」ではなく「次球ラインへ入れる」発想をモデル化する。
+        // 両側・複数角度から、レール際とその次への逆側を避ける最大許容ゾーンを先に選ぶ。
+        const idealCuts=hasFuture?[19,25,31,37]:[8,14,22],idealDists=hasFuture?[.42,.54,.66]:[.34,.44,.56];
+        let ideal=null,idealScore=Infinity;
+        for(const idealSign of [-1,1])for(const idealCut of idealCuts)for(const idealDist of idealDists){
+          const vin=CO.rotate(opt.u,-idealSign*idealCut*D2R),pos=[opt.ghost[0]-vin[0]*idealDist,opt.ghost[1]-vin[1]*idealDist];
+          if(Math.abs(pos[0])>PH.HX-PH.R*.95||Math.abs(pos[1])>PH.HY-PH.R*.95)continue;
+          if(!CO.lineClear(balls,pos,opt.ghost,new Set([0,nextId])))continue;
+          const tangentRaw=[vin[0]-opt.u[0]*(vin[0]*opt.u[0]+vin[1]*opt.u[1]),
+            vin[1]-opt.u[1]*(vin[0]*opt.u[0]+vin[1]*opt.u[1])],tangent=CO.norm2(tangentRaw[0],tangentRaw[1]);
+          let futureCost=0;
+          if(futureZones.length){futureCost=Infinity;for(const z of futureZones){
+            const vx=z.pos[0]-ob.p[0],vy=z.pos[1]-ob.p[1],forward=vx*tangent[0]+vy*tangent[1],
+              lateral=Math.abs(vx*tangent[1]-vy*tangent[0]),sc=lateral+(forward<.04?1.1+Math.abs(forward):0)+z.score*.35;
+            futureCost=Math.min(futureCost,sc);
+          }}
+          const rail=CO.railClearance(pos),pocketGap=CO.pocketClearance(pos),railCost=rail<.075?3.0:rail<.12?1.1:rail<.18?.25:0,
+            pocketCost=pocketGap<.14?1.8:pocketGap<.22?.35:0,
+            sc=futureCost*(hasFuture?.82:0)+railCost+pocketCost+Math.abs(idealCut-(hasFuture?25:14))*.012+Math.abs(idealDist-(hasFuture?.54:.44))*.12;
+          if(sc<idealScore){idealScore=sc;ideal={pos,vin,cut:idealCut,sign:idealSign,dist:idealDist};}
+        }
+        const fallbackSign=Math.sign(opt.signedCut)||1,fallbackCut=hasFuture?25:14,
+          fallbackVin=CO.rotate(opt.u,-fallbackSign*fallbackCut*D2R);
+        if(!ideal)ideal={vin:fallbackVin,cut:fallbackCut,sign:fallbackSign,dist:hasFuture?.54:.44,
+          pos:[opt.ghost[0]-fallbackVin[0]*(hasFuture?.54:.44),opt.ghost[1]-fallbackVin[1]*(hasFuture?.54:.44)]};
+        const idealVin=ideal.vin,idealPos=ideal.pos;
         const posDist = Math.hypot(cuePos[0] - idealPos[0], cuePos[1] - idealPos[1]);
         const tangentRaw = [opt.vin[0] - opt.u[0] * (opt.vin[0] * opt.u[0] + opt.vin[1] * opt.u[1]),
           opt.vin[1] - opt.u[1] * (opt.vin[0] * opt.u[0] + opt.vin[1] * opt.u[1])];
@@ -5700,6 +5783,13 @@ const CO = {
           }
           wrongSide = sideBest;
         }
+        // ライン方向の速度ずれは広く、ラインを横切る厚みずれは狭く評価する。
+        const zoneLongR=hasFuture?Math.min(.39,.30+Math.min(.09,opt.cueDist*.055)):.29,
+          zoneLatR=Math.max(.095,(hasFuture?.155:.17)-Math.max(0,opt.cut-30)*.0012-opt.railRisk*.025),
+          ex=cuePos[0]-idealPos[0],ey=cuePos[1]-idealPos[1],
+          zoneLongError=ex*idealVin[0]+ey*idealVin[1],zoneLatError=ex*idealVin[1]-ey*idealVin[0],
+          zoneMetric=Math.sqrt(Math.pow(zoneLongError/zoneLongR,2)+Math.pow(zoneLatError/zoneLatR,2)),
+          zoneAngle=Math.atan2(idealVin[1],idealVin[0]);
         const rail = CO.railClearance(cuePos), pocketGap = CO.pocketClearance(cuePos);
         const cutCost = hasFuture
           ? (opt.cut < 8 ? 0.8 + (8 - opt.cut) * 0.08 : Math.abs(opt.cut - 27) * 0.035)
@@ -5707,15 +5797,23 @@ const CO = {
         const railCost = rail < 0.065 ? 2.4 : rail < 0.12 ? 0.9 : rail < 0.20 ? 0.22 : 0;
         const pocketCost = pocketGap < 0.14 ? 1.8 : pocketGap < 0.22 ? 0.35 : 0;
         const position=tournamentPositionModel({nextPotProb,nextCut:opt.cut,nextDist:opt.cueDist,posDist,wrongSide,
-          optionCount:options.length,futureId});
-        const score = opt.difficulty + cutCost + railCost + pocketCost + posDist * 0.62
-          + wrongSide * (hasFuture ? 0.92 : 0) - Math.min(0.24, options.length * 0.045)
-          +(1-position.quality)*3.4;
+          optionCount:options.length,futureId,zoneMetric,zoneLongError,zoneLatError,zoneLongR,zoneLatR,
+          pocketPractical:opt.pocketPractical,nearestDelta:opt.nearestDelta,sharpSide:opt.sharpSide,
+          dominatedSide:opt.dominatedSide,sideEntryAngle:opt.entryAngle,railRisk:opt.railRisk});
+        const score=opt.difficulty+cutCost+railCost+pocketCost+zoneMetric*.48
+          +wrongSide*(hasFuture?.92:0)-Math.min(.24,options.length*.045)
+          +(1-position.quality)*3.9+(1-opt.pocketPractical)*2.2+opt.railRisk*1.35
+          +(opt.dominatedSide?4.4:0);
         const rec = { score, nextId, futureId, nextPk: opt.pk, nextPkN: CO.pkName(opt.pk),
-          nextCut: opt.cut, nextDist: opt.cueDist, idealPos, posDist, wrongSide,
+          nextCut:opt.cut,nextDist:opt.cueDist,nextObjDist:opt.objDist,idealPos,posDist,wrongSide,
           optionCount: options.length, futureZone,nextPotProb,patientNext:position.patient,
           positionQuality:position.quality,positionGrade:position.grade,correctSide:position.correctSide,
-          inIdealZone:position.inIdealZone,
+          inIdealZone:position.inIdealZone,zoneLongR,zoneLatR,zoneAngle,zoneMetric,zoneLongError,zoneLatError,
+          pocketPractical:opt.pocketPractical,nearestPocket:opt.nearestPocket,nearestDelta:opt.nearestDelta,
+          closestPocketDist:opt.closestPocketDist,sideEntryAngle:opt.entryAngle,sharpSide:opt.sharpSide,
+          dominatedSide:opt.dominatedSide,railRisk:opt.railRisk,longRailRisk:opt.longRailRisk,
+          cueRailClearance:opt.cueRailClearance,objectRailClearance:opt.objectRailClearance,
+          cueBridgeRoom:opt.cueBridgeRoom,railParallel:opt.railParallel,
           laneClear:true,distanceWindow:position.grade==='模範'?'模範':opt.cueDist<=1.45?'良形':opt.cueDist<=2.35?'許容':'長距離' };
         if (!best || score < best.score) best = rec;
       }
@@ -5804,8 +5902,11 @@ function tournamentPotProbability(opt) {
   const cut=Math.max(0,opt.cut-5), cutP=Math.exp(-Math.pow(cut/48,2)*1.24);
   const cueP=Math.exp(-Math.max(0,opt.cueDist-.42)*.35);
   const objP=Math.exp(-Math.max(0,opt.objDist-.35)*.27);
-  const sideP=opt.pk&&opt.pk.type==='side'?.96:1;
-  return clamp01(.985*cutP*cueP*objP*sideP);
+  const isSide=opt.pk&&opt.pk.type==='side',entry=opt.entryAngle,
+    // サイドは公称開口が広くても、レールに沿う鋭い進入では有効開口が急減する。
+    entryP=isSide&&Number.isFinite(entry)?Math.exp(-Math.pow(Math.max(0,entry-22)/28,2)*.92):(isSide?.96:1),
+    railP=1-clamp01(opt.railRisk||0)*.38;
+  return clamp01(.985*cutP*cueP*objP*entryP*railP);
 }
 // 横撞点のスカートを先に相殺したキュー方向を作る。物理側の strike() が
 // 同じ式で初期進行線を曲げるため、右左どちらの捻りもゴーストラインへ戻る。
@@ -5831,26 +5932,32 @@ function tournamentPowerBand(speed){
   if(speed<1.65)return '弱め';if(speed<2.25)return '中弱';if(speed<3.05)return '中';
   if(speed<4.05)return '中強';return '強め';
 }
-// 「入るか」と「次へ正しい側から入れるか」を分離して採点する。
-// 次球確率だけでなく、角度、距離、理想点との差、その次へ出る側、選択肢数を統合する。
+// 「入るか」「現実的なポケットか」「次へ正しい側から入れるか」を分離して採点する。
+// 模範ゾーンは円ではなく、位置ライン方向に長く横断方向に狭い楕円で判定する。
 function tournamentPositionModel(shape){
   if(!shape)return {quality:0,grade:'ロスト',patient:true,exemplary:false,correctSide:false};
   const hasFuture=shape.futureId!=null,pot=clamp01(shape.nextPotProb||0),cut=shape.nextCut||0,dist=shape.nextDist||9,
     posDist=shape.posDist??9,wrongSide=shape.wrongSide??9,options=shape.optionCount||0,
+    zoneMetric=shape.zoneMetric??(posDist/COACH_POSITION_ZONE_R),pocketQ=clamp01(shape.pocketPractical??1),
+    railRisk=clamp01(shape.railRisk||0),railQ=1-railRisk,
     targetCut=hasFuture?27:14,cutWidth=hasFuture?43:58,
     cutQ=clamp01(1-Math.abs(cut-targetCut)/cutWidth),
-    distQ=Math.exp(-Math.max(0,dist-.48)/1.05),idealQ=Math.exp(-posDist/.62),
+    distQ=Math.exp(-Math.max(0,dist-.48)/1.05),idealQ=Math.exp(-Math.max(0,zoneMetric-.10)*.72),
     sideQ=hasFuture?Math.exp(-wrongSide/.78):1,optionQ=clamp01(options/3),
-    quality=clamp01(pot*.36+cutQ*.17+distQ*.14+idealQ*.18+sideQ*.11+optionQ*.04),
-    correctSide=!hasFuture||wrongSide<=.82,inIdealZone=posDist<=COACH_POSITION_ZONE_R,
-    grade=quality>=.72&&correctSide&&inIdealZone?'模範':quality>=.58?'良形':quality>=.45?'許容':'我慢';
+    quality=clamp01(pot*.28+pocketQ*.17+cutQ*.12+distQ*.10+idealQ*.17+sideQ*.09+railQ*.05+optionQ*.02),
+    correctSide=!hasFuture||wrongSide<=.82,inIdealZone=zoneMetric<=1,
+    practicalPocket=pocketQ>=.58&&!shape.dominatedSide&&!(shape.sharpSide&&(shape.sideEntryAngle||0)>54),
+    railSafe=railRisk<=.58,
+    grade=quality>=.72&&correctSide&&inIdealZone&&practicalPocket&&railSafe?'模範':
+      quality>=.58&&practicalPocket&&railRisk<=.78?'良形':quality>=.45?'許容':'我慢';
   return {quality,grade,patient:grade==='我慢',exemplary:grade==='模範',correctSide,
-    inIdealZone,pot,cutQ,distQ,idealQ,sideQ,optionQ};
+    inIdealZone,practicalPocket,railSafe,pot,pocketQ,cutQ,distQ,idealQ,sideQ,railQ,optionQ,
+    zoneMetric,railRisk};
 }
-function tournamentPositionGrade(quality,robust=1,inIdealZone=true,correctSide=true){
+function tournamentPositionGrade(quality,robust=1,inIdealZone=true,correctSide=true,pocketPractical=1,railRisk=0){
   const q=clamp01(quality),r=clamp01(robust);
-  if(q>=.72&&r>=.60&&inIdealZone&&correctSide)return '模範';
-  if(q>=.58&&r>=.40)return '良形';
+  if(q>=.72&&r>=.60&&inIdealZone&&correctSide&&pocketPractical>=.58&&railRisk<=.58)return '模範';
+  if(q>=.58&&r>=.40&&pocketPractical>=.50&&railRisk<=.82)return '良形';
   if(q>=.45)return '許容';
   return '我慢';
 }
@@ -6060,7 +6167,11 @@ function tournamentReplyThreatWithBallInHand(balls,turn){
       for(const dist of [.22,.34,.50,.68])for(const cut of [0,-8,8,-16,16,-26,26]){
         const v=CO.rotate(u,-cut*D2R),x=ghost[0]-v[0]*dist,y=ghost[1]-v[1]*dist;
         if(!cuePlacementOpen(balls,x,y)||!CO.lineClear(balls,[x,y],ghost,new Set([0,id])))continue;
-        const p=tournamentPotProbability({cut:Math.abs(cut),cueDist:dist,objDist:od,pk}),after=CO.without(balls,id),
+        const entryAngle=Math.acos(Math.max(-1,Math.min(1,u[0]*pk.n[0]+u[1]*pk.n[1])))*R2D,
+          cueRail=CO.railClearance([x,y]),obRail=CO.railClearance([ob.p[0],ob.p[1]]),
+          longRail=PH.HY-Math.abs(ob.p[1])<=PH.R+.042&&Math.abs(u[1])<.24,
+          railRisk=clamp01((cueRail<.105?(.105-cueRail)/.077*.48:0)+(obRail<PH.R+.052?.34:0)+(longRail?Math.min(1,od/1.25)*.50:0)),
+          p=tournamentPotProbability({cut:Math.abs(cut),cueDist:dist,objDist:od,pk,entryAngle,railRisk}),after=CO.without(balls,id),
           pattern=tournamentPattern(after,[ghost[0],ghost[1]],turn,3);
         best=Math.max(best,p*(.58+.42*pattern.completion));
       }
@@ -6168,11 +6279,12 @@ function tournamentCandidateWin(r,role){
     return clamp01(robust*control+(1-robust)*.08-lev.aggression*.025);
   }
   if(role==='pushout')return clamp01(robust*(.47+(1-clamp01(r.replyThreat??.5))*.18)+(1-robust)*.08-.025);
-  const run=clamp01(r.runoutProb??r.pattern?.completion??.12),two=clamp01(r.twoWay??.18),breakout=clamp01(r.breakout??0),
+  const run=clamp01(r.runoutProb??r.pattern?.completion??.12),two=clamp01(r.twoWay??.18),breakout=clamp01(r.breakout??0),ps=r.shape||r,
     scoring=clamp01((r.scoringValue||0)/3),hasNext=!!r.nextId||(Array.isArray(r.route)&&r.route.length>1),
-    position=clamp01(r.positionQuality??(hasNext?.42:.82)),positionWidth=clamp01(r.positionRobust??(hasNext?.24:.80));
+    position=clamp01(r.positionQuality??(hasNext?.42:.82)),positionWidth=clamp01(r.positionRobust??(hasNext?.24:.80)),
+    pocketPractical=clamp01(ps.pocketPractical??(hasNext?.62:1)),railSafety=1-clamp01(ps.railRisk||0);
   // 入球後に良形へ止まる確率を、単なる「入れた後も何とか見える」より明確に高く評価する。
-  const makeControl=clamp01(.50+run*.17+position*.25+positionWidth*.14+breakout*.10+scoring*.08),
+  const makeControl=clamp01(.43+run*.16+position*.23+positionWidth*.13+pocketPractical*.09+railSafety*.07+breakout*.09+scoring*.07),
     missControl=clamp01(.11+two*.34);
   const initiative=role==='special'?.035:.058,complexity=role==='special'?tournamentCreativePenalty(r.kind):0;
   return clamp01(robust*makeControl+(1-robust)*missControl+initiative+lev.aggression*.08-complexity);
@@ -6649,7 +6761,7 @@ function coachFine(balls, targetId, coarse, risk) {
       const pattern=tournamentPattern(g.center.final,[g.center.cueRest[0],g.center.cueRest[1]],MATCH.turn,4,plannedGroupForShot(MATCH.turn,g.center.tid));
       const replyRisk=g.missN?g.missThreat/g.missN:0,twoWay=1-replyRisk;
       const positionQuality=g.positionQualities.length?g.positionQualities.reduce((s,x)=>s+x,0)/g.positionQualities.length:0,
-        positionRobust=g.positionOk/variants.length,positionGrade=g.center.shape?tournamentPositionGrade(positionQuality,positionRobust,g.center.position.inIdealZone,g.center.position.correctSide):'完了',
+        positionRobust=g.positionOk/variants.length,positionGrade=g.center.shape?tournamentPositionGrade(positionQuality,positionRobust,g.center.position.inIdealZone,g.center.position.correctSide,g.center.position.pocketQ,g.center.position.railRisk):'完了',
         speedMin=g.positionSpeeds.length?Math.min(...g.positionSpeeds):g.center.prm.speed,
         speedMax=g.positionSpeeds.length?Math.max(...g.positionSpeeds):g.center.prm.speed;
       const rackEV=robust*(.30+pattern.completion*1.55+positionQuality*.75+positionRobust*.45+g.center.breakout*.28)
@@ -7015,7 +7127,7 @@ function coachSpecialFine(balls, targetId, risk, attackRecs, cands, legalSet,att
       const pattern=tournamentPattern(g.center.final,[cf[0],cf[1]],MATCH.turn,4,plannedGroupForShot(MATCH.turn,g.center.potId)),breakout=tournamentBreakoutValue(balls,g.center.final,MATCH.turn,g.center.potId);
       const replyRisk=g.missN?g.missThreat/g.missN:0,twoWay=1-replyRisk,shape=g.center.shape,
         positionQuality=g.positionQualities.length?g.positionQualities.reduce((s,x)=>s+x,0)/g.positionQualities.length:0,
-        positionRobust=g.positionOk/vars.length,positionGrade=shape?tournamentPositionGrade(positionQuality,positionRobust,g.center.position.inIdealZone,g.center.position.correctSide):'完了';
+        positionRobust=g.positionOk/vars.length,positionGrade=shape?tournamentPositionGrade(positionQuality,positionRobust,g.center.position.inIdealZone,g.center.position.correctSide,g.center.position.pocketQ,g.center.position.railRisk):'完了';
       const route=[g.center.first,g.center.potId,...pattern.route].filter((x,i,a)=>x!=null&&a.indexOf(x)===i);
       specials.push({...g.center,kind:g.center.kind,robust,confidence:robust,pattern,route,runoutProb:pattern.completion,
         twoWay,replyRisk,breakout:breakout.value,breakoutBall:breakout.ball,
@@ -7380,8 +7492,10 @@ function coachChoiceRole(r){const k=r.kind||'';return r.escape?'escape':k==='saf
 function coachChoiceWin(r){return r.winProb??tournamentCandidateWin(r,coachChoiceRole(r));}
 function coachChoiceLine(r){
   if(r.rackCarryRequired&&r.rackCarryKitchen)return 'ラスト後に手球をキッチンへ戻す';
-  if(r.nextId)return '次'+r.nextId+'番 '+(r.positionGrade||'未評価')+' '+Math.round((r.positionQuality||0)*100)+'%'
-    +' / 形の幅'+Math.round((r.positionRobust||0)*100)+'%'+(routeLabel(r)?' · '+routeLabel(r):'');
+  if(r.nextId){const ps=r.shape||r;return '次'+r.nextId+'番 '+(r.positionGrade||'未評価')+' '+Math.round((r.positionQuality||0)*100)+'%'
+    +' / 形の幅'+Math.round((r.positionRobust||0)*100)+'%'
+    +(ps.pocketPractical!=null?' / 穴選択'+Math.round(ps.pocketPractical*100)+'%':'')
+    +(ps.railRisk!=null?' / レール危険'+Math.round(ps.railRisk*100)+'%':'')+(routeLabel(r)?' · '+routeLabel(r):'');}
   if(routeLabel(r))return routeLabel(r);
   if(r.kind==='safety')return r.hid?'完全遮蔽':'距離 '+(r.dist||0).toFixed(1)+'m';
   if((r.kind||'').startsWith('bank'))return (r.targetRails||1)+'レール → '+(r.potId||r.first||'的球')+'番';
@@ -7411,7 +7525,7 @@ function renderCoachQuick(sel=0){
   Coach.selected=sel;applyRec(r);$('ccard').classList.remove('show');
   restMark.visible=nextMark.visible=idealMark.visible=nextLine.visible=false;
   if(r.cueRest){restMark.position.set(r.cueRest[0],.0016,-r.cueRest[1]);restMark.visible=true;}
-  if(r.idealPos){idealMark.position.set(r.idealPos[0],.0014,-r.idealPos[1]);idealMark.visible=true;}
+  if(r.idealPos){applyCoachZoneVisual(r);idealMark.position.set(r.idealPos[0],.0014,-r.idealPos[1]);idealMark.visible=true;}
   if(r.nextId){
     const nb=S.balls.find(b=>b.id===r.nextId&&!b.pocketed);
     if(nb){nextMark.position.set(nb.p[0],.0016,-nb.p[1]);nextMark.visible=true;}
@@ -7461,7 +7575,7 @@ function renderCoach(sel) {
     actionInfo=r.prm?tournamentBallAction(r):null,aimInfo=tournamentAimModel(r),
     aimDirection=aimInfo&&Math.abs(aimInfo.cueOffset)>=.03
       ?(aimInfo.cueOffset>0?'反時計回り ':'時計回り ')+Math.abs(aimInfo.cueOffset).toFixed(2)+'°':'補正なし';
-  if(r.idealPos){idealMark.position.set(r.idealPos[0],.0014,-r.idealPos[1]);idealMark.visible=true;}
+  if(r.idealPos){applyCoachZoneVisual(r);idealMark.position.set(r.idealPos[0],.0014,-r.idealPos[1]);idealMark.visible=true;}
   if(!['break','kairun','kairun-attempt'].includes(kind)){
     const role=r.escape?'escape':kind==='safety'?'safety':kind==='pushout'?'pushout':kind==='rotation-nocall'?'spot':
       kind==='intentional-foul'?'foul':kind==='pot'?'attack':'special';
@@ -7538,6 +7652,7 @@ function renderCoach(sel) {
     lines.push('<div class="whyLine"><b>◆ シュート:</b> 狙い±0.11°・力±4%で <b>' + coachProb(r)
       + '%</b> 成立。入るだけでなく、次球の選択肢を残したラインです。</div>');
     if (r.nextId && r.nextId !== (r.tid || ctx.targetId)) {
+      const ps=r.shape||r;
       const tipWord = r.prm.tipY < -0.1
         ? '下' + Math.round(-r.prm.tipY * 100) + '%の引きで、接触後タンジェントラインより手前へ戻す'
         : r.prm.tipY > 0.1
@@ -7549,7 +7664,19 @@ function renderCoach(sel) {
       lines.push('<div class="whyLine"><b>◆ ポジション評価:</b> <b>'+(r.positionGrade||'未評価')+' '+Math.round((r.positionQuality||0)*100)
         +'%</b>、狙い±0.11°・力±4%を振っても良形へ残る幅 <b>'+Math.round((r.positionRobust||0)*100)+'%</b>。'
         +(r.correctSide===false?'その次への逆側が残るため減点済みです。':'その次へ出る正しい側まで確認しています。')
-        +' 盤面の<b>緑リングが模範ゾーン</b>、青リングが推奨ショットの予測停止点です。</div>');
+        +' 盤面の<b>緑の楕円が模範ゾーン</b>、青リングが推奨ショットの予測停止点です。</div>');
+      if(ps.nextObjDist!=null)lines.push('<div class="whyLine"><b>◆ ポケット選択:</b> '+(ps.nearestPocket
+        ?'開いている中で最寄りの自然なポケットを選択。':'最寄りとの差 '+Math.round((ps.nearestDelta||0)*100)+'cm は、厚み・進入角・次球側を含めて比較済み。')
+        +' 的球から穴まで <b>'+ps.nextObjDist.toFixed(2)+'m</b>、実戦適性 <b>'+Math.round((ps.pocketPractical||0)*100)+'%</b>。'
+        +(ps.nextPk?.type==='side'||r.nextPk?.type==='side'
+          ?'サイド進入角は <b>'+Math.round(ps.sideEntryAngle||0)+'°</b>。鋭角48°超は、近いコーナーに同等以上の入れ幅があれば主推奨から除外します。'
+          :'サイドへ無理に振らず、コーナーの自然な開口を使います。')+'</div>');
+      if(ps.cueRailClearance!=null)lines.push('<div class="whyLine"><b>◆ クッション際リスク:</b> 手球のブリッジ余白 <b>'
+        +Math.round(Math.max(0,ps.cueBridgeRoom||0)*100)+'cm</b>、的球とクッションの隙間 <b>'
+        +Math.round(Math.max(0,(ps.objectRailClearance||PH.R)-PH.R)*100)+'cm</b>、総合リスク <b>'+Math.round((ps.railRisk||0)*100)+'%</b>。'
+        +(ps.railParallel?'長クッション沿いのロングになるため、距離だけでなく厚みとレール接触のばらつきを強く減点しています。':'レール際へ寄せるだけの見かけ上の良形は採用しません。')+'</div>');
+      if(ps.zoneLongR!=null)lines.push('<div class="whyLine"><b>◆ 許容ゾーン:</b> 次球ライン方向は <b>±'+Math.round(ps.zoneLongR*100)
+        +'cm</b>、横切る方向は <b>±'+Math.round(ps.zoneLatR*100)+'cm</b>。速度がずれても同じ厚みを保つ方向へ入れ、横断して一瞬だけ合うルートを落としています。</div>');
       if(r.patientNext)lines.push('<div class="whyLine"><b>◆ 例外的な我慢:</b> 撞点・見越し・速度を振った全候補に十分な成功幅の模範／良形がなく、現在の形が攻撃継続できる最低限です。成功幅40%以上の良形候補が成立する時、この候補は主推奨になりません。</div>');
       if (r.futureId) lines.push('<div class="whyLine"><b>◆ その次:</b> ' + r.futureId
         + '番へ向かう自然なタンジェント方向の側に手玉を置きます。逆側へ出す候補は評価で落としています。</div>');
