@@ -72,6 +72,21 @@ body.runtime-ready #runtimeGate{opacity:0;visibility:hidden;pointer-events:none}
 
 /* ---- アドバイザー ---- */
 #advisor{background:var(--deck2);border-top:1px solid var(--line);padding:6px 10px;min-height:44px}
+#puzzlePanel{display:none;gap:6px;min-width:0}
+#puzzlePanel.show{display:grid}
+#advisor.puzzleMode{padding:8px 10px;max-height:none;border-top-color:rgba(255,179,92,.55)}
+#advisor.puzzleMode>#advData,#advisor.puzzleMode>#advMsg,#advisor.puzzleMode>#quickCoach{display:none!important}
+.puzzleHead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;min-width:0}
+.puzzleBadge{padding:4px 7px;border-radius:6px;background:var(--amber);color:#211403;font:900 9px var(--mono);letter-spacing:.08em}
+#puzzleTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:900 12px var(--sans);color:var(--text)}
+#puzzleProgress{font:800 9px var(--mono);color:var(--cyan);white-space:nowrap}
+.puzzleMission{display:flex;align-items:center;gap:7px;min-width:0;color:#c8d1d9;font:10.5px/1.4 var(--sans)}
+#puzzleDifficulty{flex:0 0 auto;color:var(--amber);font:900 9px var(--mono);white-space:nowrap}
+#puzzleObjective{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.puzzleActions{display:grid;grid-template-columns:40px minmax(76px,1fr) minmax(66px,.8fr) minmax(62px,.72fr) 40px;gap:5px}
+.puzzleActions button{min-height:34px;border-radius:8px;border:1px solid var(--line);background:#171e25;color:var(--text);font:800 10px var(--sans);cursor:pointer}
+.puzzleActions button.primary{border-color:var(--amber);background:rgba(255,179,92,.11);color:var(--amber)}
+.puzzleActions button.hint{border-color:rgba(99,215,232,.48);color:var(--cyan)}
 #advData{font:11px var(--mono);color:var(--cyan);white-space:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 #advData::-webkit-scrollbar{display:none}
 #advData em{color:var(--dim);font-style:normal;margin:0 2px}
@@ -446,6 +461,8 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   #hint{bottom:4px;padding:0 8px;font-size:10px}
 
   #advisor{min-height:42px;max-height:62px;padding:5px 8px;overflow:hidden}
+  #advisor.puzzleMode{max-height:116px;padding:6px 8px;overflow:visible}
+  .puzzleActions button{min-height:40px}
   #advData{font-size:9.5px}
   #advMsg{font-size:11px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .qcLead span,.qcLead em{max-width:112px}
@@ -522,6 +539,9 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
 /* Short landscape phones keep the table large while all controls remain thumb reachable. */
 @media (max-height:520px) and (max-width:950px){
   #advisor{display:none}
+  #advisor.puzzleMode{display:block;max-height:84px;padding:4px 7px}
+  #advisor.puzzleMode .puzzleMission{display:none}
+  #advisor.puzzleMode .puzzleActions button{min-height:32px}
   #hint{display:none}
   #deck{grid-template-columns:66px minmax(0,1fr) 132px;grid-template-areas:"tabs controls actions";
     gap:6px;padding:5px 7px calc(env(safe-area-inset-bottom,0px) + 5px)}
@@ -603,6 +623,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
   #app{grid-template-columns:minmax(0,1fr) 390px;grid-template-rows:auto minmax(0,1fr);height:100dvh}
   #stage{grid-column:1;grid-row:1/3}
   #advisor{grid-column:2;grid-row:1;padding:10px;max-height:92px}
+  #advisor.puzzleMode{max-height:none}
   #deck{grid-column:2;grid-row:2;display:grid;grid-template-columns:132px minmax(0,1fr);grid-template-areas:"spin controls" "actions actions";
     align-content:center;gap:16px 12px;padding:20px 18px calc(env(safe-area-inset-bottom,0px) + 20px);border-left:1px solid var(--line);border-top:0}
   #padWrap{grid-area:spin}
@@ -644,6 +665,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
         <button data-m="match">対戦</button>
         <button data-m="spectator">AI観戦</button>
         <button data-m="lesson">レッスン</button>
+        <button data-m="puzzle">曲球</button>
       </div>
       <button id="btnMobileMenu" type="button" aria-label="操作メニューを開く" aria-expanded="false">メニュー</button>
       <div class="seg" id="viewSeg">
@@ -662,7 +684,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">BILLIARD LAB PRO <small>v1.5.0</small></span>
+      <span id="proBadge">BILLIARD LAB PRO <small>v1.6.0</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
         <option value="set4">ショットラボ</option>
@@ -670,6 +692,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
         <option value="ten">テンボール</option>
         <option value="eight">エイトボール</option>
         <option value="rotation">ローテーション（120・180・240・300点）</option>
+        <option value="straight">14-1（ストレートプール）</option>
         <option value="kairun">カイルン（台湾式四ツ球 2・3・5）</option>
         <option value="fujiyama">FUJIYAMA（公式／大阪版）</option>
       </select>
@@ -716,6 +739,11 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
     </div>
   </div>
   <div id="advisor">
+    <section id="puzzlePanel" aria-live="polite" aria-label="曲球パズル">
+      <div class="puzzleHead"><span class="puzzleBadge">CURVE 80</span><b id="puzzleTitle">曲球パズル</b><span id="puzzleProgress">0 / 80</span></div>
+      <div class="puzzleMission"><span id="puzzleDifficulty">LEVEL 1</span><span id="puzzleObjective">AIのお手本を観察して、一撞きで条件を成立させます。</span></div>
+      <div class="puzzleActions"><button id="btnPuzzlePrev" type="button" aria-label="前の問題">‹</button><button id="btnPuzzleDemo" class="primary" type="button">▶ AIお手本</button><button id="btnPuzzleHint" class="hint" type="button">ヒント 0/3</button><button id="btnPuzzleRetry" type="button">再挑戦</button><button id="btnPuzzleNext" type="button" aria-label="次の問題">›</button></div>
+    </section>
     <div id="advData" class="mono"></div>
     <div id="advMsg"></div>
     <div id="quickCoach" aria-live="polite"></div>
@@ -814,7 +842,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③強さを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.5.0</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.6.0</b><span>Created by littlepond</span></div>
   </section>
 </div>
 
@@ -904,7 +932,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.5.0</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 1.6.0</b><span>Created by littlepond</span></div>
     <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
@@ -1751,37 +1779,101 @@ const PHYSICS_ROUTE_FIXTURES = Object.freeze({
     expect:{pot:9,contact:9,objectRailsMin:3,noScratch:true}},
   jumpPot:{kind:'ジャンプ',balls:[{id:0,x:-.90,y:-.32},{id:7,x:-.28,y:-.047},{id:2,x:.42,y:.261}],
     prm:{speed:5.1,aim:.414,elev:42*Math.PI/180,tipX:0,tipY:.02,pivotLen:.2},
-    expect:{pot:2,contact:2,jumpClear:7,noScratch:true}},
+    expect:{pot:2,contact:2,jumpClear:7,elevMin:12*Math.PI/180,noScratch:true}},
   jumpCombo:{kind:'ジャンプ・コンビ',balls:[{id:0,x:-.90,y:-.32},{id:7,x:-.28,y:-.047},{id:1,x:.42,y:.261},{id:9,x:.49,y:.292}],
     prm:{speed:5.1,aim:.406,elev:20*Math.PI/180,tipX:0,tipY:0,pivotLen:.2},
-    expect:{pot:9,contact:1,combo:[1,9],jumpClear:7,noScratch:true}},
+    expect:{pot:9,contact:1,combo:[1,9],jumpClear:7,elevMin:12*Math.PI/180,noScratch:true}},
   combo:{kind:'コンビ／キャノン',balls:[{id:0,x:-.86,y:.34},{id:2,x:-.18,y:.029},{id:9,x:.42,y:-.246}],
     prm:{speed:3.25,aim:-.4284,elev:0,tipX:0,tipY:0,pivotLen:.2},
     expect:{pot:9,contact:2,combo:[2,9],noScratch:true}},
   powerDraw:{kind:'パワードロー',balls:[{id:0,x:-.60,y:.12},{id:4,x:.18,y:.06}],
     prm:{speed:5,aim:-.114,elev:0,tipX:0,tipY:-.82,pivotLen:.2},
-    expect:{pot:4,contact:4,noScratch:true}},
+    expect:{pot:4,contact:4,tipYMax:-.50,noScratch:true}},
   follow:{kind:'フォロー／フック',balls:[{id:0,x:-.60,y:.12},{id:1,x:.18,y:.06}],
     prm:{speed:2,aim:-.11733087416117594,elev:0,tipX:0,tipY:.45,pivotLen:.2},
-    expect:{pot:1,contact:1,noScratch:true}},
+    expect:{pot:1,contact:1,tipYMin:.25,noScratch:true}},
   inside:{kind:'インサイド／スワーブ',balls:[{id:0,x:-.60,y:.12},{id:4,x:.18,y:.06}],
     prm:{speed:3,aim:-.056,elev:6*Math.PI/180,tipX:-.65,tipY:-.08,pivotLen:.2},
-    expect:{pot:4,contact:4,noScratch:true}},
+    expect:{pot:4,contact:4,tipXAbsMin:.40,elevMin:3*Math.PI/180,noScratch:true}},
   masse:{kind:'マッセ・エスケープ',balls:[{id:0,x:-.60,y:.12},{id:7,x:-.16,y:0},{id:4,x:.18,y:.06}],
     prm:{speed:1.6,aim:-.27,elev:18*Math.PI/180,tipX:-.82,tipY:-.18,pivotLen:.2},
     expect:{contact:4,noPocket:true,masse:true,jumpClear:7}},
   safety:{kind:'セーフティ',balls:[{id:0,x:-.70,y:.30},{id:1,x:1.02,y:-.38},{id:7,x:.22,y:.05},{id:9,x:.28,y:-.04}],
     prm:{speed:2.3,aim:-.3939436269664662,elev:0,tipX:0,tipY:0,pivotLen:.2},
-    expect:{contact:1,noPocket:true}},
+    expect:{contact:1,noPocket:true,postContactRail:true}},
   direct:{kind:'ロング／薄球',balls:[{id:0,x:-.60,y:.12},{id:1,x:.18,y:.06}],
     prm:{speed:3.2,aim:-.11733087416117594,elev:0,tipX:0,tipY:0,pivotLen:.2},
     expect:{pot:1,contact:1,noScratch:true}},
   carom3:{kind:'3クッション',carom:true,balls:[{id:0,x:-.92,y:.32},{id:1,x:-.38,y:.02},{id:2,x:.82,y:-.25}],
     prm:{speed:6.55,aim:-.3335926535897906,elev:0,tipX:-.62,tipY:.08,pivotLen:.2},
     expect:{contact:1,contactOrder:[1,2],cueRailsBeforeSecond:3,noPocket:true}},
+  splitTwo:{kind:'スプリット・ショット',balls:[{id:0,x:.014599075,y:.006081036},{id:1,x:.520983494,y:-.030804589},{id:2,x:.520370168,y:.037349353}],
+    prm:{speed:6.143039969727397,aim:-.0035848625062499194,elev:0,tipX:.02453281043563038,tipY:0,pivotLen:.2},
+    expect:{pots:[{id:1,pocket:'tr'},{id:2,pocket:'br'}],noScratch:true}},
   break:{kind:'パワー／散開',balls:[{id:0,x:-.85,y:0},{id:1,x:.635,y:0},{id:2,x:.685,y:.0288},{id:3,x:.685,y:-.0288},{id:4,x:.735,y:.0576},{id:9,x:.735,y:0},{id:5,x:.735,y:-.0576},{id:6,x:.785,y:.0288},{id:7,x:.785,y:-.0288},{id:8,x:.835,y:0}],
-    prm:{speed:8.2,aim:0,elev:0,tipX:0,tipY:.04,pivotLen:.2},expect:{contact:1}},
+    prm:{speed:8.2,aim:0,elev:0,tipX:0,tipY:.04,pivotLen:.2},expect:{pot:4,contact:1,speedMin:6,noScratch:true}},
 });
+
+// ===================== CURVE PUZZLE 80 =====================
+// 16本の1/600秒・物理検証済みフィクスチャを、台の厳密な対称変換だけで展開する。
+// 鏡映では横撞点の符号も反転させるため、見た目だけ反転した未検証ショットにはならない。
+const CURVE_PUZZLE_META=Object.freeze({
+  direct:{title:'最初の一球',category:'ストローク',difficulty:1,pocket:'br',hint:'ゴーストボールへ真っ直ぐ。まず厚みだけを読む。'},
+  splitTwo:{title:'両コーナー同時イン',category:'トリック＆ファンシー',difficulty:3,hint:'手球が2球へほぼ同時に触れる中心を探す。左右へ分かれる厚みと速度が鍵。'},
+  follow:{title:'フォローで伸ばす',category:'フォロー',difficulty:2,pocket:'br',hint:'上撞点で接触後の手球を前へ伸ばす。'},
+  safety:{title:'触れて隠す',category:'スペシャルアーツ',difficulty:3,hint:'入れずに合法接触とクッションを両立する。'},
+  kickOne:{title:'鏡像キック',category:'バンク＆キック',difficulty:4,pocket:'tm',hint:'的球をクッションの向こうへ鏡写しにして狙う。'},
+  bankOne:{title:'ワンレール・バンク',category:'バンク＆キック',difficulty:4,pocket:'tr',hint:'入射角だけでなく、速度で変わるクッションの潰れも読む。'},
+  combo:{title:'一筆書きコンビ',category:'トリック＆ファンシー',difficulty:5,pocket:'tr',hint:'最初の球を入れるのではなく、次の球へ正確に力を渡す。'},
+  break:{title:'一撞きでラックを解く',category:'スペシャルアーツ',difficulty:5,pocket:'br',hint:'強さより芯。手球のエネルギーをラックへ直線的に渡す。'},
+  inside:{title:'インサイドの見越し',category:'ストローク',difficulty:6,pocket:'br',hint:'横回転のスカートと、その後のスワーブを相殺する。'},
+  powerDraw:{title:'パワードロー',category:'ドロー',difficulty:6,pocket:'br',hint:'低い撞点を貫き、接触時まで逆回転を残す。'},
+  jumpPot:{title:'障害球越しジャンプ',category:'ジャンプ',difficulty:7,pocket:'br',obstacle:7,hint:'越える高さではなく、的球の手前へ落とす距離からキュー角を逆算する。'},
+  zKick:{title:'Zライン・キックイン',category:'バンク＆キック',difficulty:7,pocket:'tr',obstacle:6,hint:'二つのクッションを一枚ずつ鏡映し、横回転で出口を合わせる。'},
+  masse:{title:'障害球を巻くマッセ',category:'マッセ',difficulty:8,obstacle:7,hint:'高いキュー角と横撞点で、着地後の手球を障害球の外へ曲げる。'},
+  bankMulti:{title:'3レール・バンク',category:'バンク＆キック',difficulty:8,pocket:'tl',hint:'三回の反射を一つの線として逆算し、速度で長短を合わせる。'},
+  jumpCombo:{title:'ジャンプ・コンビ',category:'ジャンプ',difficulty:9,pocket:'br',obstacle:7,hint:'空中回避、着地、1番への先当たり、9番への力伝達を一続きで設計する。'},
+  carom3:{title:'3クッション接触順',category:'トリック＆ファンシー',difficulty:9,carom:true,hint:'第一的球の後、三つ以上のクッションを経て第二的球へ戻す。'},
+});
+const CURVE_PUZZLE_TRANSFORMS=Object.freeze([
+  Object.freeze({id:'a',label:'原型',point:(x,y)=>[x,y],aim:a=>a,side:1,pocket:k=>k}),
+  Object.freeze({id:'b',label:'上下反転',point:(x,y)=>[x,-y],aim:a=>-a,side:-1,
+    pocket:k=>({tl:'bl',tm:'bm',tr:'br',bl:'tl',bm:'tm',br:'tr'})[k]||k}),
+  Object.freeze({id:'c',label:'左右反転',point:(x,y)=>[-x,y],aim:a=>Math.PI-a,side:-1,
+    pocket:k=>({tl:'tr',tm:'tm',tr:'tl',bl:'br',bm:'bm',br:'bl'})[k]||k}),
+  Object.freeze({id:'d',label:'180°反転',point:(x,y)=>[-x,-y],aim:a=>a+Math.PI,side:1,
+    pocket:k=>({tl:'br',tm:'bm',tr:'bl',bl:'tr',bm:'tm',br:'tl'})[k]||k}),
+]);
+const CURVE_POCKET_LABEL=Object.freeze({tl:'左上コーナー',tm:'上サイド',tr:'右上コーナー',br:'右下コーナー',bm:'下サイド',bl:'左下コーナー'});
+function curvePuzzleFixture(key,transform,master=false){
+  const fixture=PHYSICS_ROUTE_FIXTURES[key],meta=CURVE_PUZZLE_META[key],goalPocket=meta.pocket?transform.pocket(meta.pocket):null,
+    balls=fixture.balls.map(b=>{const p=transform.point(b.x,b.y);return {id:b.id,x:p[0],y:p[1]};}),
+    prm={...fixture.prm,aim:transform.aim(fixture.prm.aim),tipX:(fixture.prm.tipX||0)*transform.side},
+    expect={...(fixture.expect||{}),pots:fixture.expect?.pots?.map(x=>({...x,pocket:transform.pocket(x.pocket)}))},allPocketKeys=['tl','tm','tr','br','bm','bl'];
+  const core=expect.pots?.length?expect.pots.map(x=>x.id+'番→'+CURVE_POCKET_LABEL[x.pocket]).join(' ＋ ')+'を一撞きで入れる':
+    expect.pot!==undefined?expect.pot+'番を'+CURVE_POCKET_LABEL[goalPocket]+'へ入れる':
+    expect.contactOrder?'接触順 '+expect.contactOrder.join(' → ')+' を成立させる':
+    expect.contact!==undefined?expect.contact+'番へ合法に当てる':'一撞きで指定軌道を成立させる';
+  return {
+    seed:key,variant:transform.id,master,category:meta.category,technique:fixture.kind,
+    title:(master?'MASTER · ':'')+meta.title+' — '+transform.label,
+    objective:core+(expect.combo?'／'+expect.combo.join('→')+'コンビ':'')+(expect.cueRailsBefore?'／手球'+expect.cueRailsBefore+'レール先行':'')+
+      (expect.objectRailsMin?'／的球'+expect.objectRailsMin+'レール以上':'')+(expect.jumpClear!==undefined?'／'+expect.jumpClear+'番を空中回避':'')+
+      (master?'／赤いNGポケットは禁止':''),
+    hint:meta.hint,difficulty:Math.min(10,meta.difficulty+(transform.id==='a'?0:transform.id==='d'?1:.5)+(master?1.5:0)),
+    carom:!!(fixture.carom||meta.carom),balls,prm,expect,goalPocket,
+    forbiddenPockets:master?allPocketKeys.filter(k=>k!==goalPocket):[],
+    avoidBalls:meta.obstacle!==undefined?[meta.obstacle]:[],demoVerified:true,
+  };
+}
+function buildCurvePuzzleCatalog(){
+  const out=[];
+  for(const key of Object.keys(CURVE_PUZZLE_META))for(const transform of CURVE_PUZZLE_TRANSFORMS)out.push(curvePuzzleFixture(key,transform,false));
+  for(const key of ['zKick','bankMulti','jumpCombo','masse'])for(const transform of CURVE_PUZZLE_TRANSFORMS)out.push(curvePuzzleFixture(key,transform,true));
+  return out.sort((a,b)=>a.difficulty-b.difficulty||a.category.localeCompare(b.category,'ja')||a.title.localeCompare(b.title,'ja'))
+    .map((p,i)=>Object.freeze({...p,id:'curve-'+String(i+1).padStart(2,'0'),number:i+1}));
+}
+const CURVE_PUZZLES=Object.freeze(buildCurvePuzzleCatalog());
 
 const P=(id,player,country,year,event,title,kind,template,source,category,difficulty,note,extra={})=>
   ({id,player,country,year,event,title,kind,template,source,category,difficulty,note,...extra});
@@ -1991,7 +2083,7 @@ const LESSON_CATALOG=[...LESSONS,...PRO_SHOTS.filter(x=>x.replayable)];
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='1.5.0';
+const APP_VERSION='1.6.0';
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
   green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
@@ -2014,7 +2106,7 @@ function applyClothTheme(key,persist=true){
 
 // ---------- 状態 ----------
 const S = {
-  app: 'practice',                                 // practice | lesson
+  app: 'practice',                                 // practice | lesson | puzzle
   balls: [], view: 'top', mode: 'idle',           // idle | running | place
   aim: 0, speed: 3, elev: 0, tipX: 0, tipY: 0, pivot: 0.20,
   slow: false, pred: null,
@@ -2038,8 +2130,12 @@ const MATCH = {
   eightStalemateTurns:0, eightLastLayout:'',
   fujiyamaRule:'osaka', fujiyamaHandicap:[7,7], fujiyamaSides:['low','high'], fujiyamaBaseSides:['low','high'],
   fujiyamaStarter:0, fujiyamaHalf:1, fujiyamaHalfScores:[[0,0],[0,0]], fujiyamaEightLocked:false,
+  straightRackScored:0, straightRacksCompleted:0, straightOpeningBreaker:0,
   lessonChallenge:null,
 };
+const PUZZLE={active:false,index:0,attempts:0,hintLevel:0,demo:false,demoAtShot:false,shotInProgress:false,
+  watchedDemo:false,progress:{},save:null};
+try{PUZZLE.progress=JSON.parse(localStorage.getItem('billiard-curve-puzzle-progress-v1')||'{}')||{};}catch(_){PUZZLE.progress={};}
 const AI_STYLE_PROFILES=Object.freeze({
   champion:Object.freeze({label:'世界王者',name:'世界王者AI',tag:'CHAMPION',intent:'全候補から試合勝率が最大の手を選択'}),
   attack:Object.freeze({label:'攻めの専門家',name:'攻撃AI',tag:'ATTACK',intent:'主導権・連続得点・創造的な攻撃を優先'}),
@@ -2440,6 +2536,16 @@ const targetRing = new THREE.Mesh(
 targetRing.rotation.x = -Math.PI / 2;
 targetRing.visible = false;
 scene.add(targetRing);
+const puzzleNgRings=POCKETS.map(pk=>{
+  const ring=new THREE.Mesh(new THREE.RingGeometry(.058,.078,32),
+    new THREE.MeshBasicMaterial({color:0xff5148,transparent:true,opacity:.90,side:THREE.DoubleSide}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(pk.x,.004,-pk.y);ring.visible=false;scene.add(ring);return {pk,ring};
+});
+const puzzleObstacleRings=Array.from({length:3},()=>{
+  const ring=new THREE.Mesh(new THREE.RingGeometry(PH.R*1.18,PH.R*1.62,30),
+    new THREE.MeshBasicMaterial({color:0xff5148,transparent:true,opacity:.86,side:THREE.DoubleSide}));
+  ring.rotation.x=-Math.PI/2;ring.visible=false;scene.add(ring);return ring;
+});
 const GROUP_OF = id => (id >= 1 && id <= 7) ? 'solid' : (id >= 9 && id <= 15) ? 'stripe' : null;
 function fujiyamaSide(turn=MATCH.turn){return MATCH.fujiyamaSides[turn]||'low';}
 function fujiyamaOwnIds(turn=MATCH.turn){return fujiyamaSide(turn)==='low'?[1,2,3,4,5,6,7]:[9,10,11,12,13,14,15];}
@@ -3279,6 +3385,7 @@ function actualStroke(base, fromAI) {
 function aiStrokeLegality(sim){
   if(!sim)return false;const A=analyzeRunEvents(sim.events||[]),legal=S.rules?.legalAtShot||legalTargets();
   if(A.firstC===null||!legal.includes(A.firstC)||!A.railAfter)return false;
+  if(S.rules?.wasBreak&&S.rules?.game==='straight')return straightOpeningMetrics(A,sim.events||[]).legal;
   // ブレイクだけは通常ショットより厳しく、インまたは4球以上のクッション到達まで確認する。
   if(S.rules?.wasBreak&&S.rules?.game!=='fujiyama'&&!A.pocketed.length&&A.railBalls.size<4)return false;
   return true;
@@ -3343,6 +3450,7 @@ function shoot(fromAI, exactCoachDemo=false) {
   if (aiControlsTurn() && !fromAI) return;
   const cue = cueBall();
   if (!cue || cue.pocketed) return;
+  if(PUZZLE.active){PUZZLE.demoAtShot=!!PUZZLE.demo;PUZZLE.shotInProgress=true;if(!PUZZLE.demo)PUZZLE.attempts++;}
   $('ccard').classList.remove('show');
   cancelCoach(true);
   $('advMsg').textContent = fromAI ? MATCH.names[MATCH.turn]+' — '+(MATCH.aiDecision||'ショット実行中…') : 'ショット実行中…';
@@ -3370,7 +3478,7 @@ function shoot(fromAI, exactCoachDemo=false) {
     S.rules.intentionalFoulAtShot = !!MATCH.intentionalFoul;
     S.rules.aliveAtShot = S.balls.filter(b=>b.id!==0&&!b.pocketed).map(b=>b.id);
     if(S.rules.rotationNoCallAtShot)MATCH.call={ball:null,pocket:null,safety:false};
-    if (!S.rules.wasBreak && ['ten','eight','rotation'].includes(S.rules.game)
+    if (!S.rules.wasBreak && ['ten','eight','rotation','straight'].includes(S.rules.game)
         && !MATCH.call.ball && !S.rules.rotationNoCallAtShot) autoCall();
     S.rules.callAtShot = {...MATCH.call};
     if(S.rules.game==='eight'){
@@ -3382,7 +3490,7 @@ function shoot(fromAI, exactCoachDemo=false) {
     S.rules.lost = false;
   }
   // 公式ルールが無いフリー練習でも、名ショット課題中は成功条件を実測する。
-  S.runEvents = (S.rules || MATCH.lessonChallenge) ? [] : null;
+  S.runEvents = (S.rules || MATCH.lessonChallenge || PUZZLE.active) ? [] : null;
   const ideal = prm();
   let actual;
   if(exactCoachDemo){actual={...ideal};MATCH.lastIdeal={...ideal};MATCH.lastActual={...ideal};}
@@ -3455,7 +3563,9 @@ function endShot() {
   syncAuxButton();
   $('btnShot').disabled = false;
   const cue = cueBall();
-  if (S.rules) {
+  if (PUZZLE.active) {
+    setTimeout(finishPuzzleAttempt, cue.pocketed ? 440 : 160);
+  } else if (S.rules) {
     setTimeout(rulesJudge, cue.pocketed ? 420 : 0);
   } else if (cue.pocketed) {
     setTimeout(() => {
@@ -3724,7 +3834,7 @@ function keepTurn(message) {
 function finishRack(winner, reason) {
   clearAIWatchdog();MATCH.aiToken++;
   cancelCoach(true);
-  const pointGame=currentGame==='rotation'||currentGame==='kairun';
+  const pointGame=currentGame==='rotation'||currentGame==='kairun'||currentGame==='straight';
   if(!pointGame) MATCH.racks[winner]++;
   MATCH.rackOver=true; MATCH.aiBusy=false;
   if(S.rules){S.rules.won=winner===0;S.rules.lost=winner!==0;}
@@ -3766,36 +3876,52 @@ function syncRotationFoulChoices(){
 function previewRotationFoulChoice(){
   const data=MATCH.optionPending;if(!data||data.type!=='rotation-foul')return;
   const cue=cueBall(),target=S.balls.find(b=>b.id===data.targetId),cc=$('rotationCueChoice').value,oc=$('rotationObjectChoice').value;
-  const cp=cc==='current'&&cue?[cue.p[0],cue.p[1]]:cc==='free'?[-.70,0]:[-.86,0],
-    op=oc==='current'&&target?[target.p[0],target.p[1]]:target?[officialSpotCoordinate(S.balls,target.id,oc==='center'?'center':'foot'),0]:[PH.TABLE_W/4,0];
+  const evaluated=rotationChoicePreview(data,cc,oc),cp=evaluated.cuePos||(cc==='current'&&cue?[cue.p[0],cue.p[1]]:cc==='free'?[-.70,0]:[-.86,0]),
+    op=evaluated.objectPos||(oc==='current'&&target?[target.p[0],target.p[1]]:target?[officialSpotCoordinate(S.balls,target.id,oc==='center'?'center':'foot'),0]:[PH.TABLE_W/4,0]);
   S.rotationPlacementPreview={cue:cp.slice(),object:op.slice()};
   idealMark.visible=false;
   restMark.position.set(cp[0],.0016,-cp[1]);restMark.visible=true;
   nextMark.position.set(op[0],.0016,-op[1]);nextMark.visible=true;nextLine.visible=false;
   const cueText=cc==='current'?'手球現状':cc==='free'?'手球全面フリー':'手球ヘッドライン内',objText=oc==='current'?'最小番号球現状':oc==='center'?'最小番号球センター':'最小番号球フット';
-  hint('配置プレビュー — '+cueText+' / '+objText+'（盤面のリングを確認）');
+  hint('配置プレビュー — '+cueText+' / '+objText+' / 入れ幅'+Math.round((evaluated.potProb||0)*100)+'%（盤面のリングを確認）');
+}
+function rotationFoulCueCandidates(balls,targetId,cueChoice,current){
+  if(cueChoice==='current')return current?[current.slice()]:[];
+  const kitchen=cueChoice==='kitchen',xs=kitchen?[-1.18,-1.08,-.98,-.88,-.78,-.69]:[-1.18,-.98,-.78,-.58,-.30,0,.30,.58,.82,1.08],
+    ys=[-.52,-.42,-.32,-.22,-.11,0,.11,.22,.32,.42,.52],points=[];
+  for(const x of xs)for(const y of ys)points.push([x,y]);
+  const target=balls.find(b=>b.id===targetId&&!b.pocketed&&!b.off);
+  if(target)for(const pk of POCKETS){const d=Math.hypot(pk.x-target.p[0],pk.y-target.p[1]);if(d<.08||!CO.lineClear(balls,[target.p[0],target.p[1]],[pk.x,pk.y],new Set([targetId])))continue;
+    const ux=(pk.x-target.p[0])/d,uy=(pk.y-target.p[1])/d,gx=target.p[0]-ux*2*PH.R,gy=target.p[1]-uy*2*PH.R;
+    for(const back of [.12,.18,.26,.38,.54,.72])points.push([gx-ux*back,gy-uy*back]);}
+  const unique=[],seen=new Set();for(const p of points){const key=Math.round(p[0]*500)+'|'+Math.round(p[1]*500);if(seen.has(key))continue;seen.add(key);
+    if(kitchen&&p[0]>-PH.TABLE_W/4-PH.R*.08||Math.abs(p[0])>PH.HX||Math.abs(p[1])>PH.HY)continue;
+    if(balls.some(b=>b.id!==0&&!b.pocketed&&!b.off&&Math.hypot(b.p[0]-p[0],b.p[1]-p[1])<2.12*PH.R))continue;unique.push(p);}
+  return unique;
 }
 function rotationChoicePreview(data,cueChoice,objChoice){
   const bs=S.balls.map(cloneBall),target=bs.find(b=>b.id===data.targetId),cue=bs.find(b=>b.id===0);
-  if(!target||!cue)return 0;
+  if(!target||!cue)return {value:0,cuePos:null,objectPos:null,potProb:0};
   const placeClone=(id,which)=>{const b=bs.find(x=>x.id===id);if(!b)return;
     const x=officialSpotCoordinate(bs,id,which);b.p=[x,0,PH.R];b.pocketed=false;b.off=false;};
   if(objChoice!=='current'||target.pocketed||target.off)placeClone(data.targetId,objChoice==='center'?'center':'foot');
   for(const id of data.returnIds.filter(id=>id!==data.targetId).sort((a,b)=>a-b))placeClone(id,'foot');
-  const xs=cueChoice==='free'?[-.95,-.55,0,.55,.95]:cueChoice==='kitchen'?[-1.02,-.82,-.66]:[cue.p[0]],
-    ys=cueChoice==='current'?[cue.p[1]]:[-.43,-.22,0,.22,.43];let best=0;
-  for(const x of xs)for(const y of ys){if(Math.abs(x)>PH.HX-.02||Math.abs(y)>PH.HY-.02||bs.some(b=>b.id!==0&&!b.pocketed&&Math.hypot(b.p[0]-x,b.p[1]-y)<2.08*PH.R))continue;
-    cue.p=[x,y,PH.R];cue.pocketed=false;cue.off=false;best=Math.max(best,tournamentReplyThreat(bs,data.incoming));}
-  return best;
+  const objectPos=[target.p[0],target.p[1]],current=[cue.p[0],cue.p[1]],points=rotationFoulCueCandidates(bs,data.targetId,cueChoice,current);let best=null;
+  for(const [x,y] of points){cue.p=[x,y,PH.R];cue.pocketed=false;cue.off=false;const opts=CO.potOptions(bs,[x,y],data.targetId),potProb=tournamentPotProbability(opts[0]),
+      attack=tournamentReplyThreat(bs,data.incoming),rail=CO.railClearance([x,y]),human=clamp01(.62+Math.min(.24,rail*.55)-Math.max(0,(opts[0]?.cut||0)-58)*.009),
+      value=attack*.52+potProb*.40+human*.08;
+    if(!best||value>best.value)best={value,cuePos:[x,y],objectPos:objectPos.slice(),potProb,attack,pocket:opts[0]?.pk?pocketKey(opts[0].pk):null,callBall:data.targetId};}
+  return best||{value:0,cuePos:current,objectPos:objectPos.slice(),potProb:0,attack:0,pocket:null,callBall:data.targetId};
 }
 function chooseRotationFoulForAI(data){
   const cueChoices=data.three?['free']:(data.cueCurrentAllowed?['current','kitchen']:['kitchen']);let best=null;
   for(const cue of cueChoices)for(const [object] of rotationObjectChoices(data,cue)){
-    const value=rotationChoicePreview(data,cue,object);if(!best||value>best.value)best={cue,object,value};}
-  return best||{cue:data.three?'free':'kitchen',object:'foot',value:0};
+    const evaluated=rotationChoicePreview(data,cue,object);if(!best||evaluated.value>best.value)best={cue,object,...evaluated};}
+  return best||{cue:data.three?'free':'kitchen',object:'foot',value:0,cuePos:data.three?[-.70,0]:[-.86,0]};
 }
-function applyRotationFoulChoice(data,cueChoice,objChoice){
+function applyRotationFoulChoice(data,cueChoice,objChoice,cuePos=null){
   if(!data||MATCH.optionPending!==data)return;closeLayer('rotationFoulModal');MATCH.optionPending=null;
+  const recommended=cuePos||S.rotationPlacementPreview?.cue||rotationChoicePreview(data,cueChoice,objChoice).cuePos;
   S.rotationPlacementPreview=null;
   restMark.visible=nextMark.visible=idealMark.visible=nextLine.visible=false;
   const target=S.balls.find(b=>b.id===data.targetId);
@@ -3803,12 +3929,13 @@ function applyRotationFoulChoice(data,cueChoice,objChoice){
   let offset=target&&!target.pocketed&&Math.abs(target.p[0]-PH.TABLE_W/4)<.04?1:0;
   for(const id of data.returnIds.filter(id=>id!==data.targetId))spotOne(id,offset++);
   const cue=cueBall(),free=cueChoice==='free',kitchen=cueChoice==='kitchen';
-  if(free||kitchen){if(cue){removeSinkFor(cue);reviveBall(cue,kitchen?-.86:-.70,0);}S.rules.ballInHand=true;S.rules.ballInHandRestricted=kitchen;}
+  if(free||kitchen){const p=recommended&&Number.isFinite(recommended[0])?recommended:(kitchen?[-.86,0]:[-.70,0]);
+    if(cue){removeSinkFor(cue);reviveBall(cue,p[0],p[1]);}S.rules.ballInHand=true;S.rules.ballInHandRestricted=kitchen;}
   else {if(cue){cue.pocketed=false;cue.off=false;}S.rules.ballInHand=false;S.rules.ballInHandRestricted=false;}
   if(data.three)MATCH.fouls[data.shooter]=0;
   MATCH.turn=data.incoming;S.rules.turn=MATCH.turn;MATCH.aiBusy=false;resetCall();
   const cueText=free?'手球フリー':kitchen?'手球ヘッドライン内':'手球現状',objText=objChoice==='current'?'最小番号球現状':objChoice==='center'?'最小番号球センター':'最小番号球フット';
-  addEventLog(cueText+' / '+objText,'NBA FOUL CHOICE');hint('NBAローテーション — '+cueText+'、'+objText+'から再開');
+  addEventLog(cueText+' / '+objText+(recommended?' / 手球 '+recommended[0].toFixed(2)+','+recommended[1].toFixed(2):''),'NBA FOUL CHOICE');hint('NBAローテーション — '+cueText+'、'+objText+'から再開');
   updateHUD();updateTargetRing();schedulePred(0);
   scheduleTurnController(120);
 }
@@ -3840,8 +3967,8 @@ function resolveRotationFoul(R,A,txt,three,scratch){
     cueCurrentAllowed:!scratch&&cue&&!cue.pocketed&&!cue.off};
   MATCH.turn=incoming;MATCH.aiBusy=true;MATCH.optionPending=data;resetCall();updateHUD();
   const auto=aiControlsTurn(incoming);
-  if(auto){const pick=chooseRotationFoulForAI(data);addEventLog(txt+' — NBA配置を比較','FOUL');
-    return setTimeout(()=>applyRotationFoulChoice(data,pick.cue,pick.object),380);}
+  if(auto){const pick=chooseRotationFoulForAI(data);addEventLog(txt+' — NBA配置を全面比較','FOUL');
+    return setTimeout(()=>applyRotationFoulChoice(data,pick.cue,pick.object,pick.cuePos),380);}
   const cueSel=$('rotationCueChoice');cueSel.innerHTML=three?'<option value="free">テーブル全面フリー（3ファウル）</option>'
     :(data.cueCurrentAllowed?'<option value="current">現状</option>':'')+'<option value="kitchen">ヘッドライン内</option>';
   $('rotationFoulText').textContent=txt+'。手球と最小番号 '+targetId+'番の位置を1回だけ宣言します。ファウルで入った球は番号順にフットスポットへ戻します。';
@@ -4208,6 +4335,123 @@ function judgeFujiyamaPro(R,A,scratch){
   if(oppReturn.length)return beginFujiyamaReturnChoice(oppReturn,shooter,finalize);
   return finalize();
 }
+
+// ---- WPA 14-1 Continuous -------------------------------------------------
+function straightOpeningMetrics(A,ev){
+  const post=(ev||[]).slice(Math.max(0,(A.firstIdx??-1)+1)),objectRails=new Set();let cueRail=false;
+  for(const e of post)if(e.type==='cushion'){if(e.id===0)cueRail=true;else objectRails.add(e.id);}
+  return {cueRail,objectRails,legal:A.firstC!==null&&cueRail&&objectRails.size>=2};
+}
+function straightPointSegmentDistance(px,py,ax,ay,bx,by){
+  const dx=bx-ax,dy=by-ay,ll=dx*dx+dy*dy,t=ll?Math.max(0,Math.min(1,((px-ax)*dx+(py-ay)*dy)/ll)):0;
+  return Math.hypot(px-(ax+dx*t),py-(ay+dy*t));
+}
+function straightRackInterferes(ball){
+  if(!ball||ball.pocketed||ball.off)return false;
+  const dx=2*PH.R*Math.cos(Math.PI/6)+.0004,rr=PH.R+.0002,
+    a=[FOOT_X,0],b=[FOOT_X+4*dx,4*rr],c=[FOOT_X+4*dx,-4*rr],p=[ball.p[0],ball.p[1]],
+    cross=(u,v,w)=>(v[0]-u[0])*(w[1]-u[1])-(v[1]-u[1])*(w[0]-u[0]),
+    inside=(cross(a,b,p)>=0&&cross(b,c,p)>=0&&cross(c,a,p)>=0)||(cross(a,b,p)<=0&&cross(b,c,p)<=0&&cross(c,a,p)<=0),
+    edge=Math.min(straightPointSegmentDistance(p[0],p[1],...a,...b),straightPointSegmentDistance(p[0],p[1],...b,...c),straightPointSegmentDistance(p[0],p[1],...c,...a));
+  return inside||edge<=PH.R*1.02;
+}
+function straightBlocksPoint(ball,x,y){return !!ball&&!ball.pocketed&&!ball.off&&Math.hypot(ball.p[0]-x,ball.p[1]-y)<2.02*PH.R;}
+function straightRackObjects(ids,omitApex){
+  const slots=omitApex?rackSlots(5).slice(1):rackSlots(5),order=ids.slice().sort((a,b)=>a-b);
+  order.forEach((id,i)=>{const ball=S.balls.find(b=>b.id===id),p=slots[i];if(!ball||!p)return;
+    removeSinkFor(ball);reviveBall(ball,p[0],p[1]);ball.v=[0,0,0];ball.w=[0,0,0];});
+}
+function straightCueInHandAboveHead(){
+  const cue=cueBall();if(cue){removeSinkFor(cue);reviveBall(cue,-.88,.47);cue.v=[0,0,0];cue.w=[0,0,0];}
+  if(S.rules){S.rules.ballInHand=true;S.rules.ballInHandRestricted=true;}
+}
+function straightMoveCueTo(x,y){
+  const cue=cueBall();if(!cue)return;removeSinkFor(cue);reviveBall(cue,x,y);cue.v=[0,0,0];cue.w=[0,0,0];
+  if(S.rules){S.rules.ballInHand=false;S.rules.ballInHandRestricted=false;}
+}
+function straightFullRack(breaker,opening=true,cueInHand=true){
+  straightRackObjects([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],false);
+  MATCH.turn=breaker;MATCH.straightRackScored=0;MATCH.straightOpeningBreaker=breaker;
+  if(S.rules){S.rules.straightRackScored=0;S.rules.broken=!opening;S.rules.turn=breaker;S.rules.openingBreaker=breaker;}
+  if(cueInHand)straightCueInHandAboveHead();else if(S.rules){S.rules.ballInHand=false;S.rules.ballInHandRestricted=false;}
+  sinks.length=0;resetCall();refreshChips();updateTargetRing();schedulePred(0);
+}
+function straightRerackFourteen(fifteenthPocketed){
+  const R=S.rules,cue=cueBall(),alive=S.balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off),breakBall=alive[0]||null,
+    cueInterferes=straightRackInterferes(cue),objectInterferes=straightRackInterferes(breakBall),allIds=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+  let situation='通常14球ラック';
+  if(fifteenthPocketed||!breakBall){
+    straightRackObjects(allIds,false);situation='15個目も同時イン — 全15球ラック';
+    if(cueInterferes)straightCueInHandAboveHead();else if(R){R.ballInHand=false;R.ballInHandRestricted=false;}
+  }else if(cueInterferes&&objectInterferes){
+    straightRackObjects(allIds,false);straightCueInHandAboveHead();situation='手球・15個目とも干渉 — 全15球ラック／ヘッドライン内フリー';
+  }else{
+    if(objectInterferes){
+      const headX=-FOOT_X,headBlocked=straightBlocksPoint(cue,headX,0),x=headBlocked?0:headX;
+      removeSinkFor(breakBall);reviveBall(breakBall,x,0);situation='15個目がラック線へ干渉 — '+(headBlocked?'センタースポット':'ヘッドスポット')+'へ移動';
+    }
+    if(cueInterferes){
+      if(breakBall.p[0]>=-FOOT_X-1e-8){straightCueInHandAboveHead();situation='手球がラック線へ干渉 — ヘッドライン内フリー';}
+      else {const x=straightBlocksPoint(breakBall,-FOOT_X,0)?0:-FOOT_X;straightMoveCueTo(x,0);situation='手球がラック線へ干渉 — '+(x===0?'センタースポット':'ヘッドスポット')+'へ移動';}
+    }else if(R){R.ballInHand=false;R.ballInHandRestricted=false;}
+    const rackIds=allIds.filter(id=>id!==breakBall.id);straightRackObjects(rackIds,true);
+  }
+  MATCH.straightRackScored=0;MATCH.straightRacksCompleted++;
+  if(R){R.straightRackScored=0;R.broken=true;}
+  sinks.length=0;addEventLog(situation,'14-BALL RERACK');refreshChips();updateTargetRing();schedulePred(0);return situation;
+}
+function straightSpotShotBalls(A){
+  const ids=[...new Set([...(A.pocketed||[]),...(A.off||[])].filter(id=>id!==0))];spotMany(ids);return ids;
+}
+function straightOpeningFoul(R,A,scratch,shooter,detail){
+  MATCH.points[shooter]-=2;straightSpotShotBalls(A);R.broken=false;R.ballInHand=false;R.ballInHandRestricted=false;
+  addEventLog(MATCH.names[shooter]+' −2点（'+detail+'）','BREAKING FOUL');
+  MATCH.turn=1-shooter;resetCall();updateHUD();
+  offerOption('14-1 ブレイキングファウル','−2点。現配置を受けるか、同じブレイカーへオープニングをやり直させます。','現配置を受ける','再ブレイクを要求',()=>{
+    R.broken=true;if(scratch)straightCueInHandAboveHead();else{R.ballInHand=false;R.ballInHandRestricted=false;}
+    addEventLog(MATCH.names[MATCH.turn]+'が現配置を受諾','OPTION');updateHUD();schedulePred(0);scheduleTurnController();
+  },()=>{
+    straightFullRack(shooter,true,true);addEventLog(MATCH.names[shooter]+'が再びオープニング','REBREAK');
+    hint('14-1 再ブレイク — 手球と2個の的球をクッションへ');updateHUD();scheduleTurnController();
+  });
+}
+function straightStandardFoul(R,A,scratch,shooter,fouls){
+  MATCH.points[shooter]-=1;MATCH.fouls[shooter]++;straightSpotShotBalls(A);
+  if(MATCH.fouls[shooter]>=3){
+    MATCH.points[shooter]-=15;MATCH.fouls[shooter]=0;straightFullRack(shooter,true,true);
+    addEventLog(MATCH.names[shooter]+' −16点（3回目−1＋追加−15）','THREE FOULS');
+    hint('⚠ 14-1 3連続ファウル — 全15球を再ラックし、違反者がオープニング');updateHUD();scheduleTurnController();return;
+  }
+  R.broken=true;MATCH.turn=shooter;
+  return changeTurn('14-1 ファウル −1点: '+fouls.join(' / ')+(scratch?' — ヘッドライン内フリー':' — 手球は現状'),scratch,true);
+}
+function straightScore(R,A,shooter){
+  const scored=[...new Set(A.pocketed||[])],gain=scored.length,before=R.straightRackScored||0;
+  MATCH.points[shooter]+=gain;R.straightRackScored=before+gain;MATCH.straightRackScored=R.straightRackScored;
+  addEventLog(scored.join('・')+'番 = +'+gain+'点（ラック '+R.straightRackScored+'/14）','14-1 SCORE');
+  if(MATCH.points[shooter]>=MATCH.raceTo)return finishRack(shooter,MATCH.raceTo+'点到達');
+  let rack='';if(R.straightRackScored>=14)rack=straightRerackFourteen(R.straightRackScored>=15);
+  return keepTurn('✓ '+gain+'点。合計 '+MATCH.points[shooter]+' / '+MATCH.raceTo+(rack?' — '+rack:''));
+}
+function judgeStraightPro(R,A,ev,scratch,wasBreak){
+  const shooter=R.turnAtShot==null?MATCH.turn:R.turnAtShot,call=R.callAtShot||{},made=callMade(A,call),fouls=[];
+  MATCH.turn=shooter;
+  if(A.firstC===null)fouls.push('無接触');
+  if(scratch)fouls.push('スクラッチ');
+  if((A.off||[]).some(id=>id!==0))fouls.push('的球場外');
+  if(A.firstC!==null&&!A.railAfter&&!A.pocketed.length)fouls.push('接触後ノークッション');
+  if(wasBreak){
+    const opening=straightOpeningMetrics(A,ev),breakingFoul=!made&&!opening.legal;
+    if(breakingFoul)return straightOpeningFoul(R,A,scratch,shooter,'手球＋的球2個のクッション未達');
+  }
+  if(fouls.length)return straightStandardFoul(R,A,scratch,shooter,fouls);
+  MATCH.fouls[shooter]=0;R.broken=true;R.ballInHand=false;R.ballInHandRestricted=false;
+  if(made&&!call.safety)return straightScore(R,A,shooter);
+  const spotted=straightSpotShotBalls(A);
+  MATCH.turn=shooter;
+  return changeTurn(call.safety?'セーフティ — '+(spotted.length?spotted.join('・')+'番をスポット':'ノーイン'):
+    spotted.length?'コール不成立 — '+spotted.join('・')+'番をスポット':'ノーインで交代',false,false);
+}
 function rulesJudgePro() {
   const R=S.rules;if(!R)return;
   const ev=S.runEvents||[],A=analyzeRunEvents(ev),cue=cueBall();
@@ -4216,6 +4460,7 @@ function rulesJudgePro() {
   const scratch=!!(cue&&cue.pocketed)||A.off.includes(0);
   if(R.game==='kairun')return judgeKairunPro(R,A,ev);
   if(R.game==='fujiyama')return judgeFujiyamaPro(R,A,scratch);
+  if(R.game==='straight')return judgeStraightPro(R,A,ev,scratch,wasBreak);
   const fouls=[];
   if(R.pushAtShot) {
     if(scratch)fouls.push('スクラッチ');
@@ -5711,45 +5956,119 @@ function planFujiyamaTurnSpectrum(balls=S.balls,options={}){
     out[0].goalCount?'成立確認済みの得点を優先':fujiyamaPurposeText(out[0]);
   return out;
 }
+function planStraightOpeningBreak(){
+  const head=breakHeadBall(S.balls);if(!head)return null;
+  return {kind:'break',ball:head.id,straightOpening:true,safety:true,straightCuePlacement:[-.88,.47],
+    prm:{speed:3.2,aim:-.25,elev:0,tipX:0,tipY:.05,pivotLen:S.pivot},robust:.78,confidence:.78,
+    breakControl:'CUE + TWO OBJECT RAILS',planLabel:'薄いセーフティブレイク'};
+}
+function tournamentBreakProfiles(game=S.rules?.game,nineFoot=MATCH.nineFoot){
+  const sideX=-PH.TABLE_W/4-PH.R*1.9,centerX=-.86,nearX=-PH.TABLE_W/4-PH.R*3.0,
+    sideY=Math.min(.46,PH.HY-.09),halfY=Math.min(.28,PH.HY-.16),mirror=(family,label,cueY,extra={})=>({
+      ...extra,family:family+(cueY<0?'-L':'-R'),label:label+(cueY<0?'・左':'・右'),cue:[extra.x??sideX,cueY],target:extra.target||'apex',
+      speed:extra.speed??8.25,aimOffset:(extra.aimOffset??.55)*(cueY<0?1:-1),tipX:(extra.tipX??.05)*(cueY<0?1:-1),tipY:extra.tipY??.04,
+      power:extra.power??.70,control:extra.control??.72});
+  if(game==='nine'){
+    const modern=nineFoot==='nine';
+    return [
+      mirror(modern?'nine-cut-9f':'nine-cut-1f',modern?'⑨オンフット・カット':'①オンフット・カット',-sideY,{speed:modern?8.50:9.35,aimOffset:0,control:.82}),
+      mirror(modern?'nine-cut-9f':'nine-cut-1f',modern?'⑨オンフット・カット':'①オンフット・カット',sideY,{speed:modern?8.50:9.35,aimOffset:0,control:.82}),
+      {family:'nine-center-control',label:(modern?'⑨':'①')+'オンフット・中央コントロール',cue:[centerX,0],target:'apex',speed:9.65,aimOffset:0,tipX:0,tipY:.06,power:.94,control:.72},
+      mirror('nine-box-power','サイド寄りパワー',-halfY,{x:nearX,speed:9.55,aimOffset:.36,power:.98,control:.58}),
+      mirror('nine-box-power','サイド寄りパワー',halfY,{x:nearX,speed:9.55,aimOffset:.36,power:.98,control:.58}),
+    ];
+  }
+  if(game==='ten')return [
+    {family:'ten-center-power',label:'中央・正面パワー',cue:[centerX,0],target:'apex',speed:8.75,aimOffset:0,tipX:0,tipY:.05,power:.96,control:.68},
+    mirror('ten-control','中央脇コントロール',-halfY,{x:nearX,speed:8.45,aimOffset:.24,power:.84,control:.82}),
+    mirror('ten-control','中央脇コントロール',halfY,{x:nearX,speed:8.45,aimOffset:.24,power:.84,control:.82}),
+    mirror('ten-side-power','サイド寄りパワー',-sideY,{speed:8.75,aimOffset:.46,power:.96,control:.60}),
+    mirror('ten-side-power','サイド寄りパワー',sideY,{speed:8.75,aimOffset:.46,power:.96,control:.60}),
+  ];
+  if(game==='eight')return [
+    {family:'eight-head-power',label:'ヘッドボール正面パワー',cue:[centerX,0],target:'apex',speed:8.85,aimOffset:0,tipX:0,tipY:.06,power:1,control:.62},
+    mirror('eight-head-control','ヘッドボール・サイドコントロール',-halfY,{x:nearX,speed:8.55,aimOffset:.20,power:.88,control:.78}),
+    mirror('eight-head-control','ヘッドボール・サイドコントロール',halfY,{x:nearX,speed:8.55,aimOffset:.20,power:.88,control:.78}),
+    mirror('eight-second-ball','第2球ブレイク',-sideY,{target:'second',speed:7.95,aimOffset:.08,tipX:.10,tipY:-.10,power:.76,control:.86}),
+    mirror('eight-second-ball','第2球ブレイク',sideY,{target:'second',speed:7.95,aimOffset:.08,tipX:.10,tipY:-.10,power:.76,control:.86}),
+  ];
+  if(game==='rotation')return [
+    {family:'rotation-center-power',label:'中央・ラック全体を割る',cue:[centerX,0],target:'apex',speed:8.85,aimOffset:0,tipX:0,tipY:.06,power:1,control:.62},
+    mirror('rotation-control','サイド寄りコントロール',-halfY,{x:nearX,speed:8.55,aimOffset:.30,power:.88,control:.78}),
+    mirror('rotation-control','サイド寄りコントロール',halfY,{x:nearX,speed:8.55,aimOffset:.30,power:.88,control:.78}),
+    mirror('rotation-cut','薄めの展開ブレイク',-sideY,{speed:8.35,aimOffset:.64,power:.82,control:.76}),
+    mirror('rotation-cut','薄めの展開ブレイク',sideY,{speed:8.35,aimOffset:.64,power:.82,control:.76}),
+  ];
+  return [{family:'standard-center',label:'中央コントロール',cue:[centerX,0],target:'apex',speed:8.35,aimOffset:0,tipX:0,tipY:.05,power:.84,control:.74}];
+}
+function breakProfileTargetBall(balls,profile,head=breakHeadBall(balls)){
+  if(!head||profile?.target!=='second')return head;
+  const rowX=Math.min(...balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off&&b.p[0]>head.p[0]+PH.R).map(b=>b.p[0]));
+  if(!Number.isFinite(rowX))return head;
+  const row=balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off&&Math.abs(b.p[0]-rowX)<PH.R*.45);
+  return row.sort((a,b)=>Math.abs(a.p[1]-profile.cue[1])-Math.abs(b.p[1]-profile.cue[1]))[0]||head;
+}
+function breakCuePlacementOpen(balls,pos){
+  const [x,y]=pos||[];return Number.isFinite(x)&&Number.isFinite(y)&&x<=-PH.TABLE_W/4-PH.R*.08&&x>=-PH.HX&&Math.abs(y)<=PH.HY
+    &&!balls.some(b=>b.id!==0&&!b.pocketed&&!b.off&&Math.hypot(b.p[0]-x,b.p[1]-y)<2.12*PH.R);
+}
+function tournamentBreakStyleBias(profile,style='champion'){
+  if(style==='attack')return -(profile.power||0)*.20+(profile.control||0)*.03;
+  if(style==='defense')return -(profile.control||0)*.22+(profile.power||0)*.05;
+  if(style==='balanced')return -(profile.control||0)*.10-(profile.power||0)*.04;
+  return -(profile.control||0)*.035-(profile.power||0)*.035;
+}
+function tournamentBreakOutcome(before,sim,profile,target,game=S.rules?.game){
+  if(!sim||!target||!sim.firstHit||sim.firstHit.obId!==target.id)return null;
+  const cf=sim.final.find(b=>b.id===0);if(!cf||cf.pocketed||cf.off)return null;
+  const A=analyzeRunEvents(sim.events||[]),potted=A.pocketed.length,rails=A.railBalls.size,
+    breakCount=new Set([...A.pocketed,...A.headCross]).size;
+  if(!potted&&rails<4||game==='nine'&&breakCount<3)return null;
+  let spread=0,moved=0;for(const b of before){if(b.id===0||b.pocketed||b.off)continue;const f=sim.final.find(x=>x.id===b.id);if(!f)continue;
+    const d=f.pocketed&&!f.off?.55:Math.hypot(f.p[0]-b.p[0],f.p[1]-b.p[1]);spread+=Math.min(.55,d);if(d>.12||f.pocketed)moved++;}
+  let nextProb=0,nextId=null;for(const id of choicesForTurn(sim.final,MATCH.turn).slice(0,game==='eight'?8:2)){
+    const opt=CO.potOptions(sim.final,[cf.p[0],cf.p[1]],id)[0],prob=tournamentPotProbability(opt);if(prob>nextProb){nextProb=prob;nextId=id;}}
+  const nearestPocket=Math.min(...POCKETS.map(pk=>Math.hypot(cf.p[0]-pk.x,cf.p[1]-pk.y))),
+    cueControl=clamp01(1-Math.hypot(cf.p[0],cf.p[1])/(PH.TABLE_W*.54)),pocketDanger=clamp01((.20-nearestPocket)/.16),
+    score=-potted*1.60-moved*.075-spread*.075-nextProb*1.38-cueControl*.28+pocketDanger*.72+Math.max(0,profile.speed-8.7)*.08;
+  return {score,cueRest:cf.p.slice(),potted,rails,breakCount,spread,moved,nextProb,nextId,final:sim.final};
+}
 function planTournamentBreak(options={}){
   if(S.rules?.game==='fujiyama')return planFujiyamaOpening(options);
+  if(S.rules?.game==='straight')return planStraightOpeningBreak();
   const cue=cueBall(),head=breakHeadBall(S.balls);
   if(!cue||!head)return null;
-  const fast=options.fast!==false,deadline=options.deadline||performance.now()+(options.maxMs??(fast?260:900)),
-    base=Math.atan2(head.p[1]-cue.p[1],head.p[0]-cue.p[0]),coarse=[],aims=fast?[-.45,0,.45]:[-.7,-.35,0,.35,.7],
-    speeds=fast?[7.6,8.3,8.9]:[7.4,8.2,9.0],tips=fast?[0]:[-.12,0,.12],verticals=fast?[.05]:[.02,.09];
-  // 対戦開始直後は入力を一切ブロックしない。先頭位置を正しく取り、同じ物理コアへ
-  // そのまま渡せる競技標準のセンターボール・コントロールブレイクを即時提示する。
-  if(fast)return {prm:{speed:S.rules?.game==='eight'?8.55:8.25,aim:base,elev:0,tipX:0,tipY:.05,pivotLen:S.pivot},
-    kind:'break',ball:head.id,robust:.66,confidence:.66,breakControl:'APEX + CUE-CENTRE'};
-  breakSearch: for(const da of aims)for(const speed of speeds)for(const tx of tips)for(const ty of verticals){if(performance.now()>=deadline)break breakSearch;
-    const prm0={speed,aim:base+da*D2R,elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot};
-    const sim=simulateShot(S.balls,prm0,{maxT:15,dt:1/300}),cf=sim?.final.find(b=>b.id===0);
-    if(!sim?.firstHit||sim.firstHit.obId!==head.id||!cf||cf.pocketed||cf.off)continue;
-    const potted=sim.final.filter(b=>b.id!==0&&b.pocketed&&!b.off).length;
-    const railBalls=new Set(sim.events.filter(e=>e.type==='cushion'&&e.id!==0).map(e=>e.id));
-    if(!potted&&railBalls.size<4)continue;
-    const A=analyzeRunEvents(sim.events||[]),breakCount=new Set([...A.pocketed,...A.headCross]).size;
-    if(S.rules?.game==='nine'&&breakCount<3)continue;
-    const cueCenter=Math.hypot(cf.p[0],cf.p[1]),next=choicesForTurn(sim.final,MATCH.turn)[0];
-    const nextOpen=next?CO.potOptions(sim.final,[cf.p[0],cf.p[1]],next).length:0;
-    const score=-potted*1.8-nextOpen*.34+cueCenter*.9+Math.abs(tx)*.28+Math.max(0,speed-8.5)*.12;
-    coarse.push({prm:prm0,kind:'break',ball:head.id,score,cueRest:cf.p.slice(),potted,nextOpen,breakCount});
-  }
-  coarse.sort((a,b)=>a.score-b.score);let best=null;
-  for(const c of coarse.slice(0,fast?3:7)){if(performance.now()>=deadline)break;let ok=0,sum=0,center=null;
-    const variants=fast?[[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+']]:[[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.97,'s-'],[0,1.03,'s+']];
-    for(const [da,sm,tag] of variants){if(performance.now()>=deadline)break;
-      const prm0={...c.prm,aim:c.prm.aim+da*D2R,speed:c.prm.speed*sm},sim=simulateShot(S.balls,prm0,{maxT:16,dt:1/600});
-      const cf=sim?.final.find(b=>b.id===0);if(!sim?.firstHit||sim.firstHit.obId!==head.id||!cf||cf.pocketed||cf.off)continue;
-      const potted=sim.final.filter(b=>b.id!==0&&b.pocketed&&!b.off).length,rails=new Set(sim.events.filter(e=>e.type==='cushion'&&e.id!==0).map(e=>e.id));
-      const A=analyzeRunEvents(sim.events||[]),breakCount=new Set([...A.pocketed,...A.headCross]).size;
-      if(!potted&&rails.size<4||S.rules?.game==='nine'&&breakCount<3)continue;ok++;sum+=potted;if(tag==='c')center={cueRest:cf.p.slice(),potted,breakCount};
+  const game=S.rules?.game,fast=options.fast!==false,deadline=options.deadline||performance.now()+(options.maxMs??(fast?650:1200)),
+    style=activeAIStyleKey(MATCH.turn),lastFamily=MATCH.lastBreakFamily?.[MATCH.turn]||null,
+    profiles=tournamentBreakProfiles(game,MATCH.nineFoot).slice().sort((a,b)=>tournamentBreakStyleBias(a,style)-tournamentBreakStyleBias(b,style)),
+    variants=fast?[[0,1,'c'],[-.60,1,'a-'],[.60,1,'a+'],[-.24,1.06,'p-'],[.24,1.06,'p+']]:
+      [[0,1,'c'],[-.70,1,'a-'],[.70,1,'a+'],[-.30,1.06,'p-'],[.30,1.06,'p+'],[0,.96,'s-'],[0,1.10,'s+']],candidates=[];
+  profileSearch: for(const profile of profiles){
+    if(performance.now()>=deadline)break;const working=S.balls.map(cloneBall),wc=working.find(b=>b.id===0);if(!wc||!breakCuePlacementOpen(working,profile.cue))continue;
+    wc.p=[profile.cue[0],profile.cue[1],PH.R];wc.pocketed=false;wc.off=false;const target=breakProfileTargetBall(working,profile,breakHeadBall(working));if(!target)continue;
+    const base=Math.atan2(target.p[1]-profile.cue[1],target.p[0]-profile.cue[0])+profile.aimOffset*D2R,valid=[];let center=null,attempted=0;
+    for(const [da,sm,tag] of variants){if(performance.now()>=deadline)break;attempted++;
+      const prm0={speed:profile.speed*sm,aim:base+da*D2R,elev:0,tipX:profile.tipX||0,tipY:profile.tipY||0,pivotLen:S.pivot},
+        sim=simulateShot(working,prm0,{maxT:15,dt:fast?1/300:1/480}),out=tournamentBreakOutcome(working,sim,profile,target,game);
+      if(!out)continue;const result={...out,prm:prm0};valid.push(result);if(tag==='c')center=result;
     }
-    if(center&&ok>=Math.min(2,variants.length)){const robust=ok/variants.length,cand={...c,...center,robust,confidence:robust,score:c.score+(1-robust)*8-sum*.08};
-      if(!best||cand.score<best.score)best=cand;}
+    if(!valid.length)continue;valid.sort((a,b)=>a.score-b.score);const chosen=center||valid[0],robust=valid.length/Math.max(1,attempted),
+      repeatPenalty=lastFamily&&lastFamily===profile.family?.18:0,score=chosen.score+(1-robust)*2.8+tournamentBreakStyleBias(profile,style)+repeatPenalty;
+    candidates.push({...chosen,score,kind:'break',ball:target.id,targetId:target.id,robust,confidence:robust,
+      breakFamily:profile.family,breakLabel:profile.label,breakCuePlacement:profile.cue.slice(),breakControl:profile.label+' / 散り'+chosen.moved+'球 / 次球'+Math.round(chosen.nextProb*100)+'%'});
   }
-  return best||coarse[0]||{prm:{speed:8.2,aim:base,elev:0,tipX:0,tipY:.05,pivotLen:S.pivot},kind:'break',ball:head.id,robust:.6,confidence:.6};
+  candidates.sort((a,b)=>a.score-b.score);
+  // 粗い時間刻みで順位を付けても、採用線だけは試合物理と同じ1/600秒で再判定する。
+  // とくに9ボールの3ポイント規定は、ヘッドライン通過の境界を粗刻みで誤認しない。
+  for(const candidate of candidates){const working=S.balls.map(cloneBall),wc=working.find(b=>b.id===0),target=working.find(b=>b.id===candidate.targetId);
+    if(!wc||!target)continue;wc.p=[candidate.breakCuePlacement[0],candidate.breakCuePlacement[1],PH.R];wc.pocketed=false;wc.off=false;
+    const exact=tournamentBreakOutcome(working,simulateShot(working,candidate.prm,{maxT:16,dt:1/600}),
+      {speed:candidate.prm.speed},target,game);if(exact)return {...candidate,...exact,score:candidate.score,physicsVerified:true};}
+  const fallback=profiles.find(p=>p.target==='apex')||profiles[0],pos=fallback?.cue||[-.86,0],target=breakProfileTargetBall(S.balls,fallback,head)||head,
+    aim=Math.atan2(target.p[1]-pos[1],target.p[0]-pos[0])+(fallback?.aimOffset||0)*D2R;
+  return {prm:{speed:fallback?.speed||8.35,aim,elev:0,tipX:fallback?.tipX||0,tipY:fallback?.tipY||.05,pivotLen:S.pivot},kind:'break',ball:target.id,
+    targetId:target.id,breakFamily:fallback?.family||'standard-center',breakLabel:fallback?.label||'中央コントロール',breakCuePlacement:pos.slice(),robust:.50,confidence:.50,
+    breakControl:(fallback?.label||'中央コントロール')+' / 緊急合法ブレイク'};
 }
 function planTournamentPushOut(options={}){
   const cue=cueBall(),targetId=legalTargets()[0],cands=[],alive=new Set(S.balls.filter(b=>b.id!==0&&!b.pocketed).map(b=>b.id));if(!cue||!targetId)return null;
@@ -5833,11 +6152,14 @@ function aiPlanPool(detail=false){
           reason:'隠されても全脱出経路を探索し、合法ヒット確率を最大化',risk:{scratchTotal:0,scratchRej:{}}}};}
       return best;}
   }
-  if(ids.length>7){const open8=R?.game==='eight'&&!MATCH.groups[MATCH.turn]?eightBallOpenPlan(S.balls,MATCH.turn,[cue.p[0],cue.p[1]]):null;
+  if(ids.length>7){const open8=R?.game==='eight'&&!MATCH.groups[MATCH.turn]?eightBallOpenPlan(S.balls,MATCH.turn,[cue.p[0],cue.p[1]]):null,
+      straightPlan=R?.game==='straight'?straightPatternContext(S.balls,[cue.p[0],cue.p[1]]):null;
     ids=ids.map(id=>{const opts=CO.potOptions(S.balls,[cue.p[0],cue.p[1]],id),gp=GROUP_OF(id),plan=open8?.plans.find(x=>x.group===gp);
       return{id,n:opts.length,d:opts[0]?.difficulty??99,problem:tournamentProblemScore(S.balls,id,[cue.p[0],cue.p[1]]),
-        groupBias:open8?(gp===open8.recommendedGroup?-.48:.12):0,solve:plan?.problemBall===id?-.25:0};})
-      .sort((a,b)=>(b.problem-a.problem)*.22+a.d-b.d+a.groupBias-b.groupBias+a.solve-b.solve).slice(0,7).map(x=>x.id);}
+        groupBias:open8?(gp===open8.recommendedGroup?-.48:.12):0,solve:plan?.problemBall===id?-.25:0,
+        straightBias:straightPlan?(id===straightPlan.problemBall?-.32:0)+(id===straightPlan.breakBall&&straightPlan.remainingToRack>2?.78:0)+
+          (id===straightPlan.keyBall&&straightPlan.remainingToRack>2?.20:0):0};})
+      .sort((a,b)=>(b.problem-a.problem)*.22+a.d-b.d+a.groupBias-b.groupBias+a.solve-b.solve+a.straightBias-b.straightBias).slice(0,7).map(x=>x.id);}
   const coarse=[];
   for(const id of ids){
     const options=CO.potOptions(S.balls,[cue.p[0],cue.p[1]],id).slice(0,6);
@@ -6182,16 +6504,17 @@ function quickVerifiedPoolEmergencyPlan(){
 function quickAIEmergencyPlan(){
   const cue=cueBall();if(!cue)return null;
   if(S.rules&&!S.rules.broken&&S.rules.game==='fujiyama')return planFujiyamaOpening({fast:true,maxMs:480});
+  if(S.rules&&!S.rules.broken&&S.rules.game==='straight')return planStraightOpeningBreak();
   if(S.rules?.game==='fujiyama'){
     const plans=planFujiyamaTurnSpectrum(S.balls,{fast:true,maxMs:700});plans.sort((a,b)=>styleAdjustedCandidateValue(b,fujiyamaDecisionRole(b))-styleAdjustedCandidateValue(a,fujiyamaDecisionRole(a)));
     return plans[0]||fujiyamaEmergencyLegalPlan(S.balls);
   }
-  if(S.rules&&!S.rules.broken){const head=breakHeadBall(S.balls);if(!head)return null;
-    return {kind:'break',ball:head.id,prm:{speed:8.1,aim:Math.atan2(head.p[1]-cue.p[1],head.p[0]-cue.p[0]),elev:0,tipX:0,tipY:.05,pivotLen:S.pivot},robust:.55,confidence:.55};}
+  if(S.rules&&!S.rules.broken)return planTournamentBreak({fast:true,maxMs:360});
   if(currentGame==='kairun'){const ids=S.rules?.opening?[1]:(S.rules?.kairunStage===1?[3,11]:[1,3,11]),ob=ids.map(id=>S.balls.find(b=>b.id===id&&!b.pocketed)).find(Boolean);
     if(!ob)return null;return {kind:'kairun-attempt',first:ob.id,targetId:ob.id,stage:S.rules?.kairunStage||0,
       progress:1,planLabel:'時間上限時の未完成参考線',prm:{speed:(S.rules?.kairunStage||0)===2?5.2:3.8,aim:Math.atan2(ob.p[1]-cue.p[1],ob.p[0]-cue.p[0]),elev:0,tipX:0,tipY:.10,pivotLen:S.pivot},robust:.10,confidence:.10};}
-  const placement=Coach.ballInHandPlacement,forced=placement?.directPlan||(placement?quickBallInHandAttack(placement,MATCH.turn):null);
+  const placement=Coach.ballInHandPlacement||(S.rules?.ballInHand?aiPlaceBallInHand({fast:true,maxMs:140,maxTargets:4}):null),
+    forced=placement?.directPlan||(placement?quickBallInHandAttack(placement,MATCH.turn):null);
   if(forced)return {...forced,ballInHandPlacement:placement};
   const verified=quickVerifiedPoolEmergencyPlan();if(verified)return verified;
   const targetId=legalTargets()[0]||lowestId(),attempt=targetId?lastChanceAttackAttempt(S.balls,targetId):null;
@@ -6207,24 +6530,28 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
   clearAIWatchdog();if(!plan)plan=quickAIEmergencyPlan();
   if(!plan||!plan.prm){MATCH.aiBusy=false;updateHUD();changeTurn('AI思考を安全解除 — プレイ可能な配置を再判定',false,false);return;}
   try{
-    // 対戦AIはローテーションを通常のコールショット競技としてプレーする。
-    // 戦術解析由来のノーコール案が渡っても、実行前に同じ入れ筋のコールショットへ戻す。
-    if(currentGame==='rotation'&&(plan.kind==='rotation-nocall'||plan.rotationNoCall))
+    // ローテーションのノーコールは、次球が極端に悪くスポットバック後の守備価値が明確な時だけ残す。
+    if(currentGame==='rotation'&&(plan.kind==='rotation-nocall'||plan.rotationNoCall)&&!rotationNoCallAllowed(plan))
       plan={...plan,kind:'pot',rotationNoCall:false};
-    applyPlannedFujiyamaCue(plan);
+    applyPlannedTournamentCue(plan);
+    if(plan.kind==='break'&&plan.breakFamily){MATCH.lastBreakFamily=MATCH.lastBreakFamily||[null,null];MATCH.lastBreakFamily[actor]=plan.breakFamily;}
     MATCH.aiPlan=plan;
     S.aim=plan.prm.aim;S.speed=plan.prm.speed;S.elev=(plan.prm.elev||0)*R2D;S.tipX=plan.prm.tipX||0;S.tipY=plan.prm.tipY||0;
     $('spd').value=S.speed;$('elv').value=S.elev;uiOuts();drawPad();
     if(plan.kind==='pushout')MATCH.pushDeclared=true;
     MATCH.rotationNoCall=plan.kind==='rotation-nocall'||!!plan.rotationNoCall;
     MATCH.intentionalFoul=plan.kind==='intentional-foul'||!!plan.intentionalFoul;
-    const callBall=plan.callBall||plan.potId||plan.ball;
     if(MATCH.rotationNoCall)MATCH.call={ball:null,pocket:null,safety:false};
-    else if(['ten','eight','rotation'].includes(currentGame)&&callBall){MATCH.call={ball:callBall,pocket:plan.pocket||nearestPocketKey(S.balls.find(b=>b.id===callBall)),safety:plan.kind==='safety'||(plan.escape&&!plan.potId)};}
+    else if(currentGame==='straight'&&plan.kind==='break')MATCH.call={ball:null,pocket:null,safety:true};
+    else if(['ten','eight','rotation','straight'].includes(currentGame)&&plan.kind!=='break'){
+      const call=plannedShotCall(plan);if(call)MATCH.call=call;
+    }
     const aiRole=plan.escape?'escape':plan.kind==='safety'?'safety':plan.kind==='pushout'?'pushout':
       plan.kind==='rotation-nocall'?'spot':plan.kind==='intentional-foul'?'foul':plan.kind==='pot'?'attack':'special';
     const aiWin=plan.winProb??tournamentCandidateWin(plan,aiRole),confidence=plan.robust??plan.confidence??0;
-    if(plan.kind==='break')MATCH.aiDecision=currentGame==='fujiyama'?(plan.fujiyamaPlan||'8番から次の自球へつなぐ初球'):'中央へ残すコントロールブレイク';
+    if(plan.kind==='break')MATCH.aiDecision=currentGame==='fujiyama'?(plan.fujiyamaPlan||'8番から次の自球へつなぐ初球'):
+      currentGame==='straight'?'14-1 薄いセーフティブレイク — 手球＋的球2個のクッション到達を物理確認':
+      (plan.breakLabel||'可変コントロールブレイク')+' — ヘッドライン内 '+(plan.breakCuePlacement?('x '+plan.breakCuePlacement[0].toFixed(2)+' / y '+plan.breakCuePlacement[1].toFixed(2)):'最適位置');
     else if(plan.kind==='fujiyama-score')MATCH.aiDecision='FUJIYAMA 自球'+(plan.goalIds||[plan.potId]).filter(Boolean).join('・')+'番を有効ゴールへ / '+(plan.easyScore?'簡単な得点を最優先 / ':'')+'継続・評価'+Math.round(aiWin*100)+'%';
     else if(plan.kind==='fujiyama-pass-goal')MATCH.aiDecision='FUJIYAMA 8番経由で自球'+(plan.goalIds||[plan.potId]).filter(Boolean).join('・')+'番を有効ゴールへ / 次打は自球';
     else if(plan.kind==='fujiyama-eight'||plan.kind==='fujiyama-eight-spin')MATCH.aiDecision='FUJIYAMA '+(plan.kind==='fujiyama-eight-spin'?'捻りで':'')+'8番イン → センター復帰 / 次打は自球';
@@ -6241,6 +6568,7 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
     else if(plan.kind==='fujiyama-long-bank')MATCH.aiDecision='FUJIYAMA序盤 '+plan.targetId+'番を長クッションのロング・コーナーバンク / 成功'+Math.round(confidence*100)+'%';
     else if(plan.kind==='fujiyama-reverse-follow-bank')MATCH.aiDecision='FUJIYAMA '+plan.targetId+'番を逆押しの捻りで手前コーナーへ逆バンク / 成功'+Math.round(confidence*100)+'%';
     else if(plan.kind==='pushout')MATCH.aiDecision='返球まで読んだプッシュアウト';
+    else if(plan.kind==='pot'&&currentGame==='straight')MATCH.aiDecision='14-1 PATTERN '+(routeLabel(plan)||(plan.ball||plan.tid)+'番')+' / 成功'+Math.round(confidence*100)+'% / '+tournamentVision(plan);
     else if(plan.kind==='pot')MATCH.aiDecision='ATTACK '+(routeLabel(plan)||(plan.ball||plan.tid)+'番から取り切り')+' / 成功'+Math.round(confidence*100)+'%・ラック勝率'+Math.round(Math.max(0,aiWin)*100)+'% / '+tournamentVision(plan);
     else if(plan.kind==='attack-attempt')MATCH.aiDecision='ATTACK TRY '+(plan.attemptLabel||'低確率の勝負球')+' / 成功'+Math.round(confidence*100)+'% — 守備だけに限定せず入れを狙う';
     else if(plan.kind==='kairun')MATCH.aiDecision='STEP '+[2,3,5][S.rules.kairunStage||0]+' '+plan.planLabel+' / '+Math.round(confidence*100)+'%'+
@@ -6267,7 +6595,7 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
     MATCH.aiBusy=false;updateHUD();changeTurn('AI処理を復旧し手番を進行',false,false);}
 }
 function scheduleAI(delayOverride=null){
-  if(!aiControlsTurn()||MATCH.rackOver||S.app==='lesson'||S.mode!=='idle'||(MATCH.mode==='spectator'&&MATCH.spectatorPaused))return;
+  if(!aiControlsTurn()||MATCH.rackOver||S.app!=='practice'||S.mode!=='idle'||(MATCH.mode==='spectator'&&MATCH.spectatorPaused))return;
   cancelCoach(true);clearAIWatchdog();const actor=MATCH.turn,token=++MATCH.aiToken,budget=aiThinkingBudget(),profile=AI_STYLE_PROFILES[activeAIStyleKey(actor)];
   MATCH.aiBusy=true;updateHUD();hint(MATCH.names[actor]+(MATCH.mode==='spectator'?'［'+profile.label+'］':'')+' が全攻撃・ポジション・守備を比較中…');
   MATCH.aiWatchdog=setTimeout(()=>{if(token!==MATCH.aiToken||MATCH.turn!==actor||!MATCH.aiBusy)return;
@@ -6289,6 +6617,7 @@ function syncMeshes() {
     m.visible = true;
     m.position.set(b.p[0], b.p[2], -b.p[1]);
   }
+  if(PUZZLE.active)updatePuzzleMarkers();
 }
 const _rq = new THREE.Quaternion(), _ax = new THREE.Vector3();
 function rotateBalls(h) {
@@ -6954,6 +7283,7 @@ function selectLesson(i) {
 
 function enterLesson() {
   if (S.app === 'lesson') return;
+  if(S.app==='puzzle')exitPuzzle();
   if (S.mode === 'running') {
     for (const b of S.balls) {
       if (b.pocketed) continue;
@@ -7009,8 +7339,119 @@ function exitLesson() {
   schedulePred(0);
 }
 
+function puzzleCurrent(){return CURVE_PUZZLES[PUZZLE.index]||CURVE_PUZZLES[0];}
+function puzzleStarsText(n){return '★'.repeat(n)+'☆'.repeat(Math.max(0,3-n));}
+function savePuzzleProgress(){
+  try{localStorage.setItem('billiard-curve-puzzle-progress-v1',JSON.stringify(PUZZLE.progress));localStorage.setItem('billiard-curve-puzzle-last',String(PUZZLE.index));}catch(_){ }
+}
+function updatePuzzleMarkers(p=puzzleCurrent()){
+  const ng=new Set(p?.forbiddenPockets||[]);for(const x of puzzleNgRings)x.ring.visible=PUZZLE.active&&ng.has(pocketKey(x.pk));
+  const ids=p?.avoidBalls||[];puzzleObstacleRings.forEach((ring,i)=>{const ball=S.balls.find(b=>b.id===ids[i]&&!b.pocketed&&!b.off);
+    ring.visible=!!(PUZZLE.active&&ball);if(ball)ring.position.set(ball.p[0],.004,-ball.p[1]);});
+}
+function renderPuzzlePanel(message=''){
+  const p=puzzleCurrent(),cleared=Object.values(PUZZLE.progress).filter(n=>n>0).length,totalStars=Object.values(PUZZLE.progress).reduce((s,n)=>s+(+n||0),0),stars=PUZZLE.progress[p.id]||0;
+  $('puzzleTitle').textContent='#'+String(p.number).padStart(2,'0')+' '+p.title+' '+puzzleStarsText(stars);
+  $('puzzleProgress').textContent=cleared+' / '+CURVE_PUZZLES.length+' CLEAR · '+totalStars+'★';
+  $('puzzleDifficulty').textContent='LEVEL '+Math.ceil(p.difficulty)+' · '+p.category;
+  $('puzzleObjective').textContent=message||p.objective;
+  $('btnPuzzleHint').textContent='ヒント '+PUZZLE.hintLevel+'/3';
+  $('btnPuzzlePrev').disabled=PUZZLE.index<=0;$('btnPuzzleNext').disabled=PUZZLE.index>=CURVE_PUZZLES.length-1;
+}
+function stopPuzzleMotion(){
+  if(S.mode!=='running')return;for(const b of S.balls)if(!b.pocketed){b.v=[0,0,0];b.w=[0,0,0];b.p[2]=PH.R;}
+  S.mode='idle';MATCH.shotStartedAt=0;MATCH.shotForceStop=false;acc=0;sinks.length=0;$('btnShot').disabled=false;syncAuxButton();
+}
+function loadPuzzle(index,announce=true,preserveSession=false){
+  stopPuzzleMotion();const session=preserveSession?{attempts:PUZZLE.attempts,hintLevel:PUZZLE.hintLevel,watchedDemo:PUZZLE.watchedDemo}:null;
+  PUZZLE.index=Math.max(0,Math.min(CURVE_PUZZLES.length-1,index|0));const p=puzzleCurrent();
+  PUZZLE.attempts=session?.attempts||0;PUZZLE.hintLevel=session?.hintLevel||0;PUZZLE.watchedDemo=!!session?.watchedDemo;
+  PUZZLE.demo=false;PUZZLE.demoAtShot=false;PUZZLE.shotInProgress=false;MATCH.lessonChallenge=null;S.rules=null;S.runEvents=null;
+  ENV.carom=!!p.carom;compatCanvas.style.display=ENV.carom?'block':'none';
+  practiceLayout=p.balls.map(b=>({...b}));practiceDefs=p.balls.map(b=>ballDef(b.id));setBallSet(practiceDefs);
+  S.balls=p.balls.map(b=>makeBall(b.id,b.x,b.y));sinks.length=0;trailPts=[];trailLine.visible=false;
+  const cue=cueBall(),target=S.balls.find(b=>b.id===(p.expect.contact??p.expect.pot??p.expect.pots?.[0]?.id));
+  S.aim=cue&&target?Math.atan2(target.p[1]-cue.p[1],target.p[0]-cue.p[0]):0;S.speed=2.4;S.elev=0;S.tipX=0;S.tipY=0;
+  $('spd').value=S.speed;$('elv').value=0;uiOuts();drawPad();refreshChips();hideAimVis();setSegView('top');
+  updatePuzzleMarkers(p);renderPuzzlePanel();savePuzzleProgress();schedulePred(0);updateHUD();
+  if(announce)hint('#'+String(p.number).padStart(2,'0')+' '+p.objective+' — 撞点・強さ・角度を逆算してください');
+}
+function curvePuzzleEvaluation(p,ev){
+  const A=analyzeRunEvents(ev||[]),actual=MATCH.lastActual||{},checks=[];let pass=true;
+  const mark=(ok,label)=>{checks.push((ok?'✓':'✕')+' '+label);pass=pass&&ok;},contacts=[];
+  for(const e of ev||[])if(e.type==='ball'&&(e.a===0||e.b===0)){const id=e.a===0?e.b:e.a;if(!contacts.includes(id))contacts.push(id);}
+  const cueRailsBefore=id=>{let n=0;for(const e of ev||[]){if(e.type==='ball'&&(e.a===0||e.b===0)&&(e.a===id||e.b===id))break;if(e.type==='cushion'&&e.id===0)n++;}return n;};
+  if(p.expect.pots?.length)for(const goal of p.expect.pots){const hit=A.pocketEvents.find(e=>e.id===goal.id);mark(!!hit&&hit.pocketKey===goal.pocket,goal.id+'番 → '+CURVE_POCKET_LABEL[goal.pocket]);}
+  if(p.expect.pot!==undefined){const hit=A.pocketEvents.find(e=>e.id===p.expect.pot),ok=!!hit&&(!p.goalPocket||hit.pocketKey===p.goalPocket);mark(ok,p.expect.pot+'番 → '+CURVE_POCKET_LABEL[p.goalPocket]);}
+  if(p.expect.contact!==undefined)mark(A.firstC===p.expect.contact,p.expect.contact+'番へ先当て');
+  if(p.expect.noPocket)mark(A.pocketed.length===0,'ノーイン');
+  if(p.expect.kick)mark(cueRailsBefore(p.expect.contact)>=p.expect.kick,'手球 '+p.expect.kick+'クッション先行');
+  if(p.expect.cueRailsBefore!==undefined)mark(cueRailsBefore(p.expect.contact)>=p.expect.cueRailsBefore,'手球 '+p.expect.cueRailsBefore+'レール以上先行');
+  if(p.expect.objectRailsMin!==undefined){const n=(ev||[]).filter(e=>e.type==='cushion'&&e.id===(p.expect.pot??p.expect.contact)).length;mark(n>=p.expect.objectRailsMin,'的球 '+p.expect.objectRailsMin+'レール以上');}
+  if(p.expect.contactOrder)mark(p.expect.contactOrder.every((id,i)=>contacts[i]===id),'接触順 '+p.expect.contactOrder.join(' → '));
+  if(p.expect.cueRailsBeforeSecond!==undefined&&p.expect.contactOrder?.[1]!==undefined)mark(cueRailsBefore(p.expect.contactOrder[1])>=p.expect.cueRailsBeforeSecond,'第2的球まで '+p.expect.cueRailsBeforeSecond+'レール以上');
+  if(p.expect.combo){const [a,b]=p.expect.combo;mark((ev||[]).some(e=>e.type==='ball'&&((e.a===a&&e.b===b)||(e.a===b&&e.b===a))),a+' → '+b+' コンビ');}
+  if(p.expect.jumpClear!==undefined){const blocker=contacts.indexOf(p.expect.jumpClear),target=contacts.indexOf(p.expect.contact);mark(blocker<0||(target>=0&&target<blocker),p.expect.jumpClear+'番を空中回避');}
+  if(p.expect.masse)mark((actual.elev||0)>=10*D2R&&Math.abs(actual.tipX||0)>=.5&&A.firstC===p.expect.contact,'マッセ軌道');
+  if(p.expect.tipYMin!==undefined)mark((actual.tipY||0)>=p.expect.tipYMin,'上撞点でフォローを残す');
+  if(p.expect.tipYMax!==undefined)mark((actual.tipY||0)<=p.expect.tipYMax,'下撞点で逆回転を残す');
+  if(p.expect.tipXAbsMin!==undefined)mark(Math.abs(actual.tipX||0)>=p.expect.tipXAbsMin,'横回転を使う');
+  if(p.expect.elevMin!==undefined)mark((actual.elev||0)>=p.expect.elevMin,'必要なキュー角を使う');
+  if(p.expect.speedMin!==undefined)mark((actual.speed||0)>=p.expect.speedMin,'散開に必要な速度を使う');
+  if(p.expect.postContactRail)mark(!!A.railAfter,'接触後にクッションへ入れる');
+  if(p.expect.noScratch)mark(!(ev||[]).some(e=>(e.type==='pocket'||e.type==='off')&&e.id===0),'スクラッチなし');
+  if(p.avoidBalls?.length)mark(!contacts.some(id=>p.avoidBalls.includes(id)),'赤リングの障害球へ接触しない');
+  if(p.forbiddenPockets?.length){const bad=A.pocketEvents.filter(e=>p.forbiddenPockets.includes(e.pocketKey));mark(bad.length===0,'NGポケットなし');}
+  return {pass,checks,A,contacts};
+}
+function finishPuzzleAttempt(){
+  if(!PUZZLE.active||!PUZZLE.shotInProgress)return;PUZZLE.shotInProgress=false;const p=puzzleCurrent(),demo=PUZZLE.demoAtShot,result=curvePuzzleEvaluation(p,S.runEvents||[]);
+  if(demo){PUZZLE.demo=false;PUZZLE.demoAtShot=false;PUZZLE.watchedDemo=true;S.slow=!!PUZZLE.demoSlowBefore;$('btnSlow').classList.toggle('on',S.slow);
+    renderPuzzlePanel('AIお手本: '+result.checks.join(' / '));hint('AIお手本終了 — 数値を隠して同じ因果を逆算します');
+    setTimeout(()=>{if(PUZZLE.active)loadPuzzle(PUZZLE.index,false,true);},1100);return;}
+  if(result.pass){const stars=PUZZLE.watchedDemo?1:PUZZLE.hintLevel?2:PUZZLE.attempts<=2?3:PUZZLE.attempts<=5?2:1;
+    PUZZLE.progress[p.id]=Math.max(PUZZLE.progress[p.id]||0,stars);savePuzzleProgress();renderPuzzlePanel('CLEAR '+puzzleStarsText(stars)+' · '+result.checks.join(' / '));
+    hint('✓ PUZZLE CLEAR '+puzzleStarsText(stars)+' — 次の問題へ進めます');addEventLog('#'+p.number+' '+p.title,'PUZZLE CLEAR');
+  }else{renderPuzzlePanel('RETRY · '+result.checks.join(' / '));hint('未達 — 軌道を観察して再挑戦。必要なら段階ヒントを使えます');}
+}
+function enterPuzzle(){
+  if(S.app==='puzzle')return;if(S.app==='lesson')exitLesson();stopPuzzleMotion();if(S.mode==='place')exitPlace();
+  PUZZLE.save={balls:S.balls.map(cloneBall),defs:practiceDefs,layout:practiceLayout,rules:S.rules,currentGame,matchMode:MATCH.mode,rackOver:MATCH.rackOver,
+    aim:S.aim,speed:S.speed,elev:S.elev,tipX:S.tipX,tipY:S.tipY,envCarom:ENV.carom};
+  S.app='puzzle';MATCH.mode='puzzle';MATCH.rackOver=false;PUZZLE.active=true;$('proHud').style.display='none';$('eventLog').style.display='none';
+  $('advisor').classList.add('puzzleMode');$('puzzlePanel').classList.add('show');$('btnPlace').style.display='none';$('btnReset').style.display='none';$('btnCoach').style.display='none';
+  $('btnShot').textContent='パズルショット';document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m==='puzzle'));
+  let last=0;try{last=+localStorage.getItem('billiard-curve-puzzle-last')||0;}catch(_){ }loadPuzzle(last,true,false);
+}
+function exitPuzzle(){
+  if(S.app!=='puzzle')return;stopPuzzleMotion();PUZZLE.active=false;PUZZLE.demo=false;S.app='practice';
+  puzzleNgRings.forEach(x=>x.ring.visible=false);puzzleObstacleRings.forEach(x=>x.visible=false);
+  $('advisor').classList.remove('puzzleMode');$('puzzlePanel').classList.remove('show');$('proHud').style.display='';$('eventLog').style.display='';
+  $('btnPlace').style.display='';$('btnReset').style.display='';$('btnCoach').style.display='';$('btnShot').textContent='ショット';
+  const x=PUZZLE.save;if(x){MATCH.mode=x.matchMode||'free';MATCH.rackOver=!!x.rackOver;currentGame=x.currentGame;practiceDefs=x.defs;practiceLayout=x.layout;setBallSet(practiceDefs);S.balls=x.balls;S.rules=x.rules;
+    S.aim=x.aim;S.speed=x.speed;S.elev=x.elev;S.tipX=x.tipX;S.tipY=x.tipY;ENV.carom=!!x.envCarom;compatCanvas.style.display=ENV.carom?'block':'none';
+    $('gameSelect').value=currentGame;$('spd').value=S.speed;$('elv').value=Math.round(S.elev);}
+  document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===(MATCH.mode==='free'?'practice':MATCH.mode)));
+  uiOuts();drawPad();refreshChips();configureRace();updateCallChoices();updateHUD();schedulePred(0);updateHint();PUZZLE.save=null;
+}
+
+$('btnPuzzlePrev').addEventListener('click',()=>loadPuzzle(PUZZLE.index-1));
+$('btnPuzzleNext').addEventListener('click',()=>loadPuzzle(PUZZLE.index+1));
+$('btnPuzzleRetry').addEventListener('click',()=>loadPuzzle(PUZZLE.index,false,true));
+$('btnPuzzleHint').addEventListener('click',()=>{
+  if(!PUZZLE.active)return;const p=puzzleCurrent();PUZZLE.hintLevel=Math.min(3,PUZZLE.hintLevel+1);let msg=p.hint;
+  if(PUZZLE.hintLevel===2)msg='方向 '+Math.round(p.prm.aim*R2D/10)*10+'°付近／'+tournamentPowerBand(p.prm.speed)+'／'+p.technique;
+  if(PUZZLE.hintLevel===3)msg='角度 '+(p.prm.aim*R2D).toFixed(2)+'° · '+p.prm.speed.toFixed(2)+'m/s · 撞点 横'+(p.prm.tipX||0).toFixed(2)+' 縦'+(p.prm.tipY||0).toFixed(2)+' · キュー角 '+Math.round((p.prm.elev||0)*R2D)+'°';
+  renderPuzzlePanel('HINT '+PUZZLE.hintLevel+': '+msg);hint(msg);
+});
+$('btnPuzzleDemo').addEventListener('click',()=>{
+  if(!PUZZLE.active||S.mode!=='idle')return;loadPuzzle(PUZZLE.index,false,true);const p=puzzleCurrent();PUZZLE.demo=true;PUZZLE.watchedDemo=true;PUZZLE.demoSlowBefore=S.slow;S.slow=true;$('btnSlow').classList.add('on');
+  S.aim=p.prm.aim;S.speed=p.prm.speed;S.elev=(p.prm.elev||0)*R2D;S.tipX=p.prm.tipX||0;S.tipY=p.prm.tipY||0;
+  $('spd').value=S.speed;$('elv').value=Math.round(S.elev);uiOuts();drawPad();computePred();renderPuzzlePanel('AIが1/600秒の正解ストロークを再生中…');requestAnimationFrame(()=>shoot(false,true));
+});
+
 document.querySelectorAll('#modeSeg button').forEach(b =>
-  b.addEventListener('click', () => b.dataset.m === 'lesson' ? enterLesson() : exitLesson()));
+  b.addEventListener('click', () => {if(b.dataset.m==='lesson')enterLesson();else if(b.dataset.m==='puzzle')enterPuzzle();else{exitLesson();exitPuzzle();}}));
 $('btnPlay').addEventListener('click', () => {
   if (!L.tl) return;
   if (L.playing) { L.playing = false; updatePlayBtn(); return; }
@@ -7609,10 +8050,37 @@ function tournamentProblemScore(balls,id,cuePos){
   return (opts.length?Math.max(0,3-opts.length)*.65:3.2)+congestion*.58+(rail<.075?.85:rail<.13?.28:0)
     +(opts[0]?.difficulty||0)*.22;
 }
+function straightPatternContext(balls,cuePos=null){
+  const cue=balls.find(b=>b.id===0&&!b.pocketed&&!b.off),cp=cuePos||(cue?[cue.p[0],cue.p[1]]:[0,0]),
+    alive=balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off),scored=S.rules?.straightRackScored??MATCH.straightRackScored??0,
+    remainingToRack=Math.max(0,14-scored),items=alive.map(b=>{const opts=CO.potOptions(balls,cp,b.id),best=opts[0],cluster=tournamentClusterState(balls,b.id),
+      problem=tournamentProblemScore(balls,b.id,cp),pot=tournamentPotProbability(best),rackDistance=Math.hypot(b.p[0]-FOOT_X,b.p[1]),
+      sideWindow=Math.abs(b.p[1])>=.11&&Math.abs(b.p[1])<=.48&&b.p[0]>=FOOT_X-.34&&b.p[0]<=FOOT_X+.48,
+      breakScore=(sideWindow?1.25:0)+pot*.42+Math.min(.45,rackDistance*.48)-cluster.severity*.26-(straightRackInterferes(b)?1.2:0);
+      return {id:b.id,pot,problem,cluster:cluster.severity,breakScore,options:opts.length};});
+  const breakBall=items.slice().sort((a,b)=>b.breakScore-a.breakScore)[0]?.id||null,
+    insuranceBall=items.filter(x=>x.id!==breakBall).sort((a,b)=>b.pot-a.pot||a.problem-b.problem)[0]?.id||null,
+    keyBall=items.filter(x=>x.id!==breakBall&&x.id!==insuranceBall).sort((a,b)=>b.pot-a.pot||a.problem-b.problem)[0]?.id||insuranceBall,
+    problemBall=items.slice().sort((a,b)=>b.problem-a.problem||b.cluster-a.cluster)[0]?.id||null,
+    clusters=items.reduce((s,x)=>s+x.cluster,0);
+  return {scored,remainingToRack,breakBall,keyBall,insuranceBall,problemBall,clusters,items};
+}
+function straightShotScoringValue(before,after,calledId,potted){
+  const cue0=before.find(b=>b.id===0),cue1=after.find(b=>b.id===0),a=straightPatternContext(before,cue0?[cue0.p[0],cue0.p[1]]:null),
+    b=straightPatternContext(after,cue1?[cue1.p[0],cue1.p[1]]:null),remaining=Math.max(0,a.remainingToRack-potted.length);
+  let value=potted.length*.30;
+  if(calledId===a.breakBall&&a.remainingToRack>2)value-=1.75;
+  if(calledId===a.keyBall&&a.remainingToRack>2)value-=.38;
+  if(b.problemBall!==a.problemBall||b.clusters<a.clusters)value+=Math.max(0,a.clusters-b.clusters)*.28;
+  if(remaining<=3&&b.breakBall&&after.some(x=>x.id===b.breakBall&&!x.pocketed&&!x.off))value+=1.10+(3-remaining)*.22;
+  if(remaining<=2&&b.keyBall)value+=.30;
+  return value;
+}
 function tournamentShotScoringValue(before,after,turn,calledId){
   const alive=new Set(before.filter(b=>b.id!==0&&!b.pocketed&&!b.off).map(b=>b.id)),
     potted=after.filter(b=>b.id!==0&&b.pocketed&&alive.has(b.id)).map(b=>b.id),game=S.rules?.game;
   if(game==='rotation')return potted.reduce((s,id)=>s+id,0)/8;
+  if(game==='straight')return straightShotScoringValue(before,after,calledId,potted);
   if(game==='nine'||game==='ten')return potted.length*.22;
   if(game==='fujiyama'){
     const own=new Set(fujiyamaOwnIds(turn)),opp=new Set(fujiyamaOpponentIds(turn)),eightFirst=calledId===8;
@@ -7736,7 +8204,7 @@ function tournamentOpponentReplyProfile(balls,turn,deep=false){
     replyThreat,kickRequired,lockQuality};
 }
 function tournamentLeverage(){
-  const pointGame=currentGame==='rotation'||currentGame==='kairun'||currentGame==='fujiyama';
+  const pointGame=currentGame==='rotation'||currentGame==='straight'||currentGame==='kairun'||currentGame==='fujiyama';
   const who=MATCH.turn,us=pointGame?MATCH.points[who]:MATCH.racks[who],them=pointGame?MATCH.points[1-who]:MATCH.racks[1-who],race=MATCH.raceTo||5;
   const hill=Math.max(us,them)>=race-1, trailing=them-us;
   // プレッシャー＝消極策ではない。負けている時は攻撃幅を少し広げ、リード時だけ
@@ -7843,6 +8311,14 @@ function tournamentReplyThreatWithBallInHand(balls,turn){
   return clamp01(best);
 }
 function rotationNoCallModeText(){return 'フットスポット／フットレール側ロングラインへ戻して交代';}
+function rotationNoCallAllowed(r){
+  if(!r||!(r.kind==='rotation-nocall'||r.rotationNoCall)||r.rackCarryRequired)return false;
+  const remaining=(r.calledFinal||r.originalFinal||r.final||[]).filter(b=>b.id!==0&&!b.pocketed&&!b.off).length,
+    robust=clamp01(r.robust??r.confidence??0),nextThreat=clamp01(r.calledNextThreat??r.nextThreat??r.positionQuality??1),
+    replyThreat=clamp01(r.replyThreat??1),advantage=r.noCallAdvantage??((1-replyThreat)-nextThreat),
+    nextHard=(r.positionQuality!=null?r.positionQuality<.28:nextThreat<.26)||(r.nextCut??0)>64;
+  return remaining>0&&robust>=.66&&nextHard&&nextThreat<=.30&&replyThreat<=.20&&advantage>=.48;
+}
 function rotationNoCallCandidatesFromAttacks(balls,attacks,turn){
   if(!(S.rules&&S.rules.game==='rotation'))return [];
   const alive=new Set(balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off).map(b=>b.id)),out=[];
@@ -7850,13 +8326,13 @@ function rotationNoCallCandidatesFromAttacks(balls,attacks,turn){
     if(!a.final||!(a.robust>0))continue;
     const noCallIds=a.final.filter(b=>b.id!==0&&b.pocketed&&alive.has(b.id)).map(b=>b.id);if(!noCallIds.length)continue;
     // 無得点インは必ずスポットバックした後の配置で相手の返球難度を評価する。
-    const final=spottedState(a.final,noCallIds),replyThreat=tournamentReplyThreat(final,1-turn),cluster=tournamentClusterReport(final,1-turn,null),
-      clusterPressure=clamp01(cluster.severity/6),robust=clamp01(a.robust),control=1-replyThreat;
+    const final=spottedState(a.final,noCallIds),calledFinal=a.final,replyThreat=tournamentReplyThreat(final,1-turn),calledNextThreat=tournamentReplyThreat(calledFinal,turn),cluster=tournamentClusterReport(final,1-turn,null),
+      clusterPressure=clamp01(cluster.severity/6),robust=clamp01(a.robust),control=1-replyThreat,noCallAdvantage=control-calledNextThreat;
     const r={...a,kind:'rotation-nocall',rotationNoCall:true,noCallIds,noCallRule:'spot',final,robust,confidence:robust,
-      replyThreat,clusterPressure,runoutProb:0,twoWay:control,
+      calledFinal,calledNextThreat,nextThreat:calledNextThreat,noCallAdvantage,replyThreat,clusterPressure,runoutProb:0,twoWay:control,
       rackEV:robust*(.30+control*.72+clusterPressure*.12)-(1-robust)*.42,
       score:(a.score||0)+(1-control)*5.2-clusterPressure*1.2};
-    r.winProb=tournamentCandidateWin(r,'spot');out.push(r);
+    r.winProb=tournamentCandidateWin(r,'spot');r.rotationNoCallStrategic=rotationNoCallAllowed(r);if(r.rotationNoCallStrategic)out.push(r);
   }
   return out.sort((a,b)=>tournamentCandidateWin(b,'spot')-tournamentCandidateWin(a,'spot')||a.score-b.score);
 }
@@ -8000,7 +8476,8 @@ function tournamentDecisionMatrix({attack=null,safety=null,special=null,push=nul
       (safety.lock||clamp01(safety.lockQuality??0)>=.72)&&clamp01(safety.bestPotProb??1)<=.24,
     containingSafety=!!safety&&safetyRobust>=.64&&clamp01(safety.lockQuality??0)>=.58&&clamp01(safety.bestPotProb??1)<=.38,
     attackMargin=style==='attack'?-.075:style==='defense'?.050:style==='balanced'?.010:-.005,
-    attackBeatsLock=playablePot&&offenseValue>=safetyValue+attackMargin;
+    attackBeatsLock=playablePot&&offenseValue>=safetyValue+attackMargin,
+    strategicSpot=!!spot&&spot.rotationNoCallStrategic===true&&!directEasy&&spotValue>=offenseValue+(style==='defense'?-.018:.008);
   let primary=null,decision='',reason='';
   // Commit to one of two professional intentions.  An easy make is never passed;
   // otherwise a reproducible pot must beat the opponent's fully-modelled reply.
@@ -8008,6 +8485,8 @@ function tournamentDecisionMatrix({attack=null,safety=null,special=null,push=nul
   if(easyAttack){
     primary=offense;decision=offense===special?'super':'runout';
     reason='高再現の入れを完遂し、自然な手球経路で次球へつなぐ';
+  }else if(strategicSpot){
+    primary=spot;decision='spot';reason='次球ポジションだけが極端に悪く、ノーコールのスポットバックで相手の直接入れを消す';
   }else if(lockSafety&&!attackBeatsLock){
     primary=safety;decision='safety';reason='相手の全合法球を照合し、直接入れを消すロックセーフティを完遂';
   }else if(playablePot){
@@ -8034,7 +8513,7 @@ function tournamentDecisionMatrix({attack=null,safety=null,special=null,push=nul
   if(primary)primary.winProb=primary===attack?directWin:primary===special?specialWin:primary===safety?safetyWin:
     primary===spot?spotWin:primary===foul?foulWin:pushWin;
   for(const [r,v] of [[attack,directWin],[special,specialWin],[safety,safetyWin],[push,pushWin],[spot,spotWin],[foul,foulWin]])if(r)r.winProb=v;
-  return {primary,decision,reason,openAttack,playablePot,lockSafety,containingSafety,
+  return {primary,decision,reason,openAttack,playablePot,lockSafety,containingSafety,strategicSpot,
     style,values:{attack:directWin,special:specialWin,safety:safetyWin,push:pushWin,spot:spotWin,foul:foulWin},
     styleValues:{attack:directValue,special:specialValue,safety:safetyValue,push:pushValue,spot:spotValue,foul:foulValue}};
 }
@@ -8042,6 +8521,11 @@ function tournamentVision(r){
   if(!r)return '';
   if(r.rackCarryRequired&&r.rackCarryKitchen)return 'ラストを入れて手球をキッチンへ戻し、次ラックのブレイク権を維持';
   if(r.escape)return r.potId?coachKindName(r)+'で入れまで狙う':coachKindName(r)+'で合法ヒットを最大化';
+  if(S.rules?.game==='straight'){
+    const cue=cueBall(),p=straightPatternContext(S.balls,cue?[cue.p[0],cue.p[1]]:null);
+    return p.remainingToRack<=3?'終盤を逆算 — ブレイク球 '+(p.breakBall||'—')+'番／キー球 '+(p.keyBall||'—')+'番を残して14球再ラックへ':
+      '問題球 '+(p.problemBall||'—')+'番を早期処理し、保険球 '+(p.insuranceBall||'—')+'番とブレイク球 '+(p.breakBall||'—')+'番を保存';
+  }
   if(r.kind==='safety')return r.lock
     ?'相手の全合法球を照合し、直接入れ'+(r.replyOptions||0)+'通り・最善返信'+Math.round((r.replyThreat||0)*100)+'%まで封鎖'
     :'相手の簡単な直接球を消し、最善返信を'+Math.round((r.replyThreat||0)*100)+'%へ抑える';
@@ -8353,7 +8837,8 @@ function coachThink(options={}) {
   const aliveAtStart=new Set(balls.filter(b=>b.id!==0&&!b.pocketed).map(b=>b.id));
   const eightGroup=S.rules?.game==='eight'?(MATCH.groups[MATCH.turn]||S.rules.group):null,
     eightPlan=S.rules?.game==='eight'?(eightGroup?{recommendedGroup:eightGroup,best:eightBallGroupPlan(balls,eightGroup,[cue.p[0],cue.p[1]])}:
-      eightBallOpenPlan(balls,MATCH.turn,[cue.p[0],cue.p[1]])):null;
+      eightBallOpenPlan(balls,MATCH.turn,[cue.p[0],cue.p[1]])):null,
+    straightPlan=S.rules?.game==='straight'?straightPatternContext(balls,[cue.p[0],cue.p[1]]):null;
   if (cands.length > 1) {
     cands = cands.map(id => {
       const o = balls.find(b => b.id === id);
@@ -8363,8 +8848,10 @@ function coachThink(options={}) {
       const gp=GROUP_OF(id),plan=gp&&eightPlan?.plans?eightPlan.plans.find(x=>x.group===gp):eightPlan?.best,
         groupBias=gp&&eightPlan&&!eightGroup?(gp===eightPlan.recommendedGroup?-.42:.10):0,
         solve=plan?.problemBall===id?-.30:0,preserve=plan&&plan.ids.length>2&&plan.keyBall===id?.25:0,
-        insurance=plan&&plan.cluster>.7&&plan.insuranceBall===id?.12:0;
-      return { id, score: best + urgency+groupBias+solve+preserve+insurance, options: opts.length };
+        insurance=plan&&plan.cluster>.7&&plan.insuranceBall===id?.12:0,
+        straightBias=straightPlan?(id===straightPlan.problemBall?-.34:0)+(id===straightPlan.breakBall&&straightPlan.remainingToRack>2?.82:0)+
+          (id===straightPlan.keyBall&&straightPlan.remainingToRack>2?.22:0)+(id===straightPlan.insuranceBall&&straightPlan.clusters>1?.16:0):0;
+      return { id, score: best + urgency+groupBias+solve+preserve+insurance+straightBias, options: opts.length };
     }).sort((a, b) => a.score - b.score).slice(0, 7).map(x => x.id);
   }
   const targetId = cands[0];
@@ -9153,7 +9640,7 @@ function pressureMoment(targetId) {
   const gameBall=(S.rules&&S.rules.game==='nine'&&targetId===9)||(S.rules&&S.rules.game==='ten'&&targetId===10)
     ||(S.rules&&S.rules.game==='eight'&&targetId===8)
     ||(S.rules&&S.rules.game==='fujiyama'&&MATCH.points[MATCH.turn]>=MATCH.fujiyamaHandicap[MATCH.turn]-1);
-  const pointGame=currentGame==='rotation'||currentGame==='kairun'||currentGame==='fujiyama',scores=pointGame?MATCH.points:MATCH.racks;
+  const pointGame=currentGame==='rotation'||currentGame==='straight'||currentGame==='kairun'||currentGame==='fujiyama',scores=pointGame?MATCH.points:MATCH.racks;
   const hillHill=isCompetitiveMode()&&Math.max(scores[0]||0,scores[1]||0)>=MATCH.raceTo-1&&Math.abs((scores[0]||0)-(scores[1]||0))<=1;
   return gameBall||alive.length<=3||hillHill;
 }
@@ -9177,8 +9664,8 @@ function finishCoachDecision(targetId,risk,attackRecs,specialRecs,safeties){
     .filter(a=>!a.rackCarryRequired||a.rackCarryKitchen)
     .sort((a,b)=>styleAdjustedCandidateValue(b,'special')-styleAdjustedCandidateValue(a,'special')||a.score-b.score);
   const safety=safeties.slice().sort((a,b)=>styleAdjustedCandidateValue(b,'safety')-styleAdjustedCandidateValue(a,'safety')||a.score-b.score), pressure=pressureMoment(targetId);
-  // 自分用コーチでは戦術比較として残すが、対戦AIにはノーコール案を一切渡さない。
-  const spotTactics=Coach.forAI?[]:rotationNoCallCandidatesFromAttacks(S.balls,attack,MATCH.turn),spot=spotTactics[0],
+  // ノーコールは「入れられるから」ではなく、次球が極端に悪くスポットバック後の封鎖が明確な場合だけ比較する。
+  const spotTactics=rotationNoCallCandidatesFromAttacks(S.balls,attack,MATCH.turn),spot=spotTactics[0],
     a=attack[0],s=safety[0],x=special[0],p=Coach.pushOption,
     tacticalTime=!(Coach.deadline&&performance.now()>Coach.deadline-90),
     foul=tacticalTime&&(!a||(a.robust??0)<.42)&&(!s||(s.robust??0)<.50)?planIntentionalFoul(S.balls,MATCH.turn,Coach.auto):null;
@@ -9221,8 +9708,29 @@ function applyPlannedFujiyamaCue(r){
     ||S.rules.ballInHandRestricted&&!fujiyamaInsideHomePos(p[0],MATCH.turn)||!cuePlacementOpen(S.balls,p[0],p[1]))return false;
   const cue=cueBall();if(!cue)return false;removeSinkFor(cue);reviveBall(cue,p[0],p[1]);return true;
 }
+function applyPlannedStraightCue(r){
+  const p=r?.straightCuePlacement;if(!p||S.rules?.game!=='straight'||!S.rules.ballInHand||!cuePlacementOpen(S.balls,p[0],p[1]))return false;
+  const cue=cueBall();if(!cue)return false;removeSinkFor(cue);reviveBall(cue,p[0],p[1]);return true;
+}
+function applyPlannedTournamentCue(r){
+  if(applyPlannedFujiyamaCue(r)||applyPlannedStraightCue(r))return true;
+  if(!S.rules?.ballInHand)return false;
+  const raw=r?.breakCuePlacement||(r?.ballInHandPlacement&&[r.ballInHandPlacement.x,r.ballInHandPlacement.y]);
+  if(!raw||!Number.isFinite(raw[0])||!Number.isFinite(raw[1]))return false;
+  const opening=!S.rules.broken;
+  if(opening&&!breakCuePlacementOpen(S.balls,raw)||!opening&&!cuePlacementOpen(S.balls,raw[0],raw[1]))return false;
+  const cue=cueBall();if(!cue)return false;removeSinkFor(cue);reviveBall(cue,raw[0],raw[1]);cue.v=[0,0,0];cue.w=[0,0,0];syncMeshes();return true;
+}
+function plannedShotCall(r){
+  if(!r)return null;const raw=r.callBall??r.potId??r.tid??r.ball??r.targetId,ball=Number(raw);if(!Number.isFinite(ball)||ball<=0)return null;
+  let pocket=r.callPocket??r.pocket??r.pk;
+  if(pocket&&typeof pocket!=='string')pocket=pocketKey(pocket);
+  if(!pocket){const final=r.final||r.plannedFinal,fb=final?.find(b=>b.id===ball&&b.pocketed&&!b.off);pocket=fb?.pocketKey||null;}
+  if(!pocket)pocket=nearestPocketKey(S.balls.find(b=>b.id===ball));
+  return {ball,pocket,safety:!!(r.kind==='safety'||(r.escape&&!r.potId))};
+}
 function applyRec(r) {
-  applyPlannedFujiyamaCue(r);
+  applyPlannedTournamentCue(r);
   S.aim = r.prm.aim;
   S.speed = r.prm.speed;
   S.elev = (r.prm.elev || 0) * R2D;
@@ -9239,13 +9747,9 @@ function applyRec(r) {
   drawPad();
   uiOuts();
   if(MATCH.rotationNoCall)MATCH.call={ball:null,pocket:null,safety:false};
-  else if(S.rules&&['ten','eight','rotation'].includes(S.rules.game)){
-    const ball=r.tid||r.potId||r.ball||r.targetId;
-    const pk=r.pk||r.pocket;
-    if(ball)MATCH.call.ball=+ball;
-    if(typeof pk==='string')MATCH.call.pocket=pk;
-    else if(pk)MATCH.call.pocket=pocketKey(pk);
-    MATCH.call.safety=r.kind==='safety'||(r.escape&&!r.potId);
+  else if(S.rules&&['ten','eight','rotation','straight'].includes(S.rules.game)){
+    if(r.kind==='break')MATCH.call=S.rules.game==='straight'?{ball:null,pocket:null,safety:true}:{ball:null,pocket:null,safety:false};
+    else MATCH.call=plannedShotCall(r)||MATCH.call;
     updateCallChoices();
   }
   computePred();
@@ -9261,7 +9765,7 @@ function coachPotPlanName(r){
 function coachKindName(r) {
   const k = r.kind || '';
   const attackPrefix=r.escape&&r.potId?'入れ狙い・':'';
-  if (k === 'break') return currentGame==='fujiyama'?(r.openingStrategy||'8番オープニング'):'ブレイク';
+  if (k === 'break') return currentGame==='fujiyama'?(r.openingStrategy||'8番オープニング'):currentGame==='straight'?'14-1 セーフティブレイク':'ブレイク';
   if (k === 'fujiyama-score') return '自球を有効ゴール';
   if (k === 'fujiyama-pass-goal') return '8番経由で自球をゴール';
   if (k === 'fujiyama-eight') return '8番インから継続';
@@ -9859,6 +10363,14 @@ function rackRotationLayout(style) {
   return out;
 }
 
+// 14-1 opening rack: apex is on the foot spot; there is no intentional pattern.
+function straightRackLayout(style) {
+  const slots=rackSlots(5),ids=style==='random'?shuffled([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]):[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    out=[{id:0,x:-.88,y:.47}];
+  slots.forEach((p,i)=>out.push({id:ids[i],x:p[0],y:p[1]}));
+  return out;
+}
+
 function kairunLayout() {
   return [
     { id:0, x:-0.88, y:0.22 },
@@ -9895,7 +10407,7 @@ function fujiyamaLayout(){
 }
 
 let rulesTemplate = null;
-let currentGame = 'set4';       // set4 | nine | ten | eight | rotation | kairun | fujiyama
+let currentGame = 'set4';       // set4 | nine | ten | eight | rotation | straight | kairun | fujiyama
 function loadPreset(game, style) {
   if (S.mode === 'running') return;
   if (game) currentGame = game;
@@ -9915,6 +10427,10 @@ function loadPreset(game, style) {
   } else if (currentGame === 'rotation') {
     practiceLayout = rackRotationLayout(rackStyle);
     rulesTemplate = () => ({ game:'rotation', broken:false, ballInHand:true, targetAtShot:null, won:false, lost:false, pushAvailable:false });
+  } else if (currentGame === 'straight') {
+    practiceLayout=straightRackLayout(rackStyle);
+    rulesTemplate=()=>({game:'straight',broken:false,ballInHand:true,ballInHandRestricted:true,targetAtShot:null,
+      straightRackScored:0,openingBreaker:MATCH.turn,won:false,lost:false});
   } else if (currentGame === 'kairun') {
     practiceLayout = kairunLayout();
     rulesTemplate = () => ({ game:'kairun', broken:true, ballInHand:true, targetAtShot:1,
@@ -9960,7 +10476,11 @@ function loadPreset(game, style) {
     hint('ランダム配置(9ボールルール)。🎓コーチが、この任意局面を全探索して最善手を出します');
     return;
   }
-  const gname = ({nine:'9ボール',ten:'10ボール',eight:'8ボール',rotation:'ローテーション',kairun:'カイルン',fujiyama:'FUJIYAMA'})[currentGame];
+  const gname = ({nine:'9ボール',ten:'10ボール',eight:'8ボール',rotation:'ローテーション',straight:'14-1',kairun:'カイルン',fujiyama:'FUJIYAMA'})[currentGame];
+  if(currentGame==='straight'){
+    hint('14-1 オープニング: 手球と2個の的球を接触後にクッションへ。以後は球とポケットをコールし、14球で再ラックします');
+    return;
+  }
   if (currentGame === 'kairun') {
     hint('カイルン初球: 手球をキッチン内で動かし、黄(1番)→赤の順に当てます。次は赤＋赤、最後に3球全部で1点');
     return;
@@ -9980,13 +10500,14 @@ function loadPreset(game, style) {
 }
 
 // ==================== PRO UI / 公式競技レイヤー ====================
-const GAME_LABEL = {set4:'ショットラボ',nine:'9-BALL',ten:'10-BALL',eight:'8-BALL',rotation:'ROTATION',kairun:'カイルン 2・3・5',fujiyama:'FUJIYAMA'};
+const GAME_LABEL = {set4:'ショットラボ',nine:'9-BALL',ten:'10-BALL',eight:'8-BALL',rotation:'ROTATION',straight:'14-1 CONTINUOUS',kairun:'カイルン 2・3・5',fujiyama:'FUJIYAMA'};
 const POCKET_LABEL = {tl:'左上',tm:'上サイド',tr:'右上',br:'右下',bm:'下サイド',bl:'左下'};
 const RULE_TEXT = {
   nine: `<h3>ナインボール</h3><ul><li>現行WPA配列は1番を先頭、9番を中央かつフットスポットに置き、残りを意図的なパターンなしで配置する。本機は9番オンフットを既定とし、1番オンフットの従来方式も選べる。</li><li>常に最小番号へ先当て。合法に9番が入れば勝利、ファウル／プッシュの9番はスポット、3連続ファウルはラック敗北。</li><li>ブレイクはインまたは4球クッションに加え、<b>イン数＋ヘッドライン通過球が3以上</b>。後者だけ不成立なら、相手は現配置を受ける／ブレイカーへ返すを選び、受けた側はプッシュ不可。</li><li>プッシュアウトは「相手が撞く」と「自分に返される」の両方を評価し、悪い方でも生きる配置だけ採用。</li><li>攻略は目先の入れだけでなく、最低3球先のルート、正しい側、クラスター、ツーウェイ、3ファウルプレッシャーを同時比較。</li></ul>`,
   ten: `<h3>テンボール</h3><ul><li>現行WPA配列は1番を先頭かつフットスポット、10番を中央に置き、残りを意図的なパターンなしで配置する。</li><li>最小番号へ先当てするコールショット競技。</li><li>10番は、他の的球がすべて無くなった後の合法なコールショットでのみ勝利。</li><li>早い10番、ファウル時の10番、場外の10番はスポットへ戻る。</li><li>コール不成立で球が入った場合、相手に「現状を撞く／返す」の選択権。</li><li>ブレイク直後のみプッシュアウト可能。3連続ファウルはラック敗北。</li></ul>`,
   eight: `<h3>エイトボール</h3><ul><li>オープンテーブルで合法にコール球を入れた時点でソリッド／ストライプを決定。セーフティコールでは組は決まらない。</li><li>ブレイクで8番インは「8番を戻して続行／再ブレイク」、8番＋ファウルは相手が「8番を戻しヘッドライン内フリー／再ブレイク」を選択。</li><li>4球クッション未満のイリーガルブレイクは、現配置／自分が再ブレイク／相手に再ブレイクの3択。</li><li>自分の7球後に8番をコールイン。早い8番、8番と同時のファウル、別ポケット、8番場外は敗北。通常ファウル後は全面フリー。</li><li>攻略は両グループの<b>全取り切り率</b>を比較し、問題球を早めに解決、キーボールと保険球を残し、8番の穴と正しい側から逆算。</li></ul>`,
   rotation: `<h3>ローテーション（120点完全保持）</h3><ul><li>最小番号へ先当てし、合法に入った球の番号を得点にする。合法なコール球と同時に入った他球も得点。</li><li>1ラックの球番号合計は必ず<b>120点</b>。試合の勝敗点は120／180／240／300点から選べるが、各ラックは得点済み球の合計が120になるまで完了しない。</li><li>ノーコールまたはコール不成立で入った的球は無得点。番号の小さい順に必ずフットスポットへ戻し、塞がっていればフットレール側のロングライン上へ置いて交代する。</li><li>次ラックへ続く場合、ラストボールを入れた選手が次もブレイクできるのは、同じショットで手球をキッチン内へ戻した時だけ。その場合は手球を動かさず停止位置からブレイクし、キッチンへ戻せなければブレイク権は相手へ移る。</li><li>通常ファウル後は、手球を現状／ヘッドライン内、最小番号球を現状／センター／フットから1回宣言。ファウルインも番号順に戻す。3ファウルは相手の全面フリー。</li><li>ブレイキングファウルは組み直して自分がブレイク／相手に再ブレイク、ブレイクスクラッチはヘッドライン内から再開。</li><li>攻略は次球の入れ率に加え、<b>同時インの得点値</b>、高点球コンビ／キャノン、クラスター解消、目標点までの残り、ノーコールスポット返し後の相手脱出率まで比較。</li></ul>`,
+  straight: `<h3>14-1 Continuous（ストレートプール）</h3><ul><li>15球すべてが合法な先球。球とポケットをコールし、合法なコール球は1点、同時に入った他球も各1点。得点はファウルでマイナスにもなる。</li><li>オープニングでコール球が入らない場合、ラック接触後に<b>手球と2個の的球</b>がそれぞれクッションへ到達する。未達は−2点で、相手は現状受け／同じ選手へ再ブレイクを選ぶ。</li><li>14球を合法得点すると先頭を空けた14球を再ラックし、残ったブレイクボールから同じ選手が続行。手球・15個目の球がラック線へ干渉する全配置を公式表どおり移動する。</li><li>セーフティ、ファウル、コール不成立で落ちた球と場外球はスポットへ戻る。通常ファウルは−1点。スクラッチ時だけ相手はヘッドライン内フリーで、その他は手球現状。</li><li>通常ファウル3回連続は3回目の−1に加えて−15点。全15球を組み、違反者がオープニング条件でブレイクする。ブレイキングファウルは連続数へ数えない。</li><li>AIは単球の入れ率だけでなく、クラスターを早期に開く球、保険球、最後のキーボール、ラック外に残すブレイクボール、その正しい側へ出る速度窓を逆算する。</li></ul>`,
   kairun: `<h3>カイルン（台湾式四ツ球／2・3・5）</h3><ul><li>ポケット台で、白手球と1番（黄）、3番・11番（赤）の4球を使う。</li><li>STEP 2「黄＋赤」→ STEP 3「赤＋赤」→ STEP 5「黄＋赤＋赤」を同じ撞き番で順に成功させ、初めて1点。</li><li>初球だけはキッチン内の手球から黄→赤の順。以後のSTEP 2は黄・赤どちらが先でもよい。STEP 2・3で3球全部はニセカイルン（標準−1点・交代）。</li><li>ノークッション、スクラッチ、的球イン自体はファウルではない。落ちた球はフット→ヘッド→センター→黄スポットの順で戻す。</li><li>トップ層の発想は「当てる」で終わらず、STEP 2で赤2球、STEP 3で黄＋赤2球の角度を作り、STEP 5後の次のSTEP 2まで設計。手球からの可視性、球間隔、三角形のバランス、ポケット・レール際・球同士のフローズン危険を評価する。</li><li>直接、押し・引き、内外の捻り、カーブ、ジャンプ、マッセ、1〜3クッションを同じ物理で比較。ポケットイン後のスポットも次配置として採点し、最短経路だけでなく次STEPの許容幅を優先する。</li><li>STEP 5は3球へ触れただけでは完成候補にしない。3球目到達時の手球実速度を測り、狙い±0.12°と10%弱い力でも完遂する余力を必須にする。2/3や到達余力不足は「未完成参考線」として分離する。</li></ul>`,
   fujiyama: `<h3>FUJIYAMA</h3><ul><li>ローボール1〜7とハイボール9〜15を持ち球にし、反対側の2コーナーへ設定数を入れる。初期配置は各陣のツーポイント内に7球。上下の長クッションへ各2球、短クッションへ3球を、全指定ポイントで完全タッチさせる。8番は何度でも使えるパスボール。</li><li><b>自殺点：</b>❽以外の自球を第一的球にして相手球を入れた場合、6ポケットのどこでも相手の得点となり、その球は戻らない。❽を第一的球にして間接的に相手球を入れた場合だけ自殺点にならず、相手側の初期7ポイントへ戻して撞いた側が続行する。</li><li>初球は自陣内の手球から8番へ先当て。継続中に8番を2ショット連続で第一的球にはできない。全ショットはノンコール。</li><li>コーチは、8番コーナーから自陣へ引く、8番サイドから自陣へ戻す、強打で複数球を敵陣のゴール圏へ運ぶ押し殺し、相手陣球をブレーキに使う展開、8番を含む長クッションバンク、センター脇からの逆押し・手前コーナー逆バンクを比較する。</li><li>序盤・中盤は小さな寄せだけにせず、複数自球を強く上げる。中盤以降は直接入れだけを優先せず、入れ線を少し外してゴール口へ寄せる二方向、相手が一手で消し切れない二重脅威、8番を入れずに大きく動かすセーフティを比較する。</li><li>自陣へ迫る相手球は、最大の1球だけでなく複数球の脅威総量を測る。8番または自球を合法な第一的球にして二次衝突させ、相手陣方向または横方向へ、有効ゴールから大きく遠ざける。8番経由で相手球が入れば、自殺点にせず初期ポイントへ戻した盤面まで評価する。</li><li>手番を渡す全ショットで、相手の直接入れ、8番インからの継続、8番経由の自球得点、見える合法球、短クッション距離を合わせて相手の最善返しを読む。</li><li>双方残り1球はHILL-HILLの一発勝負として、バンクや捻りを含む勝負球の成立幅と外した時の配置を同時評価する。入れば勝ちでも成立幅が狭く、外すと相手へ決め球を渡す場合は、堅い封鎖を上位にできる。</li><li>8番は入るたびセンターへ戻す。</li><li><b>大阪版</b>は通常ファウル後に自陣内から再開し、キッチン外の自球または8番を狙える。スクラッチと自陣内相手球への先当ては手球全面フリー。</li><li><b>公式版</b>の通常ファウルは8番を必ず第一的球にする間接FK。スクラッチ／場外は直接FK、自陣内の相手球への先当ては自球1個の移動権を含むPK。</li><li>コーチは得点だけでなく、8番からの次球、余剰自球のゴール前ブロッカー、相手脅威球の押し戻し／8番経由リセット、戦略的自殺点、スクラッチ損失、前後半の合計点を比較する。</li></ul>`,
   common: `<h3>共通判定</h3><ul><li>スクラッチ／場外、先当たり違反、無接触、接触後ノークッション、二度撞き相当を判定対象とする。</li><li>合法な攻撃もセーフティも成立しない局面では、通常のキューストロークによる戦術的ファウルを、相手のフリーボール後まで実走査して比較する。</li><li>意図的なミスキュー、手や衣服で球を動かす行為、ヘッドライン規定の故意違反などWPAの非スポーツマン的行為は候補生成しない。</li><li>物理ステップは1/600秒。球・クッション衝突、滑り→転がり遷移、スピン、スロウ、ジョー、シェルフを計算。</li><li>足が床から離れる、衣服の球触り等、画面外の身体行為はシミュレーターでは発生しない。</li></ul>`
@@ -10136,7 +10657,7 @@ document.addEventListener('keydown', e => {
 
 function buildRuleTabs(active) {
   const tabs = $('ruleTabs'); tabs.innerHTML = '';
-  for (const k of ['nine','ten','eight','rotation','kairun','fujiyama','common']) {
+  for (const k of ['nine','ten','eight','rotation','straight','kairun','fujiyama','common']) {
     const b = document.createElement('button');
     b.textContent = k === 'common' ? '共通' : GAME_LABEL[k];
     b.classList.toggle('on', k === active);
@@ -10264,6 +10785,7 @@ function configureRace() {
   const old = currentGame==='rotation'?MATCH.rotationTarget:MATCH.raceTo;
   const sets = currentGame === 'kairun' ? [[3,'3点'],[5,'5点'],[7,'7点'],[10,'10点']]
     : currentGame === 'rotation' ? [[120,'120点'],[180,'180点'],[240,'240点'],[300,'300点']]
+    : currentGame === 'straight' ? [[50,'50点'],[75,'75点'],[100,'100点'],[125,'125点'],[150,'150点']]
     : currentGame === 'fujiyama' ? [[1,'単戦'],[2,'前後半']]
     : [[3,'3先'],[5,'5先'],[7,'7先'],[9,'9先']];
   const chosen = sets.some(x=>x[0]===old) ? old : sets[0][0];
@@ -10285,7 +10807,7 @@ function updateHUD() {
   $('p0Name').textContent = MATCH.names[0]; $('p1Name').textContent = MATCH.names[1];
   for(const i of [0,1]){const plate=$('p'+i+'Plate');for(const key of Object.keys(AI_STYLE_PROFILES))plate.classList.remove('ai-'+key);
     if(MATCH.mode==='spectator')plate.classList.add('ai-'+aiStyleKey(i));}
-  const pointGame = currentGame === 'rotation' || currentGame === 'kairun';
+  const pointGame = currentGame === 'rotation' || currentGame === 'kairun' || currentGame === 'straight';
   $('p0Score').textContent = currentGame==='fujiyama'?MATCH.points[0]+' / '+MATCH.fujiyamaHandicap[0]:(pointGame ? MATCH.points[0]+' / '+MATCH.raceTo : MATCH.racks[0]);
   $('p1Score').textContent = currentGame==='fujiyama'?MATCH.points[1]+' / '+MATCH.fujiyamaHandicap[1]:(pointGame ? MATCH.points[1]+' / '+MATCH.raceTo : MATCH.racks[1]);
   $('p0Fouls').textContent = '●'.repeat(MATCH.fouls[0]); $('p1Fouls').textContent = '●'.repeat(MATCH.fouls[1]);
@@ -10297,6 +10819,7 @@ function updateHUD() {
   if (currentGame === 'kairun' && S.rules) state = 'STEP ' + [2,3,5][S.rules.kairunStage || 0];
   if(currentGame==='rotation')state='ROTATION '+MATCH.raceTo+'点 · RACK '+rotationRackTotal()+'/120 · '+state;
   if(currentGame==='rotation'&&MATCH.rotationNoCall)state+=' · NO CALL SPOT BACK';
+  if(currentGame==='straight'&&S.rules)state='14-1 '+MATCH.raceTo+'点 · RACK '+(S.rules.straightRackScored||0)+'/14 · '+state;
   if(currentGame==='fujiyama'){
     const rule=MATCH.fujiyamaRule==='osaka'?'大阪版':'公式版',half=MATCH.raceTo===2?' · '+(MATCH.fujiyamaHalf===1?'前半':'後半'):'';
     state='FUJIYAMA '+rule+half+' · '+fujiyamaSideLabel(MATCH.turn)+(MATCH.fujiyamaEightLocked?' · 8番連続不可':'')+(S.rules?.ballInHand?' · 手球フリー':'');
@@ -10305,7 +10828,7 @@ function updateHUD() {
   $('gameState').textContent = state;
   $('btnPushOut').disabled = MATCH.mode==='spectator'||!(S.rules && S.rules.pushAvailable) || S.mode === 'running' || MATCH.aiBusy;
   $('btnPushOut').classList.toggle('on', MATCH.pushDeclared);
-  $('btnCall').style.display = MATCH.mode!=='spectator'&&['ten','eight','rotation'].includes(currentGame) ? '' : 'none';
+  $('btnCall').style.display = MATCH.mode!=='spectator'&&['ten','eight','rotation','straight'].includes(currentGame) ? '' : 'none';
   $('btnCall').textContent=currentGame==='rotation'&&MATCH.rotationNoCall?'ノーコール':'コール';
   $('btnShot').disabled = S.mode === 'running' || S.mode === 'place' || MATCH.rackOver || MATCH.aiBusy || aiControlsTurn();
   updateCoachButton();
@@ -10325,13 +10848,14 @@ function configureGame(game, resetScore) {
   ENV.carom = false; compatCanvas.style.display = 'none';
   if (resetScore) { MATCH.racks = [0,0]; MATCH.points = [0,0]; MATCH.breaker = 0; MATCH.turn = game==='fujiyama'?MATCH.fujiyamaStarter:0;
     if(game==='fujiyama'){MATCH.fujiyamaHalf=1;MATCH.fujiyamaHalfScores=[[0,0],[0,0]];MATCH.fujiyamaSides=MATCH.fujiyamaBaseSides.slice();}}
-  else if (MATCH.rackOver && !['rotation','kairun','fujiyama'].includes(game)) { MATCH.breaker = 1 - MATCH.breaker; MATCH.turn = MATCH.breaker; }
+  else if (MATCH.rackOver && !['rotation','straight','kairun','fujiyama'].includes(game)) { MATCH.breaker = 1 - MATCH.breaker; MATCH.turn = MATCH.breaker; }
   MATCH.fouls = [0,0]; MATCH.groups = [null,null]; MATCH.call = {ball:null,pocket:null,safety:false};
   MATCH.eightStalemateTurns=0;MATCH.eightLastLayout='';
   MATCH.fujiyamaEightLocked=false;
   S.tapTarget=null;S.aimTarget=null;S.aimPocket=null;closeGhostEditor(false);closeCoachPicker();
   MATCH.pushDeclared = false;MATCH.rotationNoCall=false;MATCH.intentionalFoul=false;
   if(game==='rotation')MATCH.rotationRackAwarded=[];
+  if(game==='straight'){MATCH.straightRackScored=0;MATCH.straightRacksCompleted=0;MATCH.straightOpeningBreaker=MATCH.turn;}
   MATCH.optionPending=null;closeLayer('rotationFoulModal');closeLayer('fujiyamaRestartModal');closeLayer('fujiyamaReturnModal');closeLayer('optionModal');
   S.rotationPlacementPreview=null;restMark.visible=nextMark.visible=idealMark.visible=nextLine.visible=false;
   MATCH.lessonChallenge=null;
@@ -10348,7 +10872,9 @@ function configureGame(game, resetScore) {
 
 function setPlayMode(mode) {
   if (mode === 'lesson') { MATCH.mode = 'lesson'; $('proHud').style.display = 'none'; return; }
+  if (mode === 'puzzle') { enterPuzzle(); return; }
   if (S.app === 'lesson') exitLesson();
+  if (S.app === 'puzzle') exitPuzzle();
   clearAIWatchdog();MATCH.aiToken++;cancelCoach(true);MATCH.aiBusy=false;
   MATCH.mode = mode;
   MATCH.spectatorPaused=false;
@@ -10418,7 +10944,7 @@ function autoCall() {
 $('btnCall').addEventListener('click', () => {
   if(!MATCH.rotationNoCall)autoCall(); updateCallChoices(); $('callBall').value = MATCH.call.ball || '';
   $('callPocket').value = MATCH.call.pocket || 'tr'; $('btnSafetyCall').classList.toggle('on', MATCH.call.safety);
-  $('btnSafetyCall').style.display = currentGame === 'eight'||currentGame==='rotation' ? '' : 'none';
+  $('btnSafetyCall').style.display = currentGame === 'eight'||currentGame==='rotation'||currentGame==='straight' ? '' : 'none';
   if(currentGame==='rotation'){
     const n='ノーコール（必ずフット／ロングラインへ戻す）';
     $('btnSafetyCall').textContent=MATCH.rotationNoCall?'✓ '+n:n;
@@ -10451,6 +10977,7 @@ document.querySelectorAll('#modeSeg button').forEach(b => b.addEventListener('cl
   if (b.dataset.m === 'match') setPlayMode('match');
   else if (b.dataset.m === 'spectator') setPlayMode('spectator');
   else if (b.dataset.m === 'practice') setPlayMode('free');
+  else if(b.dataset.m==='puzzle')setPlayMode('puzzle');
   else { MATCH.mode = 'lesson'; $('proHud').style.display = 'none'; }
 }));
 
