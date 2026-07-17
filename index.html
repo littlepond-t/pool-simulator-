@@ -849,7 +849,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">BILLIARD LAB PRO <small>v2.24.0</small></span>
+      <span id="proBadge">BILLIARD LAB PRO <small>v2.24.1</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
         <option value="set4">ショットラボ</option>
@@ -1021,7 +1021,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③強さを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.0</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.1</b><span>Created by littlepond</span></div>
   </section>
 </div>
 
@@ -1123,7 +1123,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.0</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.1</b><span>Created by littlepond</span></div>
     <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
@@ -13530,7 +13530,7 @@ const LESSON_CATALOG=[...LESSONS,...PRO_SHOTS.filter(x=>x.replayable)];
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='2.24.0';
+const APP_VERSION='2.24.1';
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
   green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
@@ -13573,6 +13573,7 @@ const MATCH = {
   lastActual: null, lastIdeal: null, log: [], rackOver: false,
   coachMode: 'quick', matchTempo: 'fast', autoCoachTimer: null, aiDecision: '',
   aiToken: 0, aiWatchdog: null, aiPlan:null, shotStartedAt: 0, shotForceStop: false,
+  aiRecoveryKey:'', aiReplanCount:0, aiReplanReason:'',
   aiStyles:['champion','champion'], aiShafts:['carbon','ldwood'], spectatorPaused:false,
   tableVariance:'realistic',rackSerial:0,rackCondition:null,
   safetyAttempts:[0,0], attackAttempts:[0,0], safetyStreak:[0,0],
@@ -13582,6 +13583,22 @@ const MATCH = {
   straightRackScored:0, straightRacksCompleted:0, straightOpeningBreaker:0,
   lessonChallenge:null,
 };
+const AI_REPLAN_LIMIT=2;
+function aiRecoveryTurnKey(actor=MATCH.turn){
+  const game=S.rules?.game||currentGame||'free',legal=S.rules?legalTargets().slice().sort((a,b)=>a-b).join(','):'none';
+  return [game,actor,MATCH.rackSerial,MATCH.shotNo,MATCH.inning,S.rules?.broken?1:0,legal].join('|');
+}
+function aiEnsureRecoveryState(actor=MATCH.turn){
+  const key=aiRecoveryTurnKey(actor);
+  if(MATCH.aiRecoveryKey!==key){MATCH.aiRecoveryKey=key;MATCH.aiReplanCount=0;MATCH.aiReplanReason='';}
+  return {key,count:MATCH.aiReplanCount,limit:AI_REPLAN_LIMIT,exhausted:MATCH.aiReplanCount>=AI_REPLAN_LIMIT};
+}
+function aiRegisterReplan(actor=MATCH.turn,reason='plan-audit'){
+  aiEnsureRecoveryState(actor);MATCH.aiReplanCount++;MATCH.aiReplanReason=reason;
+  return {key:MATCH.aiRecoveryKey,count:MATCH.aiReplanCount,limit:AI_REPLAN_LIMIT,
+    exhausted:MATCH.aiReplanCount>=AI_REPLAN_LIMIT,reason};
+}
+function aiResetRecoveryState(){MATCH.aiRecoveryKey='';MATCH.aiReplanCount=0;MATCH.aiReplanReason='';}
 const PUZZLE={active:false,index:0,attempts:0,hintLevel:0,demo:false,demoAtShot:false,shotInProgress:false,
   watchedDemo:false,progress:{},save:null,timeScale:1,countdown:false};
 try{PUZZLE.progress=JSON.parse(localStorage.getItem('billiard-side-pocket-puzzle-progress-v12')||'{}')||{};}catch(_){PUZZLE.progress={};}
@@ -15086,8 +15103,10 @@ function actualStroke(base, fromAI) {
   MATCH.lastIdeal = {...base}; MATCH.lastActual = {...p};
   return p;
 }
-function aiStrokeLegality(sim,plan=null){
-  if(!sim)return false;const A=analyzeRunEvents(sim.events||[]),legal=S.rules?.legalAtShot||legalTargets();
+function aiStrokeLegality(sim,plan=null,legalIds=null){
+  if(!sim)return false;const A=analyzeRunEvents(sim.events||[]),legal=legalIds||legalTargets(),
+    cue=(sim.final||sim.bs||[]).find(b=>b.id===0);
+  if(!cue||cue.pocketed||cue.off)return false;
   if(A.firstC===null||!legal.includes(A.firstC)||!A.railAfter)return false;
   if(S.rules?.wasBreak&&S.rules?.game==='straight')return straightOpeningMetrics(A,sim.events||[]).legal;
   // 実行誤差を加えた後も、種目別の本番ブレイク規定をそのまま再検査する。
@@ -15096,28 +15115,28 @@ function aiStrokeLegality(sim,plan=null){
     plan?.targetId??plan?.ball,legal).legal;
   return true;
 }
-function standardPlanIntentMatches(plan,sim,balls=S.balls,turn=MATCH.turn){
-  if(!sim||!plan)return aiStrokeLegality(sim,plan);
+function standardPlanIntentMatches(plan,sim,balls=S.balls,turn=MATCH.turn,legalIds=null){
+  if(!sim||!plan)return aiStrokeLegality(sim,plan,legalIds);
   const final=sim.final||[],potted=id=>final.some(b=>b.id===id&&b.pocketed&&!b.off),kind=plan.kind||'';
-  if(kind==='break')return aiStrokeLegality(sim,plan);
+  if(kind==='break')return aiStrokeLegality(sim,plan,legalIds);
   if(kind==='pushout')return !!pushOutLegalFinal(balls,sim);
   if(kind==='safety'){
-    const r={bs:final,ev:sim.events||[],stopped:true},legal=S.rules?.legalAtShot||legalTargets(),
+    const r={bs:final,ev:sim.events||[],stopped:true},legal=legalIds||legalTargets(),
       x=evaluateSafetyResult(balls,r,plan.prm||{},legal,plan.targetId||plan.ball,turn,false);
     if(!x)return false;
     if(plan.straightControl)return x.rackEscaped<=1&&x.rackDisplacement<=.82;
     return plan.lock?x.lock&&x.lockQuality>=Math.max(.58,(plan.lockQuality||.70)-.14):x.containment;
   }
-  if(kind==='rotation-nocall')return (plan.noCallIds||[]).every(potted)&&aiStrokeLegality(sim);
-  if(plan.escape&&!plan.potId)return aiStrokeLegality(sim);
+  if(kind==='rotation-nocall')return (plan.noCallIds||[]).every(potted)&&aiStrokeLegality(sim,plan,legalIds);
+  if(plan.escape&&!plan.potId)return aiStrokeLegality(sim,plan,legalIds);
   const id=plan.potId??plan.tid??(kind==='pot'?plan.ball:null);
   if(id!=null){
-    if(!potted(id)||!aiStrokeLegality(sim))return false;
+    if(!potted(id)||!aiStrokeLegality(sim,plan,legalIds))return false;
     const wanted=typeof plan.pocket==='string'?plan.pocket:plan.pk?pocketKey(plan.pk):null,
       actual=final.find(b=>b.id===id)?.pocketKey;
     return !wanted||!actual||wanted===actual;
   }
-  return aiStrokeLegality(sim);
+  return aiStrokeLegality(sim,plan,legalIds);
 }
 function kairunPlanIntentMatches(plan,sim,stage=S.rules?.kairunStage||0,opening=!!S.rules?.opening){
   if(!sim)return false;const events=sim.events||sim.ev||[],result=kairunContactMetrics(events,stage,opening);
@@ -15131,7 +15150,7 @@ function kairunPlanIntentMatches(plan,sim,stage=S.rules?.kairunStage||0,opening=
 }
 function tournamentAIStroke(base,plan){
   if(plan?.kind==='intentional-foul')return actualStroke(base,true);
-  let sampled=null;
+  let sampled=null;const liveLegal=legalTargets();
   // The decision and the execution must tell the same story.  An ATTACK sample
   // has to make the planned ball; a SAFETY sample has to preserve the planned
   // lock.  Human variation remains, but a random legal miss is never relabelled
@@ -15143,15 +15162,15 @@ function tournamentAIStroke(base,plan){
     sampled=actualStroke(base,true);
     const sim=simulateShot(S.balls,sampled,{maxT:16,dt:H_DT});
     if(S.rules?.game==='fujiyama'){
-      const out=fujiyamaShotOutcome(S.balls,sim,MATCH.turn,S.rules?.legalAtShot||legalTargets());
+      const out=fujiyamaShotOutcome(S.balls,sim,MATCH.turn,liveLegal);
       if(fujiyamaPlanIntentMatches(plan,out))return sampled;
     }else if(S.rules?.game==='kairun'){
       if(kairunPlanIntentMatches(plan,sim))return sampled;
-    }else if(standardPlanIntentMatches(plan,sim))return sampled;
+    }else if(standardPlanIntentMatches(plan,sim,S.balls,MATCH.turn,liveLegal))return sampled;
   }
   const exact=simulateShot(S.balls,base,{maxT:16,dt:H_DT}),exactOK=S.rules?.game==='fujiyama'
-    ?fujiyamaPlanIntentMatches(plan,fujiyamaShotOutcome(S.balls,exact,MATCH.turn,S.rules?.legalAtShot||legalTargets()))
-    :S.rules?.game==='kairun'?kairunPlanIntentMatches(plan,exact):standardPlanIntentMatches(plan,exact);
+    ?fujiyamaPlanIntentMatches(plan,fujiyamaShotOutcome(S.balls,exact,MATCH.turn,liveLegal))
+    :S.rules?.game==='kairun'?kairunPlanIntentMatches(plan,exact):standardPlanIntentMatches(plan,exact,S.balls,MATCH.turn,liveLegal);
   if(exactOK){MATCH.lastIdeal={...base};MATCH.lastActual={...base};return {...base};}
   return sampled||actualStroke(base,true);
 }
@@ -15166,17 +15185,17 @@ function tournamentAuditPlanState(plan,balls=S.balls){
 }
 function tournamentFinalPlanAudit(plan,balls=S.balls,turn=MATCH.turn){
   if(!plan?.prm)return {ok:false,reason:'no-stroke'};const working=tournamentAuditPlanState(plan,balls),
-    sim=simulateShot(working,plan.prm,{maxT:17,dt:1/600}),game=S.rules?.game;
+    sim=simulateShot(working,plan.prm,{maxT:17,dt:1/600}),game=S.rules?.game,legal=legalTargets();
   if(plan.kind==='break'&&!['straight','fujiyama'].includes(game)){
     const target=plan.targetId??plan.ball,legality=tournamentBreakLegality(sim,game,target);
     return {ok:!!legality.legal,reason:legality.reason,sim};
   }
   if(game==='fujiyama'){
-    const out=fujiyamaShotOutcome(working,sim,turn,S.rules?.legalAtShot||legalTargets());
+    const out=fujiyamaShotOutcome(working,sim,turn,legal);
     return {ok:fujiyamaPlanIntentMatches(plan,out),reason:'fujiyama-intent',sim,out};
   }
   if(game==='kairun')return {ok:kairunPlanIntentMatches(plan,sim),reason:'kairun-intent',sim};
-  return {ok:standardPlanIntentMatches(plan,sim,working,turn),reason:'standard-intent',sim};
+  return {ok:standardPlanIntentMatches(plan,sim,working,turn,legal),reason:'standard-intent',sim};
 }
 function shoot(fromAI, exactCoachDemo=false) {
   if (S.mode !== 'idle') return;
@@ -15240,6 +15259,7 @@ function shoot(fromAI, exactCoachDemo=false) {
   if (actual.miscue) addEventLog('撞点がチョーク限界を超え、ミスキューが発生', 'MISCUE');
   strike(cue, actual);
   S.mode = 'running';
+  if(fromAI)aiResetRecoveryState();
   MATCH.shotStartedAt=performance.now();MATCH.shotForceStop=false;
   syncAuxButton();
   trailPts = [cue.p.slice()];
@@ -15574,7 +15594,7 @@ function resetCall() {
   updateCallChoices();
 }
 function changeTurn(reason, ballInHand, restricted) {
-  clearAIWatchdog();MATCH.aiToken++;MATCH.aiBusy=false;
+  clearAIWatchdog();MATCH.aiToken++;MATCH.aiBusy=false;aiResetRecoveryState();
   cancelCoach(true);
   MATCH.turn=1-MATCH.turn;
   syncActiveShaft(MATCH.turn);
@@ -15587,7 +15607,7 @@ function changeTurn(reason, ballInHand, restricted) {
   scheduleTurnController();
 }
 function keepTurn(message) {
-  clearAIWatchdog();MATCH.aiToken++;MATCH.aiBusy=false;
+  clearAIWatchdog();MATCH.aiToken++;MATCH.aiBusy=false;aiResetRecoveryState();
   cancelCoach(true);
   resetCall();
   if(message){hint(message);addEventLog(message,'CONTINUE');}
@@ -15595,7 +15615,7 @@ function keepTurn(message) {
   scheduleTurnController();
 }
 function finishRack(winner, reason) {
-  clearAIWatchdog();MATCH.aiToken++;
+  clearAIWatchdog();MATCH.aiToken++;aiResetRecoveryState();
   cancelCoach(true);
   const pointGame=currentGame==='rotation'||currentGame==='kairun'||currentGame==='straight';
   if(!pointGame) MATCH.racks[winner]++;
@@ -19284,6 +19304,32 @@ function quickAIEmergencyPlan(){
     prm:{speed:2.7,aim:Math.atan2(ob.p[1]-cue.p[1],ob.p[0]-cue.p[0]),elev:0,tipX:0,tipY:.04,pivotLen:S.pivot},
     gap:CO.pocketClearance([ob.p[0],ob.p[1]]),robust:.01,confidence:.01,runoutProb:.01,rackEV:.005};
 }
+function tournamentRelabelSafeFallback(plan,audit,actor=MATCH.turn){
+  if(!plan?.prm||!audit?.sim||['fujiyama','kairun'].includes(S.rules?.game)||plan.kind==='break'||plan.kind==='pushout')return null;
+  const legal=legalTargets();if(!aiStrokeLegality(audit.sim,plan,legal))return null;
+  const A=analyzeRunEvents(audit.sim.events||[]),target=A.firstC;if(target==null||!legal.includes(target))return null;
+  return {...plan,kind:'escape-contain',escape:true,potId:null,tid:null,ball:target,targetId:target,pk:null,pocket:null,
+    robust:Math.min(.35,plan.robust??plan.confidence??.20),confidence:Math.min(.35,plan.robust??plan.confidence??.20),
+    boundedRecovery:true,recoveryActor:actor,recoveryLabel:'物理的に合法なコンテインメントへ意図を再定義'};
+}
+function tournamentBoundedRecoveryPlan(seed,audit,actor=MATCH.turn){
+  const candidates=[],relabeled=tournamentRelabelSafeFallback(seed,audit,actor);if(relabeled)candidates.push(relabeled);
+  if(S.rules?.game==='fujiyama'){
+    const emergency=fujiyamaEmergencyLegalPlan(S.balls);if(emergency)candidates.push(emergency);
+  }else if(S.rules?.game==='kairun'){
+    const emergency=quickAIEmergencyPlan();if(emergency)candidates.push(emergency);
+  }else if(S.rules?.broken){
+    const escapes=planEscapeSpectrum(S.balls,legalTargets(),true);if(escapes?.length)candidates.push(...escapes);
+  }
+  if(seed?.prm&&!candidates.includes(seed))candidates.push(seed);
+  for(const candidate of candidates){
+    if(!candidate?.prm)continue;const commit=tournamentFinalPlanAudit(candidate,S.balls,actor);
+    if(commit.ok)return {plan:{...candidate,boundedRecovery:true},commit,forced:false};
+  }
+  const forced=candidates.find(candidate=>candidate?.prm)||seed;
+  return forced?.prm?{plan:{...forced,boundedRecovery:true,commitOverride:true},
+    commit:tournamentFinalPlanAudit(forced,S.balls,actor),forced:true}:null;
+}
 function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
   if(token!==MATCH.aiToken||MATCH.turn!==actor||MATCH.rackOver||S.mode!=='idle'||(MATCH.mode==='spectator'&&MATCH.spectatorPaused))return;
   clearAIWatchdog();if(!plan)plan=quickAIEmergencyPlan();
@@ -19305,21 +19351,30 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
       plan={...plan,kind:'pot',rotationNoCall:false};
     plan={...plan,prm:{...plan.prm,shaftKey:currentShaftKey(actor)}};syncActiveShaft(actor);
     if(plan.kind==='break'&&!['straight','fujiyama'].includes(currentGame)){
-      let locked=verifyTournamentBreakPlan(plan,S.balls,currentGame);
-      if(!locked){const retry=planTournamentBreak({fast:false,maxMs:1500});
-        if(retry)locked=verifyTournamentBreakPlan({...retry,prm:{...retry.prm,shaftKey:currentShaftKey(actor)}},S.balls,currentGame);}
-      if(!locked){MATCH.aiBusy=false;MATCH.aiPlan=null;updateHUD();addEventLog('合法性の境界線を破棄し、世界トップ基準で再探索','BREAK GUARD');
-        setTimeout(()=>scheduleAI(80),0);return;}
-      plan=locked;
+      let locked=verifyTournamentBreakPlan(plan,S.balls,currentGame),breakRetry=null;
+      if(!locked){breakRetry=planTournamentBreak({fast:false,maxMs:1500});
+        if(breakRetry)locked=verifyTournamentBreakPlan({...breakRetry,prm:{...breakRetry.prm,shaftKey:currentShaftKey(actor)}},S.balls,currentGame);}
+      if(!locked){const recovery=aiRegisterReplan(actor,'break-guard');
+        if(!recovery.exhausted&&!recovered){MATCH.aiBusy=false;MATCH.aiPlan=null;updateHUD();
+          addEventLog('ブレイク最終監査を再計算（'+recovery.count+'/'+recovery.limit+'）','BREAK GUARD');setTimeout(()=>scheduleAI(80),0);return;}
+        plan={...(breakRetry||plan),boundedRecovery:true,breakGuardRecovery:true};
+        addEventLog('ブレイク監査の再試行上限 — 最善候補を実行し、ルール判定へ進行','BREAK RECOVERY');
+      }else plan=locked;
     }
     let commit=tournamentFinalPlanAudit(plan,S.balls,actor);
     if(!commit.ok){
       const fallback=quickVerifiedPoolEmergencyPlan(),fallbackCommit=fallback?tournamentFinalPlanAudit(fallback,S.balls,actor):null;
       if(fallback&&fallbackCommit?.ok){addEventLog('最終1/600秒監査で意図不一致を破棄し、物理合格した代替線へ変更','COMMIT GATE');plan=fallback;commit=fallbackCommit;}
-      else if(!recovered){MATCH.aiBusy=false;updateHUD();addEventLog('最終監査不合格 — 雑なショットを実行せず盤面全体を再探索','COMMIT GATE');
-        setTimeout(()=>scheduleAI(80),0);return;}
+      else {const recovery=aiRegisterReplan(actor,'commit-gate');
+        if(!recovery.exhausted&&!recovered){MATCH.aiBusy=false;updateHUD();
+          addEventLog('最終監査不合格 — 現在の的球で再探索（'+recovery.count+'/'+recovery.limit+'）','COMMIT GATE');setTimeout(()=>scheduleAI(80),0);return;}
+        const rescue=tournamentBoundedRecoveryPlan(fallback||plan,fallbackCommit||commit,actor);
+        if(!rescue?.plan?.prm){MATCH.aiBusy=false;updateHUD();changeTurn('AI最終復旧 — 合法候補なしのため手番を進行',false,false);return;}
+        plan=rescue.plan;commit=rescue.commit;
+        addEventLog(rescue.forced?'監査上限到達 — 最善の実球を実行してルール判定へ':'監査上限到達 — 物理合格した合法線へ切替','COMMIT RECOVERY');
+      }
     }
-    plan={...plan,commitVerified:!!commit.ok,commitReason:commit.reason};
+    plan={...plan,commitVerified:!!commit.ok,commitReason:commit.ok?commit.reason:(plan.commitOverride?'bounded-recovery':commit.reason)};
     applyPlannedTournamentCue(plan);
     if(plan.kind==='break'&&plan.breakFamily){MATCH.lastBreakFamily=MATCH.lastBreakFamily||[null,null];MATCH.lastBreakFamily[actor]=plan.breakFamily;}
     MATCH.aiPlan=plan;
@@ -19394,6 +19449,7 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
 function scheduleAI(delayOverride=null){
   if(!aiControlsTurn()||MATCH.rackOver||S.app!=='practice'||S.mode!=='idle'||(MATCH.mode==='spectator'&&MATCH.spectatorPaused))return;
   cancelCoach(true);clearAIWatchdog();const actor=MATCH.turn,token=++MATCH.aiToken,budget=aiThinkingBudget(),profile=AI_STYLE_PROFILES[activeAIStyleKey(actor)];
+  aiEnsureRecoveryState(actor);
   MATCH.aiBusy=true;updateHUD();hint(MATCH.names[actor]+(MATCH.mode==='spectator'?'［'+profile.label+'］':'')+' が全攻撃・ポジション・守備を比較中…');
   MATCH.aiWatchdog=setTimeout(()=>{if(token!==MATCH.aiToken||MATCH.turn!==actor||!MATCH.aiBusy)return;
     const fallback=quickAIEmergencyPlan();cancelCoach(true);executeAIPlan(fallback,token,false,actor);},budget+Math.max(5000,budget*.35));
