@@ -849,7 +849,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">BILLIARD LAB PRO <small>v2.24.2</small></span>
+      <span id="proBadge">BILLIARD LAB PRO <small>v2.24.3</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
         <option value="set4">ショットラボ</option>
@@ -1021,7 +1021,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③強さを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.2</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.3</b><span>Created by littlepond</span></div>
   </section>
 </div>
 
@@ -1123,7 +1123,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.2</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.3</b><span>Created by littlepond</span></div>
     <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
@@ -12790,6 +12790,47 @@ function limitContactEnergy(balls,indices,preEnergy){
   const available=Math.max(0,preEnergy-cmEnergy),relative=Math.max(1e-12,energy-cmEnergy),scale=Math.min(1,Math.sqrt(available/relative));
   for(const index of indices){const ball=balls[index];ball.v=vadd(cm,vscale(vsub(ball.v,cm),scale));ball.w=vscale(ball.w,scale);}
 }
+
+// A mathematical point-contact rack is a redundant contact network.  During
+// its first compression pulse, an interior ball supported from opposing sides
+// does not receive the same free-flight velocity as an isolated two-ball hit:
+// the impulse branches through the surrounding shell.  Track that topology per
+// simulated world and redistribute only the first pulse.  Once the rack opens,
+// ordinary secondary kicks remain completely free and use the normal solver.
+const denseRackContactStates=new WeakMap();
+function denseRackContactState(balls,contacts){
+  let state=denseRackContactStates.get(balls);if(state)return state;
+  const adjacency=balls.map(()=>new Set());
+  for(const c of contacts)if(balls[c.i].id!==0&&balls[c.j].id!==0){adjacency[c.i].add(c.j);adjacency[c.j].add(c.i);}
+  const cores=[];
+  adjacency.forEach((neighbors,index)=>{
+    if(balls[index].id===0||neighbors.size<5)return;
+    const origin=balls[index].p.slice(),normals=[...neighbors].map(j=>vnorm(vsub(balls[j].p,origin)));
+    // A high degree alone is insufficient: require support on both sides of
+    // two independent axes so an edge ball is never mistaken for a caged core.
+    let opposedPairs=0;
+    for(let i=0;i<normals.length;i++)for(let j=i+1;j<normals.length;j++)if(vdot(normals[i],normals[j])<-.72)opposedPairs++;
+    if(opposedPairs>=2)cores.push({index,neighbors:[...neighbors],origin,attenuated:false});
+  });
+  state={cores,shockTick:null};denseRackContactStates.set(balls,state);return state;
+}
+function redistributeDenseRackPulse(balls,contacts){
+  const state=denseRackContactState(balls,contacts);if(!state.cores.length)return;
+  const rackMoving=balls.some(b=>b.id!==0&&!b.pocketed&&!b.off&&hyp2(b.v[0],b.v[1])>.24);
+  if(state.shockTick===null){if(!rackMoving)return;state.shockTick=0;}else state.shockTick++;
+  if(state.shockTick>24)return;
+  const diameter=2*PH.R;
+  for(const core of state.cores){
+    if(core.attenuated)continue;const ball=balls[core.index],speed=hyp2(ball.v[0],ball.v[1]);if(speed<.045)continue;
+    const shell=core.neighbors.filter(index=>{const other=balls[index];return !other.pocketed&&!other.off&&vlen(vsub(other.p,ball.p))<=diameter+PH.R*.24;});
+    if(shell.length<4)continue;
+    const indices=[core.index,...shell],preEnergy=indices.reduce((sum,index)=>{const b=balls[index];
+      return sum+.5*PH.M*vdot(b.v,b.v)+.5*PH.I*vdot(b.w,b.w);},0),retained=.12,
+      released=vscale(ball.v,1-retained),share=vscale(released,1/shell.length);
+    ball.v=vscale(ball.v,retained);for(const index of shell)balls[index].v=vadd(balls[index].v,share);
+    limitContactEnergy(balls,indices,preEnergy);core.attenuated=true;
+  }
+}
 function resolveBallContacts(balls,events){
   const diameter=2*PH.R,tolerance=2e-8,valid=(a,b)=>!a.pocketed&&!b.pocketed&&!a._puzzleRide&&!b._puzzleRide;
   let contacts=[];
@@ -12853,6 +12894,7 @@ function resolveBallContacts(balls,events){
     balls.forEach((ball,i)=>{ball.v=vadd(ball.v,tdv[i]);ball.w=vadd(ball.w,tdw[i]);});
     limitContactEnergy(balls,involved,preEnergy);
   }
+  redistributeDenseRackPulse(balls,contacts);
 }
 
 // ---- クッション ----
@@ -13098,6 +13140,7 @@ function simulateShot(srcBalls, prm, opts) {
     stepWorld(balls, dt, events);
     for (let k = evStart; k < events.length; k++) {
       const ev = events[k];
+      if(ev.t==null)ev.t=t+dt;
       if (!firstHit && ev.type === 'ball' && (ev.a === 0 || ev.b === 0)) {
         const obId = ev.a === 0 ? ev.b : ev.a;
         firstHit = analyzeFirstContact(preState, ev.info, obId, cue, t);
@@ -13633,7 +13676,7 @@ const LESSON_CATALOG=[...LESSONS,...PRO_SHOTS.filter(x=>x.replayable)];
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='2.24.2';
+const APP_VERSION='2.24.3';
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
   green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
@@ -17607,7 +17650,8 @@ function fujiyamaCounterClearanceResult(before,sim,route,prm,turn=MATCH.turn,leg
   if(!sim||prm.speed<(route.resetIntent?1.35:2.6))return null;const out=fujiyamaShotOutcome(before,sim,turn,legalIds);if(!out||out.adverse||out.first!==route.strikerId)return null;
   const firstAt=out.events.findIndex(e=>e.type==='ball'&&(e.a===0||e.b===0)),impactAt=out.events.findIndex((e,i)=>i>firstAt&&e.type==='ball'&&
     ((e.a===route.strikerId&&e.b===route.threatId)||(e.b===route.strikerId&&e.a===route.threatId)));
-  if(firstAt<0||impactAt<0)return null;const reset=out.opponentReturns.includes(route.threatId),threatBefore=before.find(b=>b.id===route.threatId),
+  if(firstAt<0||impactAt<0)return null;const reset=out.opponentReturns.includes(route.threatId);if(route.resetIntent&&!reset&&prm.speed<2.6)return null;
+  const threatBefore=before.find(b=>b.id===route.threatId),
     state=out.normalized,threatAfter=state.find(b=>b.id===route.threatId&&!b.pocketed&&!b.off);if(!threatBefore||(!reset&&!threatAfter))return null;
   const forward=fujiyamaSide(turn)==='low'?1:-1,forwardClearance=threatAfter?(threatAfter.p[0]-threatBefore.p[0])*forward:0,
     beforeGoal=fujiyamaBallGoalDistance(before,route.threatId,1-turn),afterGoal=threatAfter?fujiyamaBallGoalDistance(state,route.threatId,1-turn):beforeGoal,
@@ -17828,7 +17872,7 @@ function fujiyamaPositionCandidate(before,sim,seed,turn=MATCH.turn,legalIds=null
     newSnooker=opponentThreat.snookered&&!beforeThreat.snookered,
     meaningfulDefence=pressureGain>=.045||newSnooker||visibleReduction>=1||optionReduction>=2||eightAccessDrop>=.08||directThreatDrop>=.10||blockerGain>=.14||frontGain>=.09||forkCreated,
     tactical=!!seed.approximatePot&&ownTarget&&out.progress.goalAdvance>.045&&targetTravel>=.08&&goalProximity>.42,
-    effectiveEightSafety=out.first===8&&targetTravel>=.16&&(seed.prm?.speed||0)>=1.6&&(opponentThreat.snookered||pressureGain>=.055||visibleReduction>=1||optionReduction>=2||eightAccessDrop>=.08||directThreatDrop>=.10),
+    effectiveEightSafety=out.first===8&&targetTravel>=.16&&(seed.prm?.speed||0)>=1.6&&(opponentThreat.snookered||pressureGain>=.035||visibleReduction>=1||optionReduction>=1||eightAccessDrop>=.05||directThreatDrop>=.07),
     eightSafety=effectiveEightSafety&&(seed.eightOnlySafety||out.first===8),strongPosition=ownTarget&&((out.progress.goalAdvance>.08&&targetTravel>=.14)||frontGain>=.10||forkCreated),
     kind=eightSafety?'fujiyama-eight-safety':tactical&&meaningfulDefence?'fujiyama-two-way':strongPosition||tactical?'fujiyama-position':'fujiyama-safety',
     phase=fujiyamaPhaseState(turn,before),spinRoute=Math.abs(seed.prm?.tipX||0)>=.16||Math.abs(seed.prm?.tipY||0)>=.28,
@@ -17886,19 +17930,20 @@ function fujiyamaPlanIntentMatches(plan,out){
   if(['fujiyama-position','fujiyama-safety','fujiyama-two-way','fujiyama-eight-safety'].includes(plan.kind)){
     const threat=fujiyamaThreatProfile(out.final,1-(plan.turn??MATCH.turn),false);
     const actualTarget=out.final.find(b=>b.id===(plan.targetId||plan.first)),travel=actualTarget&&plan.targetStart?Math.hypot(actualTarget.p[0]-plan.targetStart[0],actualTarget.p[1]-plan.targetStart[1]):plan.targetTravel||0;
+    const safetyFloor=plan.kind==='fujiyama-eight-safety'?.20:.25;
     return out.first===(plan.targetId||plan.first)&&out.A.pocketed.length===0&&(!plan.insideHome||out.home.insideHome)
       &&(plan.kind!=='fujiyama-eight-safety'||travel>=.14)
-      &&(!['fujiyama-two-way','fujiyama-eight-safety'].includes(plan.kind)||threat.safetyPressure>=Math.max(.25,(plan.safetyPressure||.25)-.12));
+      &&(!['fujiyama-two-way','fujiyama-eight-safety'].includes(plan.kind)||threat.safetyPressure>=Math.max(safetyFloor,(plan.safetyPressure||safetyFloor)-.12));
   }
   if(plan.kind==='pot')return out.ownGoals.length>0||out.eightPotted;
   return !out.foul;
 }
 function planFujiyamaAttackSpectrum(balls,options={}){
-  const turn=options.turn??MATCH.turn,fast=options.fast!==false,deadline=options.deadline||performance.now()+(fast?430:720),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
+  const turn=options.turn??MATCH.turn,fast=options.fast!==false,started=performance.now(),deadline=options.deadline||started+(fast?430:720),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
     cue=balls.find(b=>b.id===0&&!b.pocketed&&!b.off),coarse=[];if(!cue)return coarse;
   const profiles=fast?[[.88,0,0],[1.02,0,.20],[1.14,0,-.22],[1.28,0,0],[1.06,-.28,.18],[1.06,.28,.18]]:
     [[.78,0,0],[.90,0,.18],[1.02,0,0],[1.12,0,-.22],[1.25,0,.30],[1.38,0,0],[1.02,-.30,.18],[1.02,.30,.18],[1.16,-.22,-.24],[1.16,.22,-.24]],
-    refineAt=Math.max(performance.now(),deadline-(fast?190:280)),own=new Set(fujiyamaOwnIds(turn)),routes=[];
+    refineAt=Math.max(started,started+(deadline-started)*(fast?.28:.40)),own=new Set(fujiyamaOwnIds(turn)),routes=[];
   // 番号順に一球ずつ深掘りすると、時間切れ時に後ろの番号の簡単な得点を見落とす。
   // 先に全合法球の入れ筋を軽く列挙し、全自球の中心撞きから一巡してから撞点違いを比較する。
   for(const id of legalIds){for(const opt of CO.potOptions(balls,[cue.p[0],cue.p[1]],id).slice(0,id===8?(fast?3:5):(fast?3:4))){
@@ -17916,13 +17961,13 @@ function planFujiyamaAttackSpectrum(balls,options={}){
     for(const [da,sm,tag] of [[0,1,'c'],[-.11,1,'a-'],[.11,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
       const prm={...c.prm,aim:c.prm.aim+da*D2R,speed:c.prm.speed*sm},seed={...c.seed,prm},sim=simulateShot(balls,prm,{maxT:14,dt:1/600}),out=fujiyamaShotOutcome(balls,sim,turn,legalIds);
       if(!fujiyamaPlanIntentMatches(c,out)){misses++;missControlSum+=out&&!out.foul&&!out.scratch&&!out.opponentScores.length?fujiyamaCueContainment(out.normalized,turn).containment:0;continue;}
-      ok++;if(tag==='c')center=fujiyamaAttackCandidate(balls,sim,seed,turn,legalIds);}
+      ok++;if(tag==='c')center=fujiyamaAttackCandidate(balls,sim,seed,turn,legalIds);if(center&&ok>=2&&c.easyScore)break;}
     if(center&&ok>=2){center.robust=center.confidence=ok/5;center.missControl=misses?missControlSum/misses:center.cueContainment;
       center.twoWay=clamp01(center.robust+(1-center.robust)*center.missControl);center.winProb=fujiyamaCandidateValue(center);center.score=1-center.winProb;tested.push(center);}}
   return tested.sort(fujiyamaDecisionCompare).slice(0,fast?5:8);
 }
 function planFujiyamaPositionSpectrum(balls,options={}){
-  const turn=options.turn??MATCH.turn,fast=options.fast!==false,deadline=options.deadline||performance.now()+(fast?300:520),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
+  const turn=options.turn??MATCH.turn,fast=options.fast!==false,started=performance.now(),deadline=options.deadline||started+(fast?300:520),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
     cue=balls.find(b=>b.id===0&&!b.pocketed&&!b.off),tasks=[],approximateTasks=[],coarse=[];if(!cue)return coarse;
   const ownIds=legalIds.filter(id=>id!==8),ids=fujiyamaStrategicTargetOrder(balls,[...(legalIds.includes(8)?[8]:[]),...ownIds],turn),
     angles=fast?[-14,-7,0,7,14]:[-18,-12,-6,0,6,12,18],speeds=fast?[1.35,2.10,3.00]:[1.10,1.60,2.20,3.00,3.80],
@@ -17932,7 +17977,12 @@ function planFujiyamaPositionSpectrum(balls,options={}){
     for(const opt of CO.potOptions(balls,[cue.p[0],cue.p[1]],id).slice(0,id===8?3:2)){const potAim=Math.atan2(opt.ghost[1]-cue.p[1],opt.ghost[0]-cue.p[0]),base=Math.max(1.05,Math.min(3.8,.92+(opt.cueDist+opt.objDist)*.72));
       for(const [da,sm,tx,ty] of [[-2.6,.82,-.26,.22],[-1.35,.92,-.18,.18],[1.35,.92,.18,.18],[2.6,.82,.26,.22],[-.75,1.04,-.30,-.12],[.75,1.04,.30,-.12]])
         approximateTasks.push({targetId:id,lineAim:potAim,pk:opt.pk,approximatePot:true,missSide:Math.sign(da),prm:{speed:base*sm,aim:tournamentCompensatedAim(potAim+da*D2R,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot}});}}
-  const sampled=[...evenlySample(approximateTasks,fast?44:76),...evenlySample(tasks,fast?58:100)],refineAt=Math.max(performance.now(),deadline-(fast?165:245));
+  // Coarse search used to consume almost the whole deadline on slower phones,
+  // leaving no time to prove the center stroke plus one perturbation.  Split
+  // the actual available budget proportionally so a candidate is never shown
+  // until the 1/600 verification phase has a guaranteed share.
+  const sampled=[...evenlySample(approximateTasks,fast?36:60),...evenlySample(tasks,fast?46:76)],
+    refineAt=Math.max(started,started+(deadline-started)*(fast?.56:.60));
   for(const seed of sampled){if(performance.now()>=refineAt)break;const x=fujiyamaPositionCandidate(balls,simulateShot(balls,seed.prm,{maxT:11,dt:1/300}),seed,turn,legalIds);if(x)coarse.push({...x,seed});}
   coarse.sort((a,b)=>b.winProb-a.winProb);const tested=[];for(const c of coarse.slice(0,fast?5:8)){if(performance.now()>=deadline)break;let ok=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
@@ -17944,8 +17994,10 @@ function planFujiyamaPositionSpectrum(balls,options={}){
 function planFujiyamaCounterClearanceSpectrum(balls,options={}){
   const turn=options.turn??MATCH.turn,fast=options.fast!==false,deadline=options.deadline||performance.now()+(fast?310:560),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
     resetOnly=!!options.resetOnly,resetRoutes=fujiyamaEightResetRoutes(balls,turn,legalIds,fast?12:22),
-    routes=resetOnly?resetRoutes:[...resetRoutes,...fujiyamaCounterClearanceRoutes(balls,turn,legalIds,fast?16:28)],coarse=[],
-    refineAt=Math.max(performance.now(),deadline-(resetOnly?(fast?105:180):(fast?155:245)));
+    clearanceRoutes=resetOnly?[]:fujiyamaCounterClearanceRoutes(balls,turn,legalIds,fast?16:28),routes=[] ,coarse=[],
+    refineAt=Math.max(performance.now(),deadline-(resetOnly?(fast?180:245):(fast?260:320)));
+  if(resetOnly)routes.push(...resetRoutes);else for(let i=0;i<Math.max(clearanceRoutes.length,resetRoutes.length);i++){
+    if(clearanceRoutes[i])routes.push(clearanceRoutes[i]);if(resetRoutes[i])routes.push(resetRoutes[i]);}
   clearanceSearch:for(const route of routes){const base=route.resetIntent
       ?Math.max(1.55,Math.min(5.2,1.30+route.cueDist*.62+route.objectDistance*.82+route.pocketDistance*.50))
       :Math.max(3.1,Math.min(5.2,2.75+route.cueDist*.72+route.objectDistance*.35)),profiles=route.resetIntent?(fast?
@@ -17960,13 +18012,13 @@ function planFujiyamaCounterClearanceSpectrum(balls,options={}){
   for(const c of coarse.slice(0,fast?5:8)){if(performance.now()>=deadline)break;let ok=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
       const prm={...c.prm,aim:c.prm.aim+da*D2R,speed:c.prm.speed*sm},x=fujiyamaCounterClearanceResult(balls,simulateShot(balls,prm,{maxT:15,dt:1/600}),c.seedRoute,prm,turn,legalIds);
-      if(!x)continue;ok++;if(tag==='c')center=x;}
+      if(!x)continue;ok++;if(tag==='c')center=x;if(center&&ok>=2)break;}
     if(center&&ok>=2){center.robust=center.confidence=ok/5;center.winProb=fujiyamaCandidateValue(center);center.score=1-center.winProb;tested.push(center);}}
   return tested.sort((a,b)=>b.winProb-a.winProb||b.clearanceDistance-a.clearanceDistance).slice(0,resetOnly?(fast?2:4):(fast?3:5));
 }
 function planFujiyamaStrategicSacrificeSpectrum(balls,options={}){
-  const turn=options.turn??MATCH.turn,fast=options.fast!==false,deadline=options.deadline||performance.now()+(fast?260:480),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
-    routes=fujiyamaStrategicSacrificeRoutes(balls,turn,legalIds,fast?12:22),coarse=[],refineAt=Math.max(performance.now(),deadline-(fast?130:215));
+  const turn=options.turn??MATCH.turn,fast=options.fast!==false,started=performance.now(),deadline=options.deadline||started+(fast?260:480),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
+    routes=fujiyamaStrategicSacrificeRoutes(balls,turn,legalIds,fast?12:22),coarse=[],refineAt=Math.max(started,started+(deadline-started)*(fast?.55:.68));
   sacrificeSearch:for(const route of routes){const base=Math.max(2.8,Math.min(5.8,2.25+route.cueDistance*.70+route.objectDistance*.72+route.pocketDistance*.42)),profiles=fast?
       [[.90,0,0,.18],[1,0,0,.28],[1.10,-1.2,-.18,.24],[1.10,1.2,.18,.24]]:
       [[.82,0,0,.16],[.92,-1.2,-.18,.22],[.92,1.2,.18,.22],[1,0,0,.30],[1.10,-1.8,-.26,.26],[1.10,1.8,.26,.26],[1.18,0,0,.20]];
@@ -17977,45 +18029,75 @@ function planFujiyamaStrategicSacrificeSpectrum(balls,options={}){
   for(const c of coarse.slice(0,fast?4:7)){if(performance.now()>=deadline)break;let ok=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
       const prm={...c.prm,aim:c.prm.aim+da*D2R,speed:c.prm.speed*sm},x=fujiyamaStrategicSacrificeResult(balls,simulateShot(balls,prm,{maxT:15,dt:1/600}),c.seedRoute,prm,turn,legalIds);
-      if(!x)continue;ok++;if(tag==='c')center=x;}
+      if(!x)continue;ok++;if(tag==='c')center=x;if(center&&ok>=2)break;}
     if(center&&ok>=2){center.robust=center.confidence=ok/5;center.winProb=fujiyamaCandidateValue(center);center.score=1-center.winProb;tested.push(center);}}
   return tested.sort((a,b)=>fujiyamaDecisionCompare(a,b)).slice(0,fast?2:4);
 }
 function planFujiyamaJumpEscapeSpectrum(balls,options={}){
-  const turn=options.turn??MATCH.turn,fast=options.fast!==false,deadline=options.deadline||performance.now()+(fast?260:480),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
+  const turn=options.turn??MATCH.turn,fast=options.fast!==false,started=performance.now(),deadline=options.deadline||started+(fast?260:480),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
     cue=balls.find(b=>b.id===0&&!b.pocketed&&!b.off),tasks=[],coarse=[];if(!cue)return coarse;
   const blocked=legalIds.map(id=>balls.find(b=>b.id===id&&!b.pocketed&&!b.off)).filter(Boolean).filter(ob=>
     !CO.lineClear(balls,[cue.p[0],cue.p[1]],[ob.p[0],ob.p[1]],new Set([0,ob.id]),PH.R*1.08));
   for(const ob of blocked){const base=Math.atan2(ob.p[1]-cue.p[1],ob.p[0]-cue.p[0]),distance=Math.hypot(ob.p[0]-cue.p[0],ob.p[1]-cue.p[1]);
-    for(const elev of (fast?[20,27,34,42]:[18,22,27,32,37,42]))for(const da of (fast?[-2.5,0,2.5]:[-4,-2,-1,0,1,2,4]))for(const sm of (fast?[.90,1.08,1.18]:[.82,.94,1.06,1.18]))for(const ty of [.02,.20]){
+    const elevations=fast?[27,34,20,42]:[27,32,37,22,42,18],offsets=fast?[0,-1,1,-2.5,2.5]:[0,-1,1,-2,2,-4,4],multipliers=fast?[1.08,.90,1.18]:[1.06,.94,1.18,.82];
+    // Interleave elevations and both sides immediately.  Sequentially walking
+    // 18° first let a wall-clock cutoff prevent the solver from ever seeing
+    // otherwise robust 27°–42° straight jumps.
+    for(const sm of multipliers)for(const ty of [.02,.20])for(const elev of elevations)for(const da of offsets){
       const speed=Math.max(3.0,Math.min(6.4,(3.05+distance*.92)*sm));tasks.push({targetId:ob.id,aimOffset:da,lineAim:base,
         prm:{speed,aim:base+da*D2R,elev:elev*D2R,tipX:0,tipY:ty,pivotLen:S.pivot}});}}
-  const sampled=evenlySample(tasks,fast?90:170),refineAt=Math.max(performance.now(),deadline-(fast?130:215));
+  const sampled=tasks,refineAt=Math.max(started,started+(deadline-started)*(fast?.56:.68));
   for(const seed of sampled){if(performance.now()>=refineAt)break;const x=fujiyamaJumpEscapeCandidate(balls,simulateShot(balls,seed.prm,{maxT:13,dt:1/300}),seed,turn,legalIds);if(x)coarse.push({...x,seed});}
   coarse.sort((a,b)=>b.winProb-a.winProb||b.jumpStraightness-a.jumpStraightness);const tested=[];
   for(const c of coarse.slice(0,fast?5:8)){if(performance.now()>=deadline)break;let ok=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
       const prm={...c.prm,aim:c.prm.aim+da*D2R,speed:c.prm.speed*sm},seed={...c.seed,prm},sim=simulateShot(balls,prm,{maxT:14,dt:1/600}),out=fujiyamaShotOutcome(balls,sim,turn,legalIds);
-      if(!fujiyamaPlanIntentMatches(c,out))continue;const x=fujiyamaJumpEscapeCandidate(balls,sim,seed,turn,legalIds);if(!x)continue;ok++;if(tag==='c')center=x;}
+      if(!fujiyamaPlanIntentMatches(c,out))continue;const x=fujiyamaJumpEscapeCandidate(balls,sim,seed,turn,legalIds);if(!x)continue;ok++;if(tag==='c')center=x;if(center&&ok>=2)break;}
     if(center&&ok>=2){center.robust=center.confidence=ok/5;center.winProb=fujiyamaCandidateValue(center);center.score=1-center.winProb;tested.push(center);}}
   return tested.sort(fujiyamaDecisionCompare).slice(0,fast?3:5);
 }
 function planFujiyamaEightSafetySpectrum(balls,options={}){
-  const turn=options.turn??MATCH.turn,fast=options.fast!==false,deadline=options.deadline||performance.now()+(fast?230:430),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
+  const turn=options.turn??MATCH.turn,fast=options.fast!==false,started=performance.now(),deadline=options.deadline||started+(fast?230:430),legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),
     cue=balls.find(b=>b.id===0&&!b.pocketed&&!b.off),eight=balls.find(b=>b.id===8&&!b.pocketed&&!b.off),coarse=[];
   if(!cue||!eight||!legalIds.includes(8))return coarse;const dist=Math.hypot(eight.p[0]-cue.p[0],eight.p[1]-cue.p[1]),baseAim=Math.atan2(eight.p[1]-cue.p[1],eight.p[0]-cue.p[0]),
-    half=Math.asin(Math.min(.96,2*PH.R/Math.max(2.02*PH.R,dist)))*R2D,fractions=fast?[-.72,-.34,0,.34,.72]:[-.82,-.56,-.28,0,.28,.56,.82],
-    speeds=fast?[1.8,2.7,3.7]:[1.65,2.2,2.9,3.7,4.5],spins=fast?[[0,.18],[-.32,.20],[.32,.20]]:[[0,.18],[-.24,.16],[.24,.16],[-.38,.24],[.38,.24],[-.32,-.10],[.32,-.10]],tasks=[];
+    half=Math.asin(Math.min(.96,2*PH.R/Math.max(2.02*PH.R,dist)))*R2D,fractions=fast?[-.88,-.52,0,.52,.88]:[-.94,-.72,-.48,-.24,0,.24,.48,.72,.94],
+    speeds=fast?[1.8,2.7,3.8,4.6]:[1.65,2.2,2.9,3.7,4.5,5.1],spins=fast?[[0,.18],[-.34,.20],[.34,.20],[-.32,-.12],[.32,-.12]]:
+      [[0,.18],[0,-.16],[-.24,.16],[.24,.16],[-.38,.24],[.38,.24],[-.48,.12],[.48,.12],[-.42,-.22],[.42,-.22]],tasks=[],edgeSpinTasks=[];
   for(const fraction of fractions)for(const speed of speeds)for(const [tx,ty] of spins){const lineAim=baseAim+half*fraction*D2R;
     tasks.push({targetId:8,lineAim,eightOnlySafety:true,prm:{speed,aim:tournamentCompensatedAim(lineAim,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot}});}
-  const refineAt=Math.max(performance.now(),deadline-(fast?125:205));for(const seed of evenlySample(tasks,fast?52:92)){if(performance.now()>=refineAt)break;
-    const x=fujiyamaPositionCandidate(balls,simulateShot(balls,seed.prm,{maxT:12,dt:1/300}),seed,turn,legalIds);if(x?.kind==='fujiyama-eight-safety')coarse.push({...x,seed});}
-  coarse.sort((a,b)=>b.winProb-a.winProb||b.targetTravel-a.targetTravel);const tested=[];for(const c of coarse.slice(0,fast?5:8)){if(performance.now()>=deadline)break;let ok=0,center=null;
-    for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
-      const prm={...c.prm,aim:c.prm.aim+da*D2R,speed:c.prm.speed*sm},seed={...c.seed,prm},sim=simulateShot(balls,prm,{maxT:13,dt:1/600}),out=fujiyamaShotOutcome(balls,sim,turn,legalIds);
-      if(!fujiyamaPlanIntentMatches(c,out))continue;const x=fujiyamaPositionCandidate(balls,sim,seed,turn,legalIds);if(x?.kind!=='fujiyama-eight-safety')continue;ok++;if(tag==='c')center=x;}
-    if(center&&ok>=2){center.robust=center.confidence=ok/5;center.winProb=fujiyamaCandidateValue(center);center.score=1-center.winProb;tested.push(center);}}
-  return tested.sort((a,b)=>b.winProb-a.winProb||b.targetTravel-a.targetTravel).slice(0,fast?2:4);
+  // Thin hits with meaningful side are a separate tactical family, not just
+  // another point in a large uniform grid.  Reserve coarse-search slots for
+  // both edges and both spin signs so even sampling cannot silently omit it.
+  const edgeFractions=[fractions[0],fractions[fractions.length-1]],edgeSpeeds=fast?[2.7,3.8]:[2.2,2.9],edgeSpins=fast?[[-.34,.20],[.34,.20]]:[[-.48,.12],[.48,.12]];
+  for(const fraction of edgeFractions)for(const speed of edgeSpeeds)for(const [tx,ty] of edgeSpins){const lineAim=baseAim+half*fraction*D2R;
+    edgeSpinTasks.push({targetId:8,lineAim,eightOnlySafety:true,reservedSideSpin:true,reservedRank:edgeSpinTasks.length,prm:{speed,aim:tournamentCompensatedAim(lineAim,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot}});}
+  const sampleCap=fast?46:72,sampled=[],seen=new Set;for(const seed of [...edgeSpinTasks,...evenlySample(tasks,sampleCap)]){
+    const key=[seed.prm.speed,seed.prm.aim,seed.prm.tipX,seed.prm.tipY].map(n=>n.toFixed(5)).join('|');if(seen.has(key))continue;seen.add(key);sampled.push(seed);if(sampled.length>=sampleCap)break;}
+  const refineAt=Math.max(started,started+(deadline-started)*(fast?.40:.38));for(const seed of sampled){if(performance.now()>=refineAt)break;
+    const sim=simulateShot(balls,seed.prm,{maxT:12,dt:1/300}),x=fujiyamaPositionCandidate(balls,sim,seed,turn,legalIds);if(x?.kind==='fujiyama-eight-safety')coarse.push({...x,seed,reservedSideSpin:!!seed.reservedSideSpin,reservedRank:seed.reservedRank});}
+  coarse.sort((a,b)=>b.safetyPressure-a.safetyPressure||b.winProb-a.winProb||b.targetTravel-a.targetTravel);
+  // Recheck every promising center stroke before spending time on its error
+  // window.  Previously a coarse candidate that changed at 1/600 consumed all
+  // four perturbations and starved the next, genuinely stable safety.
+  const shortlist=[],reservedSpins=coarse.filter(c=>c.reservedSideSpin).sort((a,b)=>a.reservedRank-b.reservedRank).slice(0,fast?2:4),bestSpin=coarse.find(c=>Math.abs(c.prm?.tipX||0)>=.18);
+  // Audit the best purposeful side-spin route first.  A straight-hit seed is
+  // usually cheaper to discover and used to consume the refinement window,
+  // leaving the tactically different rail route unverified even when its
+  // coarse result was stronger.  Final ranking still compares both by value.
+  for(const c of reservedSpins)shortlist.push(c);if(bestSpin&&!shortlist.includes(bestSpin))shortlist.push(bestSpin);if(coarse[0]&&!shortlist.includes(coarse[0]))shortlist.push(coarse[0]);
+  for(const c of coarse)if(!shortlist.includes(c)){shortlist.push(c);if(shortlist.length>=(fast?6:10))break;}
+  const tested=[];for(const c of shortlist){if(performance.now()>=deadline)break;
+    const centerPrm={...c.prm},centerSeed={...c.seed,prm:centerPrm},centerSim=simulateShot(balls,centerPrm,{maxT:12,dt:1/600}),
+      centerOut=fujiyamaShotOutcome(balls,centerSim,turn,legalIds),center=fujiyamaPositionCandidate(balls,centerSim,centerSeed,turn,legalIds);
+    if(center?.kind!=='fujiyama-eight-safety'||!fujiyamaPlanIntentMatches(center,centerOut))continue;let ok=1;
+    for(const [da,sm] of [[-.12,1],[.12,1],[0,.96],[0,1.04]]){if(performance.now()>=deadline)break;
+      const prm={...centerPrm,aim:centerPrm.aim+da*D2R,speed:centerPrm.speed*sm},seed={...c.seed,prm},sim=simulateShot(balls,prm,{maxT:12,dt:1/600}),
+        out=fujiyamaShotOutcome(balls,sim,turn,legalIds),x=fujiyamaPositionCandidate(balls,sim,seed,turn,legalIds);
+      if(x?.kind==='fujiyama-eight-safety'&&fujiyamaPlanIntentMatches(center,out))ok++;if(ok>=2)break;}
+    if(ok>=2){center.robust=center.confidence=ok/5;center.winProb=fujiyamaCandidateValue(center);center.score=1-center.winProb;tested.push(center);}}
+  const ranked=tested.sort((a,b)=>b.winProb-a.winProb||b.safetyPressure-a.safetyPressure||b.targetTravel-a.targetTravel),selected=[];
+  if(ranked[0])selected.push(ranked[0]);const verifiedSpin=ranked.find(c=>Math.abs(c.prm?.tipX||0)>=.18);if(verifiedSpin&&!selected.includes(verifiedSpin))selected.push(verifiedSpin);
+  for(const c of ranked)if(!selected.includes(c)){selected.push(c);if(selected.length>=(fast?2:4))break;}return selected.slice(0,fast?2:4);
 }
 function fujiyamaEmergencyLegalPlan(balls=S.balls,options={}){
   const turn=options.turn??MATCH.turn,legalIds=options.legalIds||fujiyamaPlanningLegalIds(balls,turn),cue=balls.find(b=>b.id===0&&!b.pocketed&&!b.off),found=[];if(!cue)return null;
@@ -18094,14 +18176,17 @@ function planFujiyamaTurnSpectrum(balls=S.balls,options={}){
   if(hooked&&performance.now()<hard){const jumpEnd=Math.min(hard,start+total*.38);
     plans.push(...planFujiyamaJumpEscapeSpectrum(working,{turn,fast,deadline:jumpEnd,legalIds}));}
   // ゴール前の敵球は通常候補より先に❽／自球で排除する。平常時は得点を先に全自球横断で探す。
-  if(danger.emergency&&performance.now()<hard){const clearEnd=Math.min(hard,start+total*(hooked?.58:.36));
+  if(danger.emergency&&performance.now()<hard){const clearEnd=Math.min(hard,start+total*(hooked?.72:.64));
     plans.push(...planFujiyamaCounterClearanceSpectrum(working,{turn,fast,deadline:clearEnd,legalIds}));}
-  const attackEnd=Math.min(hard,start+total*(danger.emergency?(hooked?.72:.62):hooked?.56:easyGeometry?.42:.31)),attacks=planFujiyamaAttackSpectrum(working,{turn,fast,deadline:attackEnd,legalIds});plans.push(...attacks);
+  const attackEnd=Math.min(hard,start+total*(danger.emergency?(hooked?.82:.76):hooked?.56:easyGeometry?.42:.31)),attacks=planFujiyamaAttackSpectrum(working,{turn,fast,deadline:attackEnd,legalIds});plans.push(...attacks);
+  // A live incoming threat gets its committed push-back search before the
+  // optional pass-ball reset.  Otherwise the softer pocket route can consume
+  // the clock and hide an available forceful clearance.
+  if(!danger.emergency&&threats.length&&(threats[0].urgency||threats[0].severity)>=.26&&performance.now()<hard){const clearEnd=Math.min(hard,start+total*.60);
+    plans.push(...planFujiyamaCounterClearanceSpectrum(working,{turn,fast,deadline:clearEnd,legalIds}));}
   // 8番経由の相手球インは緊急守備だけではない。6ポケット・全相手球を通常の攻撃候補として毎回比較する。
-  if(legalIds.includes(8)&&!plans.some(p=>p.kind==='fujiyama-pass-reset')&&performance.now()<hard){const resetEnd=Math.min(hard,start+total*(danger.emergency?.79:.60));
+  if(legalIds.includes(8)&&!plans.some(p=>p.kind==='fujiyama-pass-reset')&&performance.now()<hard){const resetEnd=Math.min(hard,start+total*(danger.emergency?.79:.68));
     plans.push(...planFujiyamaCounterClearanceSpectrum(working,{turn,fast,deadline:resetEnd,legalIds,resetOnly:true}));}
-  if(!danger.emergency&&threats.length&&(threats[0].urgency||threats[0].severity)>=.26&&performance.now()<hard){const clearEnd=Math.min(hard,start+total*.68);
-    plans.push(...planFujiyamaCounterClearanceSpectrum(working,{turn,fast,deadline:clearEnd,legalIds}));}
   if(danger.critical&&phase.opponentNeeded>1&&performance.now()<hard){const sacrificeEnd=Math.min(hard,start+total*.78);
     plans.push(...planFujiyamaStrategicSacrificeSpectrum(working,{turn,fast,deadline:sacrificeEnd,legalIds}));}
   if(!danger.emergency&&!S.rules?.ballInHand&&phase.needed>2&&!phase.late&&phase.ownAlive>=3&&performance.now()<hard){const devEnd=Math.min(hard,start+total*.76),build=planFujiyamaDevelopment(working,{turn,fast,deadline:devEnd,maxMs:undefined});
@@ -18320,6 +18405,17 @@ function tournamentBreakOpeningQuality(balls,turn=MATCH.turn,game=S.rules?.game)
   return {quality,nextProb:best?.prob||0,nextId:best?.id||null,directOptions,naturalPocket:best?.naturalPocket||0,
     clusterOpen,bestCut:best?.opt?.cut??null,bestPocket:best?.opt?.pk||null};
 }
+function rackProtectedBallId(game=S.rules?.game){
+  return game==='nine'?9:game==='ten'?10:game==='eight'?8:game==='rotation'?15:null;
+}
+function tournamentBreakProtectedMotion(before,sim,game=S.rules?.game){
+  const id=rackProtectedBallId(game),start=id==null?null:before?.find(b=>b.id===id),end=id==null?null:sim?.final?.find(b=>b.id===id),path=id==null?null:sim?.paths?.[id];
+  if(!start||!end||!path?.length)return {id,peak:0,settled:0,lateKickSpeed:0};
+  const peak=path.reduce((best,p)=>Math.max(best,hyp2(p[0]-start.p[0],p[1]-start.p[1])),0),
+    settled=hyp2(end.p[0]-start.p[0],end.p[1]-start.p[1]),hits=(sim.events||[]).filter(ev=>ev.type==='ball'&&(ev.a===id||ev.b===id)),
+    firstT=hits[0]?.t??Infinity,lateKickSpeed=hits.reduce((best,ev)=>ev.t>firstT+.055?Math.max(best,ev.info?.speed||0):best,0);
+  return {id,peak,settled,lateKickSpeed};
+}
 function tournamentBreakOutcome(before,sim,profile,target,game=S.rules?.game){
   if(!sim||!target)return null;const legality=tournamentBreakLegality(sim,game,target.id);
   if(!legality.legal)return null;
@@ -18327,15 +18423,19 @@ function tournamentBreakOutcome(before,sim,profile,target,game=S.rules?.game){
     breakCount=legality.threeBallCount;
   let spread=0,moved=0;for(const b of before){if(b.id===0||b.pocketed||b.off)continue;const f=sim.final.find(x=>x.id===b.id);if(!f)continue;
     const d=f.pocketed&&!f.off?.55:Math.hypot(f.p[0]-b.p[0],f.p[1]-b.p[1]);spread+=Math.min(.55,d);if(d>.12||f.pocketed)moved++;}
-  const opening=tournamentBreakOpeningQuality(sim.final,MATCH.turn,game),nextProb=opening.nextProb,nextId=opening.nextId;
+  const opening=tournamentBreakOpeningQuality(sim.final,MATCH.turn,game),nextProb=opening.nextProb,nextId=opening.nextId,
+    protectedMotion=tournamentBreakProtectedMotion(before,sim,game),protectedLimit=PH.R*2,
+    protectedTravelCost=Math.max(0,(protectedMotion.peak-protectedLimit)/protectedLimit)*(game==='nine'?.28:.13);
   const nearestPocket=Math.min(...POCKETS.map(pk=>Math.hypot(cf.p[0]-pk.x,cf.p[1]-pk.y))),
     cueControl=clamp01(1-Math.hypot(cf.p[0],cf.p[1])/(PH.TABLE_W*.54)),pocketDanger=clamp01((.20-nearestPocket)/.16),
     boundaryCost=game==='nine'&&breakCount===3?.16:!potted&&rails===4?.10:0,
     score=-potted*1.60-moved*.075-spread*.075-nextProb*.78-opening.quality*1.02-cueControl*.28+pocketDanger*.72
-      +Math.max(0,profile.speed-8.7)*.08+boundaryCost;
+      +Math.max(0,profile.speed-8.7)*.08+boundaryCost+protectedTravelCost;
   return {score,cueRest:cf.p.slice(),potted,rails,breakCount,spread,moved,nextProb,nextId,final:sim.final,
     openingRunQuality:opening.quality,openingNaturalPocket:opening.naturalPocket,openingDirectOptions:opening.directOptions,
     openingClusterOpen:opening.clusterOpen,openingCut:opening.bestCut,openingPocket:opening.bestPocket,
+    protectedBallId:protectedMotion.id,protectedBallPeak:protectedMotion.peak,protectedBallSettled:protectedMotion.settled,
+    protectedBallLateKick:protectedMotion.lateKickSpeed,
     legalBreakVerified:true,breakLegalReason:legality.reason};
 }
 function verifyTournamentBreakPlan(plan,balls=S.balls,game=S.rules?.game){
