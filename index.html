@@ -849,7 +849,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">BILLIARD LAB PRO <small>v2.24.1</small></span>
+      <span id="proBadge">BILLIARD LAB PRO <small>v2.24.2</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
         <option value="set4">ショットラボ</option>
@@ -1021,7 +1021,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③強さを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.1</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.2</b><span>Created by littlepond</span></div>
   </section>
 </div>
 
@@ -1084,7 +1084,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <label>試合テンポ<select id="mobileMatchTempo" aria-label="試合テンポ"><option value="fast" selected>FAST</option><option value="normal">標準</option></select></label>
       <label id="rackModeRow">9・10ボール配列<select id="mobileRackMode" aria-label="9・10ボールのラック配列"><option value="random" selected>規定球固定・毎ラックランダム</option><option value="standard">固定配列（練習用）</option></select></label>
       <label id="nineFootRow">9ボールのフット位置<select id="mobileNineFoot" aria-label="9ボールのフットスポット"><option value="one">①オンフット（1番を先頭・フットスポット）</option><option value="nine" selected>⑨オンフット（9番を中央・フットスポット／WPA）</option></select></label>
-      <label id="tableVarianceRow">ラックごとの台・締まり差<select id="mobileTableVariance" aria-label="ラックごとのテーブルコンディション差"><option value="realistic" selected>現実的な微差（推奨）</option><option value="fixed">固定（再現練習）</option><option value="wide">変化大（検証用）</option></select></label>
+      <label id="tableVarianceRow">ラックごとの台コンディション差<select id="mobileTableVariance" aria-label="ラックごとのテーブルコンディション差"><option value="realistic" selected>現実的な微差（密接ラック）</option><option value="fixed">固定（密接・再現練習）</option><option value="wide">台差大（密接・検証用）</option></select></label>
       <label id="rotationNoCallRuleRow">ノーコール球<select id="mobileRotationNoCallRule" aria-label="ローテーションのノーコールイン処理" disabled><option value="spot" selected>必ずフットへ戻す（ロングライン規定）</option></select></label>
       <label id="fujiyamaRuleRow">FUJIYAMAルール<select id="mobileFujiyamaRule" aria-label="FUJIYAMAルール"><option value="osaka" selected>大阪研究会改訂版</option><option value="official">公式 第8訂版</option></select></label>
       <label id="fujiyamaP0HandicapRow">YOU 勝利球数<select id="mobileFujiyamaP0Handicap" aria-label="YOUのFUJIYAMA勝利球数"><option>4</option><option>5</option><option>6</option><option selected>7</option></select></label>
@@ -1123,7 +1123,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;bac
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.1</b><span>Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 2.24.2</b><span>Created by littlepond</span></div>
     <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
@@ -12759,6 +12759,102 @@ function collideBalls(b1, b2) {
   return { n, speed: vn, approach1, approach2, relativeSpeed:vlen(vrel), point: vadd(b1.p, vscale(n, PH.R)) };
 }
 
+// 密接ラックでは、同じ瞬間に複数の接点へ衝撃が伝わる。球を配列順に1組ずつ
+// 解くと左右どちらを先に処理したかで中央球が斜めへ飛ぶため、同時接触の法線
+// インパルスを連立方程式で解く。単独接触は collideBalls と同じ解になる。
+function solveContactLinearSystem(matrix,values){
+  const n=values.length,a=matrix.map((row,i)=>row.map(Number).concat(values[i]));
+  for(let col=0;col<n;col++){
+    let pivot=col;for(let row=col+1;row<n;row++)if(Math.abs(a[row][col])>Math.abs(a[pivot][col]))pivot=row;
+    if(Math.abs(a[pivot][col])<1e-10)return null;
+    if(pivot!==col)[a[pivot],a[col]]=[a[col],a[pivot]];
+    for(let row=col+1;row<n;row++){const f=a[row][col]/a[col][col];if(Math.abs(f)<1e-15)continue;
+      for(let k=col;k<=n;k++)a[row][k]-=f*a[col][k];}
+  }
+  const out=new Array(n).fill(0);for(let row=n-1;row>=0;row--){let sum=a[row][n];
+    for(let k=row+1;k<n;k++)sum-=a[row][k]*out[k];out[row]=sum/a[row][row];}
+  return out;
+}
+function contactMassCoupling(a,b){
+  const dot=vdot(a.n,b.n);let sign=0;
+  if(a.i===b.i)sign++;if(a.i===b.j)sign--;if(a.j===b.i)sign--;if(a.j===b.j)sign++;
+  return sign*dot/PH.M;
+}
+function limitContactEnergy(balls,indices,preEnergy){
+  if(!indices.length)return;const count=indices.length,cm=[0,0,0];
+  for(const index of indices)for(let axis=0;axis<3;axis++)cm[axis]+=balls[index].v[axis]/count;
+  const cmEnergy=.5*PH.M*count*vdot(cm,cm),energy=indices.reduce((sum,index)=>{
+    const ball=balls[index];return sum+.5*PH.M*vdot(ball.v,ball.v)+.5*PH.I*vdot(ball.w,ball.w);
+  },0);
+  if(energy<=preEnergy*(1+1e-9))return;
+  const available=Math.max(0,preEnergy-cmEnergy),relative=Math.max(1e-12,energy-cmEnergy),scale=Math.min(1,Math.sqrt(available/relative));
+  for(const index of indices){const ball=balls[index];ball.v=vadd(cm,vscale(vsub(ball.v,cm),scale));ball.w=vscale(ball.w,scale);}
+}
+function resolveBallContacts(balls,events){
+  const diameter=2*PH.R,tolerance=2e-8,valid=(a,b)=>!a.pocketed&&!b.pocketed&&!a._puzzleRide&&!b._puzzleRide;
+  let contacts=[];
+  for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){
+    const a=balls[i],b=balls[j];if(!valid(a,b))continue;const dp=vsub(b.p,a.p),dist=vlen(dp);
+    if(dist>diameter+tolerance||dist<1e-9)continue;
+    contacts.push({i,j,n:vscale(dp,1/dist),pen:Math.max(0,diameter-dist),key:i+':'+j});
+  }
+  if(!contacts.length)return;
+
+  // 食い込み補正も全接点を同時に適用し、処理順による横方向の偏りを作らない。
+  const correction=balls.map(()=>[0,0,0]);
+  for(const c of contacts)if(c.pen>0){const d=vscale(c.n,c.pen/2);correction[c.i]=vsub(correction[c.i],d);correction[c.j]=vadd(correction[c.j],d);}
+  balls.forEach((ball,i)=>{if(vlen(correction[i])>0)ball.p=vadd(ball.p,correction[i]);});
+
+  // 補正後の接点法線を更新する。密接ラックの静止接点も残し、衝撃波を同じ
+  // タイムステップ内で列から列へ伝える。
+  contacts=[];
+  for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){
+    const a=balls[i],b=balls[j];if(!valid(a,b))continue;const dp=vsub(b.p,a.p),dist=vlen(dp);
+    if(dist>diameter+tolerance*8||dist<1e-9)continue;contacts.push({i,j,n:vscale(dp,1/dist),key:i+':'+j});
+  }
+  const resolved=new Set(),reported=new Set();
+  for(let wave=0;wave<10;wave++){
+    let active=contacts.map(c=>{const a=balls[c.i],b=balls[c.j],vrel=vsub(a.v,b.v),vn=vdot(vrel,c.n);
+      return {...c,vn,vrel,approach1:hyp2(a.v[0],a.v[1]),approach2:hyp2(b.v[0],b.v[1])};}).filter(c=>c.vn>1e-7);
+    if(!active.length)break;
+    let impulses=null;
+    // 非負の接触力だけを許すactive-set。負の解は「引っ張る接点」なので除外する。
+    while(active.length){
+      const matrix=active.map(a=>active.map(b=>contactMassCoupling(a,b))),rhs=active.map(c=>{
+        const restitution=resolved.has(c.key)?0:Math.max(.88,Math.min(.97,ENV.bbE-.012*Math.max(0,c.vn-2)));
+        return (1+restitution)*c.vn;
+      });
+      impulses=solveContactLinearSystem(matrix,rhs);
+      if(!impulses){active=active.slice(0,-1);continue;}
+      const rejected=[];for(let i=0;i<impulses.length;i++)if(impulses[i]<-1e-9)rejected.push(i);
+      if(!rejected.length)break;active=active.filter((_,index)=>!rejected.includes(index));impulses=null;
+    }
+    if(!active.length||!impulses)break;
+    const involved=[...new Set(active.flatMap(c=>[c.i,c.j]))],preEnergy=involved.reduce((sum,index)=>{
+      const ball=balls[index];return sum+.5*PH.M*vdot(ball.v,ball.v)+.5*PH.I*vdot(ball.w,ball.w);
+    },0);
+    const dv=balls.map(()=>[0,0,0]);
+    active.forEach((c,index)=>{const impulse=Math.max(0,impulses[index]),push=vscale(c.n,impulse/PH.M);
+      dv[c.i]=vsub(dv[c.i],push);dv[c.j]=vadd(dv[c.j],push);c.impulse=impulse;});
+    balls.forEach((ball,i)=>{ball.v=vadd(ball.v,dv[i]);});
+
+    // 接線摩擦も同時に加算し、スロウとスピン移りの左右対称性を保つ。
+    const tdv=balls.map(()=>[0,0,0]),tdw=balls.map(()=>[0,0,0]);
+    for(const c of active){
+      const b1=balls[c.i],b2=balls[c.j],r1=vscale(c.n,PH.R),r2=vscale(c.n,-PH.R),
+        s1=vadd(b1.v,vcross(b1.w,r1)),s2=vadd(b2.v,vcross(b2.w,r2));let u=vsub(s1,s2);u=vsub(u,vscale(c.n,vdot(u,c.n)));
+      const ulen=vlen(u);if(ulen>1e-6){const tangent=vscale(u,1/ulen),jt=Math.min(ENV.bbMu*c.impulse,PH.M*ulen/7),p=vscale(tangent,-jt);
+        tdv[c.i]=vadd(tdv[c.i],vscale(p,1/PH.M));tdw[c.i]=vadd(tdw[c.i],vscale(vcross(r1,p),1/PH.I));
+        tdv[c.j]=vadd(tdv[c.j],vscale(p,-1/PH.M));tdw[c.j]=vadd(tdw[c.j],vscale(vcross(r2,vscale(p,-1)),1/PH.I));}
+      if(events&&!reported.has(c.key)){reported.add(c.key);events.push({type:'ball',a:b1.id,b:b2.id,info:{n:c.n,speed:c.vn,
+        approach1:c.approach1,approach2:c.approach2,relativeSpeed:vlen(c.vrel),point:vadd(b1.p,vscale(c.n,PH.R))}});}
+      resolved.add(c.key);
+    }
+    balls.forEach((ball,i)=>{ball.v=vadd(ball.v,tdv[i]);ball.w=vadd(ball.w,tdw[i]);});
+    limitContactEnergy(balls,involved,preEnergy);
+  }
+}
+
 // ---- クッション ----
 function resolveCushion(b, n, facing) {
   const vn = vdot(b.v, n);
@@ -12950,6 +13046,12 @@ function collectPuzzlePropEvents(balls,events){
   }
 }
 
+function rackContactSolverEnabled(){
+  if(typeof S==='undefined'||!S.rules)return false;
+  const game=S.rules.game,rackGame=['nine','ten','eight','rotation','straight'].includes(game);
+  return rackGame&&(!S.rules.broken||(game==='straight'&&S.rules.straightContinuationBreak));
+}
+
 function stepWorld(balls, dt, events) {
   // Starting-pad devices must capture the cue before its first ordinary
   // collision; this also makes a closed-loop cannon a valid puzzle element.
@@ -12960,11 +13062,12 @@ function stepWorld(balls, dt, events) {
     if (events && b.id !== 0 && beforeX > -PH.TABLE_W / 4 && b.p[0] <= -PH.TABLE_W / 4)
       events.push({ type: 'headcross', id: b.id });
   }
-  for (let i = 0; i < balls.length; i++)
+  if(rackContactSolverEnabled())resolveBallContacts(balls,events);
+  else for (let i = 0; i < balls.length; i++)
     for (let j = i + 1; j < balls.length; j++) {
       const info = collideBalls(balls[i], balls[j]);
       if (info && events) events.push({ type: 'ball', a: balls[i].id, b: balls[j].id, info });
-  }
+    }
   for (const b of balls) if(!b._puzzleRide)cushionsAndPockets(b, events);
   collectPuzzlePropEvents(balls,events);
 }
@@ -13530,7 +13633,7 @@ const LESSON_CATALOG=[...LESSONS,...PRO_SHOTS.filter(x=>x.replayable)];
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='2.24.1';
+const APP_VERSION='2.24.2';
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
   green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
@@ -16145,7 +16248,7 @@ function straightPointSegmentDistance(px,py,ax,ay,bx,by){
 }
 function straightRackInterferes(ball){
   if(!ball||ball.pocketed||ball.off)return false;
-  const dx=2*PH.R*Math.cos(Math.PI/6)+.0004,rr=PH.R+.0002,
+  const dx=2*PH.R*Math.cos(Math.PI/6),rr=PH.R,
     a=[FOOT_X,0],b=[FOOT_X+4*dx,4*rr],c=[FOOT_X+4*dx,-4*rr],p=[ball.p[0],ball.p[1]],
     cross=(u,v,w)=>(v[0]-u[0])*(w[1]-u[1])-(v[1]-u[1])*(w[0]-u[0]),
     inside=(cross(a,b,p)>=0&&cross(b,c,p)>=0&&cross(c,a,p)>=0)||(cross(a,b,p)<=0&&cross(b,c,p)<=0&&cross(c,a,p)<=0),
@@ -24809,17 +24912,17 @@ function rackHashUnit(seed,salt=0){
 }
 function rackConditionFor(serial,variance='realistic',game='nine',seed=20260711){
   const neutral={active:false,variance:'fixed',clothSpeed:1,slideFriction:1,spinFriction:1,cushion:1,ballElasticity:1,
-    gapM:0,yawRad:0,breakX:0,breakY:0,breakSpeed:1,choice:0,label:'固定コンディション'};
+    gapM:0,yawRad:0,breakX:0,breakY:0,breakSpeed:1,choice:0,label:'固定コンディション · 密接ラック'};
   if(variance==='fixed')return neutral;
   let gameCode=0;for(const ch of String(game))gameCode=(gameCode*33+ch.charCodeAt(0))>>>0;
   const base=((Number(seed)||1)^Math.imul((serial||1)+17,0x45d9f3b)^gameCode)>>>0,amp=variance==='wide'?1.85:1;
   const centered=s=>(rackHashUnit(base,s)-.5)*2;
   const clothSpeed=1+centered(1)*.012*amp,cushion=1+centered(2)*.010*amp,ballElasticity=1+centered(3)*.004*amp,
-    gapM=(.000025+rackHashUnit(base,4)*.00019)*amp,yawRad=centered(5)*.00175*amp,
+    gapM=0,yawRad=centered(5)*.00175*amp,
     breakX=centered(6)*.012*amp,breakY=centered(7)*.020*amp,breakSpeed=1+centered(8)*.018*amp;
   return {active:true,variance,clothSpeed,slideFriction:1+centered(9)*.008*amp,spinFriction:1+centered(10)*.010*amp,
     cushion,ballElasticity,gapM,yawRad,breakX,breakY,breakSpeed,choice:rackHashUnit(base,11),
-    label:'ラック差 '+(clothSpeed>=1?'FAST ':'SLOW ')+Math.abs((clothSpeed-1)*100).toFixed(1)+'% · 隙間 '+(gapM*1000).toFixed(2)+'mm'};
+    label:'台差 '+(clothSpeed>=1?'FAST ':'SLOW ')+Math.abs((clothSpeed-1)*100).toFixed(1)+'% · 密接ラック'};
 }
 function activateRackCondition(game=currentGame){
   MATCH.rackSerial=Math.max(0,MATCH.rackSerial||0)+1;
@@ -24832,13 +24935,16 @@ function applyRackMicroVariation(layout,game,condition=MATCH.rackCondition){
     ?objects.find(b=>b.id===(MATCH.nineFoot==='nine'?9:1))
     :game==='ten'||game==='rotation'?objects.find(b=>b.id===1):objects.slice().sort((a,b)=>a.x-b.x)[0];
   if(!anchor)return layout.map(b=>({...b}));
-  const scale=1+condition.gapM/(2*PH.R+.0004),c=Math.cos(condition.yawRad),s=Math.sin(condition.yawRad);
-  return layout.map(b=>{if(b.id===0||b===anchor)return {...b};const dx=(b.x-anchor.x)*scale,dy=(b.y-anchor.y)*scale;
+  // ラック差は台・ブレイク条件だけに与える。ラックそのものは剛体回転だけとし、
+  // 全ての隣接球を球径ちょうどの密接状態に保つ。
+  const c=Math.cos(condition.yawRad),s=Math.sin(condition.yawRad);
+  return layout.map(b=>{if(b.id===0||b===anchor)return {...b};const dx=b.x-anchor.x,dy=b.y-anchor.y;
     return {...b,x:anchor.x+dx*c-dy*s,y:anchor.y+dx*s+dy*c};});
 }
 // 三角形の格子座標(row=0が先頭)を返す
 function rackSlots(rows) {
-  const dx = 2 * PH.R * Math.cos(Math.PI / 6) + 0.0004, R = PH.R + 0.0002;
+  // 全種目共通の密接ラック。隣接中心間は球径 2R ちょうど。
+  const dx = 2 * PH.R * Math.cos(Math.PI / 6), R = PH.R;
   const out = [];
   for (let r = 0; r < rows; r++)
     for (let k = 0; k <= r; k++)
@@ -24847,7 +24953,7 @@ function rackSlots(rows) {
 }
 // 9ボール: ダイヤ型9球(1=先頭, 9=中心)
 function rack9Layout(style,footBall=MATCH.nineFoot) {
-  const dx = 2 * PH.R * Math.cos(Math.PI / 6) + 0.0004, R = PH.R + 0.0002;
+  const dx = 2 * PH.R * Math.cos(Math.PI / 6), R = PH.R;
   // 1番は常に先頭、9番は常に中央。WPA現行は中央の9番をフットスポットへ置く。
   const shift=footBall==='nine'?-2*dx:0;
   const slots = [
@@ -25174,7 +25280,7 @@ $('btnApplyMatchSetup').addEventListener('click', () => {
     configureGame('fujiyama',true);
     addEventLog('大阪／公式・ハンディ・陣地・先攻を反映','FUJIYAMA');
   }else if(oldVariance!==MATCH.tableVariance){
-    configureGame(currentGame,false);addEventLog('ラックごとの台・締まり差を '+$('mobileTableVariance').selectedOptions[0].textContent+' へ変更','TABLE');
+    configureGame(currentGame,false);addEventLog('ラックごとの台コンディション差を '+$('mobileTableVariance').selectedOptions[0].textContent+' へ変更（ラックは常に密接）','TABLE');
   }else if(rackChanged&&['nine','ten'].includes(currentGame)){
     configureGame(currentGame,false);
     addEventLog('ラック設定を反映 — '+(MATCH.rackMode==='random'?'毎ラックランダム':'固定配列'),'RACK');
