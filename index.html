@@ -219,14 +219,6 @@ body.puzzle-demo-running #hint{display:none!important}
 #padWrap{display:flex;flex-direction:column;align-items:center;gap:2px}
 #pad{width:108px;height:108px;touch-action:none;cursor:crosshair}
 #padVal{font-size:10px;color:var(--dim)}
-#padTools{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;width:min(100%,172px);margin-top:2px}
-#padTools button{min-width:0;padding:4px 3px;border-radius:6px;border:1px solid var(--line);background:var(--deck2);color:var(--dim);font:800 9px var(--mono);cursor:pointer}
-#padTools button.on{border-color:var(--cyan);color:var(--cyan);background:rgba(99,215,232,.10)}
-#padTools button[data-tip-center]{color:var(--amber)}
-#puzzleReviewLegend{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:22;display:none;gap:10px;align-items:center;padding:7px 10px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(7,11,15,.88);backdrop-filter:blur(8px);font:800 10px var(--sans);pointer-events:none;white-space:nowrap}
-#puzzleReviewLegend.show{display:flex}
-#puzzleReviewLegend i{display:inline-block;width:18px;height:3px;border-radius:3px;margin-right:4px;vertical-align:middle}
-#puzzleReviewLegend .actual i{background:#ff5b57}.answer i{background:repeating-linear-gradient(90deg,#63e58a 0 6px,transparent 6px 10px)}
 #mid{display:grid;gap:3px;min-width:0}
 #mid label{display:flex;justify-content:space-between;font-size:11px;color:var(--dim)}
 #mid output{color:var(--text);font-size:11px}
@@ -966,13 +958,6 @@ button:disabled{cursor:not-allowed}
 @supports not (height:100dvh){
   #app,#deck,#ldeck{height:100vh}
 }
-
-/* v3.2 AI thinking telemetry */
-#aiThinkingPanel{position:absolute;left:50%;top:82px;transform:translateX(-50%) translateY(-10px);z-index:42;width:min(520px,calc(100vw - 28px));padding:12px 14px;border-radius:14px;background:rgba(5,10,18,.92);border:1px solid rgba(115,220,255,.42);box-shadow:0 16px 45px rgba(0,0,0,.45);backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:.18s ease;color:#eefaff}
-#aiThinkingPanel.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.aiThinkHead{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:12px;letter-spacing:.08em}.aiThinkHead b{font-size:13px}.aiThinkHead span{opacity:.75}
-.aiThinkBar{height:7px;margin:9px 0 7px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}.aiThinkBar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#69d6ff,#b2ffcf);transition:width .28s ease}
-.aiThinkMeta{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:11px;opacity:.9}.aiThinkPhase{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.aiThinkCount{font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -1009,12 +994,11 @@ button:disabled{cursor:not-allowed}
         <button id="btnProShots">世界の名ショット</button>
         <button id="btnPlace">配置</button>
         <button id="btnSlow">スロー</button>
-        <button id="btnUndo" onclick="undoLastShot()">一手戻す</button>
         <button id="btnReset">リセット</button>
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">BILLIARD LAB PRO <small>v3.6.0 · PLAYER FEEDBACK CALIBRATED</small></span>
+      <span id="proBadge">BILLIARD LAB PRO <small>v3.0.0 · REAL ENGINE</small></span>
       <span id="engineStatus" role="status" aria-label="REAL ENGINE 3 稼働中"><i></i><b>REAL ENGINE 3</b><small>IMPACT · SPIN · POCKET LIVE</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
@@ -1061,7 +1045,7 @@ button:disabled{cursor:not-allowed}
       <div id="showIntro" aria-hidden="true"><div class="showIntroCard"><div id="showIntroAct">STAGE 01 / 50</div><div id="showIntroTitle">BUTTERFLY SIX-POCKET BLOOM</div><div id="showIntroTagline">六球が六つの穴へ、一撞きで同時に開く。</div><div id="showIntroSignature">ONE STROKE · REAL PHYSICS</div></div></div>
       <div id="showCountdown" aria-hidden="true"><div id="showCountdownText">3</div></div>
       <div id="showStinger" aria-hidden="true"><div id="showStingerText">PERFECT</div></div>
-      <div id="showFx" aria-hidden="true"></div><div id="puzzleReviewLegend" aria-hidden="true"><span class="actual"><i></i>今回の実軌道</span><span class="answer"><i></i>正解軌道</span></div>
+      <div id="showFx" aria-hidden="true"></div>
       <div id="eventLog" aria-live="polite"></div>
       <div id="chips"></div>
       <div id="hint"></div>
@@ -1087,12 +1071,6 @@ button:disabled{cursor:not-allowed}
     <div id="quickCoach" aria-live="polite"></div>
   </div>
   <div id="deck" data-pane="aim">
-
-    <div id="aiThinkingPanel" role="status" aria-live="polite" aria-hidden="true">
-      <div class="aiThinkHead"><b id="aiThinkActor">AI THINKING</b><span id="aiThinkElapsed">0.0秒</span></div>
-      <div class="aiThinkBar"><i id="aiThinkFill"></i></div>
-      <div class="aiThinkMeta"><span class="aiThinkPhase" id="aiThinkPhase">盤面を認識中</span><span class="aiThinkCount" id="aiThinkCount">候補 0</span></div>
-    </div>
     <section id="coachPicker" aria-hidden="true" aria-label="AIコーチ 全ショット候補">
       <div class="coachPickerHead"><b id="coachPickerTitle">全候補</b><span id="coachPickerSummary">盤面を見ながら比較できます</span><button id="btnCoachPickerClose" type="button" aria-label="候補一覧を閉じる">×</button></div>
       <div id="coachPickerGrid"></div>
@@ -1113,7 +1091,6 @@ button:disabled{cursor:not-allowed}
     <div id="padWrap">
       <canvas id="pad" width="240" height="240"></canvas>
       <div id="padVal" class="mono">撞点 0 · 0</div>
-      <div id="padTools" role="group" aria-label="撞点の精密調整"><button id="btnTipFine" type="button" aria-pressed="false">精密</button><button type="button" data-tip-nudge-x="-1">←</button><button type="button" data-tip-nudge-y="1">↑</button><button type="button" data-tip-center="1">中心</button><button type="button" data-tip-nudge-y="-1">↓</button><button type="button" data-tip-nudge-x="1">→</button></div>
     </div>
     <div id="mid">
       <div class="controlBlock powerBlock">
@@ -1194,7 +1171,7 @@ button:disabled{cursor:not-allowed}
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③強さを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 3.6.0</b><span>REAL BILLIARDS ENGINE · Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 3.0.0</b><span>REAL BILLIARDS ENGINE · Created by littlepond</span></div>
   </section>
 </div>
 
@@ -1296,7 +1273,7 @@ button:disabled{cursor:not-allowed}
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
-    <div class="appCredit"><b>BILLIARD LAB PRO · Version 3.6.0</b><span>REAL BILLIARDS ENGINE · Created by littlepond</span></div>
+    <div class="appCredit"><b>BILLIARD LAB PRO · Version 3.0.0</b><span>REAL BILLIARDS ENGINE · Created by littlepond</span></div>
     <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
@@ -12572,14 +12549,13 @@ const PH = {
   M: 0.17,            // ボール質量
   G: 9.81,
   CUE_MASS: 0.54,     // キュー質量 (~19oz)
-  TIP_E: 0.73,         // レザーチップ-手球の有効反発係数
   MU_S: 0.21,         // ラシャ滑り摩擦
-  MU_R: 0.0127,       // 転がり抵抗（実測校正値）
+  MU_R: 0.026,        // 転がり抵抗
   MU_SP: 0.028,       // 縦軸スピン減衰係数
   BB_E: 0.94,         // 球-球 反発係数
   BB_MU: 0.055,       // 球-球 摩擦(スロウ)
   CU_E: 0.80,         // クッション反発
-  CU_MU: 0.075,       // クッション鼻先の有効接線摩擦（30°反射実測へ校正）
+  CU_MU: 0.21,        // クッション摩擦
   SL_E: 0.48,         // スレート(ラシャ)バウンド反発
   SL_MU: 0.35,        // スレートバウンド摩擦
   TABLE_W: 2.54,      // 9ftプレイエリア長辺
@@ -12609,31 +12585,6 @@ const ENV = {
   tableRollX: 0, tableRollY: 0, humidity: 45,
   swerve: 1, carom: false, guide: 'full', shaftKey:'ldwood', userShaftKey:'ldwood',
 };
-// 高角度撞きは布・チョーク・チップ変形を含む閉形式解がないため、通常物理から分離した
-// 現象論的校正モデルとして明示する。値は通常ショットへ作用せず、エレベーション＋横回転時だけ有効。
-const HIGH_ELEVATION_CALIBRATION=Object.freeze({
-  model:'phenomenological-v1',
-  swerveCoupling:0.00042,       // a_lat = k * omega_z * sin(elev) * min(4,v)
-  elevationDecayPerSec:0.45,
-  clothGripDecayPerSec:1.35,
-  note:'empirical calibration; not a universal material constant'
-});
-// クッションは滑り速度で有効摩擦が下がる速度依存Coulombモデル。
-// 30°自然転がり球の公開実測レンジへ校正し、低速の過剰な開きと中速以上の閉じを同時に抑える。
-const CUSHION_CALIBRATION=Object.freeze({
-  model:'incidence-aware-velocity-coulomb-v3',
-  muSlow:0.21,
-  muFast:PH.CU_MU,
-  transitionSpeed:1.25,
-  transitionWidth:0.08,
-  wideAngleStartDeg:32,
-  wideAngleFullDeg:55,
-  slowImpactStart:1.40,
-  slowImpactFull:0.48,
-  wideSlowBoost:1.20,
-  target:'30deg incidence: 33-38deg; 2-3m/s: 33-35deg; 1m/s 45-70deg: opening +3-9deg',
-  note:'empirical reflection calibration; low-speed wide-incidence contact friction boost prevents excess opening while preserving medium-speed response'
-});
 const RNG = {
   seed: 20260711 >>> 0,
   set(n) { this.seed = ((Number(n) || 1) >>> 0) || 1; },
@@ -12669,7 +12620,7 @@ const TBL = {
   JAW_LEN: 0.0508,
 };
 
-let POCKETS = (() => {
+const POCKETS = (() => {
   const W = PH.TABLE_W / 2, H = PH.TABLE_H / 2;
   const rot = (v, a) => [v[0] * Math.cos(a) - v[1] * Math.sin(a), v[0] * Math.sin(a) + v[1] * Math.cos(a)];
   const list = [];
@@ -12715,7 +12666,7 @@ let POCKETS = (() => {
 })();
 
 // クッション: 鼻先の線分(開口部で分断)+ ジョー面の線分
-let CUSHIONS = (() => {
+const CUSHIONS = (() => {
   const W = PH.TABLE_W / 2, H = PH.TABLE_H / 2;
   const a = TBL.CORNER_MOUTH / Math.SQRT2;
   const sm = TBL.SIDE_MOUTH / 2;
@@ -12732,65 +12683,6 @@ let CUSHIONS = (() => {
   }
   return seg;
 })();
-
-
-// v3.2: プリセットごとに物理衝突線と立体ジョーを再生成する。
-const TABLE_PROFILES=Object.freeze({
-  wpa:Object.freeze({label:'WPA',cornerMouth:.1143,sideMouth:.1270,cornerShelf:.0381,sideShelf:.009525,cornerJaw:142,sideJaw:104,backDraft:13.5,facing:.003175,jawLen:.0508}),
-  pro:Object.freeze({label:'PRO',cornerMouth:.10795,sideMouth:.12065,cornerShelf:.04445,sideShelf:.0120,cornerJaw:141,sideJaw:103,backDraft:14.5,facing:.0034,jawLen:.054}),
-  club:Object.freeze({label:'CLUB',cornerMouth:.12065,sideMouth:.13335,cornerShelf:.03175,sideShelf:.0070,cornerJaw:143,sideJaw:106,backDraft:12.5,facing:.0028,jawLen:.047}),
-});
-let ACTIVE_TABLE_PROFILE='wpa',pocketProfileVisualGroup=null;
-function buildPocketGeometry(profileKey='wpa'){
-  const P=TABLE_PROFILES[profileKey]||TABLE_PROFILES.wpa,W=PH.TABLE_W/2,H=PH.TABLE_H/2;
-  TBL.CORNER_MOUTH=P.cornerMouth;TBL.SIDE_MOUTH=P.sideMouth;TBL.CORNER_SHELF=P.cornerShelf;TBL.SIDE_SHELF=P.sideShelf;
-  TBL.CORNER_JAW=P.cornerJaw*Math.PI/180;TBL.SIDE_JAW=P.sideJaw*Math.PI/180;TBL.BACK_DRAFT=P.backDraft*Math.PI/180;
-  TBL.FACING_THICKNESS=P.facing;TBL.JAW_LEN=P.jawLen;
-  const rot=(v,a)=>[v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a)],list=[];
-  const a=TBL.CORNER_MOUTH/Math.SQRT2;
-  const mk=(T1,T2,type,mouth,jaw,shelf)=>{const M=[(T1[0]+T2[0])/2,(T1[1]+T2[1])/2];let n=[M[0]===0?0:Math.sign(M[0]),M[1]===0?0:Math.sign(M[1])];
-    if(type==='side')n=[0,Math.sign(M[1])];else{const l=hyp2(n[0],n[1]);n=[n[0]/l,n[1]/l];}const t=[-n[1],n[0]],s1=(T1[0]-M[0])*t[0]+(T1[1]-M[1])*t[1],A=s1<0?T1:T2,B=s1<0?T2:T1;
-    const phi=type==='corner'?jaw-3*Math.PI/4:jaw-Math.PI/2,fA=rot(n,phi),fB=rot(n,-phi),gapLimit=2*PH.R+.004,
-      shrink=Math.tan(phi)>1e-6?(mouth-gapLimit)/2/Math.tan(phi):TBL.JAW_LEN,len=Math.max(.020,Math.min(TBL.JAW_LEN,shrink/Math.cos(phi))),
-      J1=[A[0]+fA[0]*len,A[1]+fA[1]*len],J2=[B[0]+fB[0]*len,B[1]+fB[1]*len],back=shelf+mouth*.5;
-    list.push({type,mouth,shelf,faceBias:phi,backDraft:TBL.BACK_DRAFT,T1:A,T2:B,J1,J2,M,n,t,x:M[0],y:M[1],cx:M[0]+n[0]*back,cy:M[1]+n[1]*back,r:mouth*.5,
-      back1:[J1[0]+n[0]*(shelf+.035),J1[1]+n[1]*(shelf+.035)],back2:[J2[0]+n[0]*(shelf+.035),J2[1]+n[1]*(shelf+.035)]});};
-  for(const sx of [-1,1])for(const sy of [-1,1])mk([sx*(W-a),sy*H],[sx*W,sy*(H-a)],'corner',TBL.CORNER_MOUTH,TBL.CORNER_JAW,TBL.CORNER_SHELF);
-  for(const sy of [-1,1])mk([-TBL.SIDE_MOUTH/2,sy*H],[TBL.SIDE_MOUTH/2,sy*H],'side',TBL.SIDE_MOUTH,TBL.SIDE_JAW,TBL.SIDE_SHELF);
-  const seg=[],sm=TBL.SIDE_MOUTH/2;
-  for(const sy of [-1,1]){seg.push({a:[-(W-a),sy*H],b:[-sm,sy*H],rail:sy>0?'+y':'-y'});seg.push({a:[sm,sy*H],b:[W-a,sy*H],rail:sy>0?'+y':'-y'});}
-  for(const sx of [-1,1])seg.push({a:[sx*W,-(H-a)],b:[sx*W,H-a],rail:sx>0?'+x':'-x'});
-  for(const pk of list){seg.push({a:pk.T1,b:pk.J1,rail:'jaw',pocket:pk});seg.push({a:pk.T2,b:pk.J2,rail:'jaw',pocket:pk});
-    // ジョー背面。球がツノを越えた後も、架空の空洞へ抜けず立体壁に当たる。
-    seg.push({a:pk.J1,b:pk.back1,rail:'jaw-back',pocket:pk});seg.push({a:pk.J2,b:pk.back2,rail:'jaw-back',pocket:pk});seg.push({a:pk.back1,b:pk.back2,rail:'pocket-back',pocket:pk});}
-  POCKETS=list;CUSHIONS=seg;ACTIVE_TABLE_PROFILE=profileKey;rebuildPocketProfileVisuals();
-}
-function rebuildPocketProfileVisuals(){
-  if(typeof THREE==='undefined'||typeof scene==='undefined'||!scene)return;
-  if(pocketProfileVisualGroup){scene.remove(pocketProfileVisualGroup);pocketProfileVisualGroup.traverse(o=>{o.geometry?.dispose?.();});}
-  const g=pocketProfileVisualGroup=new THREE.Group(),mat=(typeof cushionMaterial!=='undefined'&&cushionMaterial)||new THREE.MeshPhongMaterial({color:0x183b36}),dark=new THREE.MeshBasicMaterial({color:0x050708});
-  for(const c of CUSHIONS.filter(x=>x.rail==='jaw'||x.rail==='jaw-back'||x.rail==='pocket-back')){const dx=c.b[0]-c.a[0],dy=c.b[1]-c.a[1],len=hyp2(dx,dy),geo=new THREE.BoxGeometry(len,.052,.020),m=new THREE.Mesh(geo,c.rail==='pocket-back'?dark:mat);
-    m.position.set((c.a[0]+c.b[0])/2,.055,-(c.a[1]+c.b[1])/2);m.rotation.y=Math.atan2(dy,dx);m.castShadow=true;m.receiveShadow=true;g.add(m);}
-  for(const pk of POCKETS){const well=new THREE.Mesh(new THREE.CylinderGeometry(pk.r*.94,pk.r*1.05,.055,28),dark);well.position.set(pk.cx,-.006,-pk.cy);g.add(well);}
-  scene.add(g);
-}
-function validatePocketGeometry(profileKey=ACTIVE_TABLE_PROFILE){
-  const errors=[],warnings=[],P=TABLE_PROFILES[profileKey]||TABLE_PROFILES.wpa;
-  if(POCKETS.length!==6)errors.push('pocket-count:'+POCKETS.length);
-  if(CUSHIONS.length!==36)errors.push('segment-count:'+CUSHIONS.length);
-  const finite=v=>Array.isArray(v)&&v.length===2&&v.every(Number.isFinite);
-  for(const [i,pk] of POCKETS.entries()){
-    for(const key of ['T1','T2','J1','J2','back1','back2','M','n','t'])if(!finite(pk[key]))errors.push('p'+i+'-'+key);
-    const throat=hyp2(pk.J2[0]-pk.J1[0],pk.J2[1]-pk.J1[1]);
-    if(throat<2*PH.R+.001)errors.push('p'+i+'-blocked-throat');
-    if(pk.shelf<=0||pk.mouth<=2*PH.R)errors.push('p'+i+'-dimensions');
-    const dot=pk.n[0]*pk.t[0]+pk.n[1]*pk.t[1];if(Math.abs(dot)>1e-8)errors.push('p'+i+'-basis');
-  }
-  for(const [i,c] of CUSHIONS.entries()){const len=hyp2(c.b[0]-c.a[0],c.b[1]-c.a[1]);if(!Number.isFinite(len)||len<.005)errors.push('s'+i+'-length');}
-  if(Math.abs(TBL.CORNER_MOUTH-P.cornerMouth)>1e-10)errors.push('profile-mouth-sync');
-  return {ok:errors.length===0,profile:profileKey,errors,warnings,pockets:POCKETS.length,segments:CUSHIONS.length};
-}
-function rebuildAndValidatePocketGeometry(profileKey){buildPocketGeometry(profileKey);const audit=validatePocketGeometry(profileKey);if(!audit.ok)throw new Error('Pocket geometry invalid: '+audit.errors.join(','));return audit;}
 
 // ---- ベクトル([x,y,z]) ----
 function v3(x = 0, y = 0, z = 0) { return [x, y, z]; }
@@ -12818,7 +12710,7 @@ function vnorm(a) { const l = vlen(a); return l > 1e-12 ? vscale(a, 1 / l) : [0,
 // 入力値をいきなり「押し／引き」に分類せず、実際に的球へ届いた瞬間の速度、
 // 滑り、縦回転、横回転からスロウ、球離れ、ポケット受けを決める。
 class RealBilliardsEngine {
-  static VERSION='3.6.0';
+  static VERSION='3.0.0';
   constructor(){this.rackWorlds=new WeakMap();}
   clamp(x,a=0,b=1){return Math.max(a,Math.min(b,x));}
   cueDelivery(prm,shaft){
@@ -12827,7 +12719,7 @@ class RealBilliardsEngine {
         (cueSpeed>=7.2?'power':cueSpeed<=1.7?'compact':Math.abs(ty)>=.28?'long':'standard'),
       stability={compact:.965,standard:.985,long:.994,power:.972}[style]||.98,
       contactMs=.64+(shaft.carbon ? -0.035 : (shaft===SHAFT_PROFILES.maple ? 0.055 : 0.015))+Math.sqrt(off2)*.11,
-      vmag=ENV.tipEnergy*shaft.energy*((1+PH.TIP_E)*cueSpeed)/(1+PH.M/ENV.cueMass+2.5*off2);
+      vmag=ENV.tipEnergy*shaft.energy*(2*cueSpeed)/(1+PH.M/ENV.cueMass+2.5*off2);
     return {style,stability,contactMs,tipSpeed:cueSpeed,vmag,off2,tx,ty,
       impulse:PH.M*vmag,energy:.5*PH.M*vmag*vmag};
   }
@@ -12843,10 +12735,9 @@ class RealBilliardsEngine {
   }
   ballContactMaterial(vn,tangentSpeed){
     const restitution=this.clamp(ENV.bbE-.012*Math.max(0,vn-2),.88,.97),
-      // 球間摩擦は法線速度ではなく、接触点の接線相対すべり速度で決まる。
-      // Marlow/Alciatore系の実測近似を上限・下限付きで採用する。
-      friction=this.clamp(0.01+0.108*Math.exp(-1.088*Math.max(0,tangentSpeed)),.012,.118),
-      speedFactor=friction/Math.max(1e-6,ENV.bbMu),
+      // 低速ほどスロウの角度寄与が大きく、高速では法線運動量が支配する。
+      speedFactor=this.clamp(1.16-.075*Math.max(0,vn-.6),.72,1.18),
+      friction=this.clamp(ENV.bbMu*speedFactor,.025,.105),
       normalImpulse=(1+restitution)*PH.M*vn/2,
       stickImpulse=PH.M*Math.max(0,tangentSpeed)/7,
       frictionLimit=friction*normalImpulse,
@@ -12860,16 +12751,32 @@ class RealBilliardsEngine {
       friction:material.friction,impact1:before1,impact2:before2,release1:this.surfaceState(b1),release2:this.surfaceState(b2)};
   }
   pocketWindow(pk,depth,speed,ball=null){
-    const d=Math.max(0,Math.min(depth,pk.shelf*ENV.shelfScale));
-    const throatHalf=pk.mouth*ENV.pocketScale/2-Math.tan(pk.faceBias)*d;
-    return Math.max(0,throatHalf-PH.R+TBL.FACING_THICKNESS);
+    const mouth=pk.mouth*ENV.pocketScale,shelf=pk.shelf*ENV.shelfScale,d=Math.max(0,Math.min(depth,shelf)),
+      throatHalf=mouth/2-Math.tan(pk.faceBias)*d,
+      rx=ball?(ball.p[0]-pk.M[0]):0,ry=ball?(ball.p[1]-pk.M[1]):0,
+      lateral=ball?(rx*pk.t[0]+ry*pk.t[1]):0,vx=ball?.v?.[0]||0,vy=ball?.v?.[1]||0,
+      normalSpeed=Math.max(0,vx*pk.n[0]+vy*pk.n[1]),lateralSpeed=Math.abs(vx*pk.t[0]+vy*pk.t[1]),
+      entryAngle=Math.atan2(lateralSpeed,Math.max(.02,normalSpeed))*180/Math.PI,
+      baseWindow=Math.max(.001,throatHalf-PH.R+TBL.FACING_THICKNESS),
+      // 強球の不利は「ポケット中央でも受け幅が消える」ものではない。
+      // ツノ寄りと横切り入射でジョーに衝突する確率が急増するとして解く。
+      jawExposure=Math.pow(this.clamp(Math.abs(lateral)/baseWindow),1.35),
+      speedPenalty=(Math.max(0,speed-3.05)*.00145+Math.max(0,speed-6.2)*.00075)*(.12+.88*jawExposure),
+      anglePenalty=Math.pow(this.clamp((entryAngle-16)/60),1.35)*.0065*(.35+.65*jawExposure),
+      spinSurface=(ball?.w?.[2]||0)*PH.R,
+      // +t側にいる球には−t方向の表面運動が口の中央へ助ける。
+      inwardSpin=-Math.sign(lateral||0)*spinSurface,
+      spinAdjustment=this.clamp(inwardSpin/Math.max(.35,speed),-.8,.8)*.0017;
+    return Math.max(0,baseWindow-speedPenalty-anglePenalty+spinAdjustment);
   }
   pocketAcceptance(pk,ball,depth=pk.shelf*ENV.shelfScale){
-    const rx=ball.p[0]-pk.M[0],ry=ball.p[1]-pk.M[1],s=rx*pk.n[0]+ry*pk.n[1],
-      lateral=rx*pk.t[0]+ry*pk.t[1],window=this.pocketWindow(pk,Math.max(0,s),0,ball),margin=window-Math.abs(lateral),
-      speed=hyp2(ball.v?.[0]||0,ball.v?.[1]||0),normalSpeed=Math.max(0,(ball.v?.[0]||0)*pk.n[0]+(ball.v?.[1]||0)*pk.n[1]),
-      lateralSpeed=Math.abs((ball.v?.[0]||0)*pk.t[0]+(ball.v?.[1]||0)*pk.t[1]),entryAngle=Math.atan2(lateralSpeed,Math.max(.02,normalSpeed))*180/Math.PI;
-    return {accepted:s>pk.shelf*ENV.shelfScale&&margin>=0,score:margin>=0?1:0,margin,window,lateral,entryAngle,speed};
+    const speed=hyp2(ball.v?.[0]||0,ball.v?.[1]||0),rx=ball.p[0]-pk.M[0],ry=ball.p[1]-pk.M[1],
+      lateral=rx*pk.t[0]+ry*pk.t[1],window=this.pocketWindow(pk,depth,speed,ball),margin=window-Math.abs(lateral),
+      normalSpeed=Math.max(0,(ball.v?.[0]||0)*pk.n[0]+(ball.v?.[1]||0)*pk.n[1]),
+      lateralSpeed=Math.abs((ball.v?.[0]||0)*pk.t[0]+(ball.v?.[1]||0)*pk.t[1]),
+      entryAngle=Math.atan2(lateralSpeed,Math.max(.02,normalSpeed))*180/Math.PI,
+      score=this.clamp(.5+margin/Math.max(.0035,window*.72||.0035));
+    return {accepted:margin>=0,score,margin,window,lateral,entryAngle,speed};
   }
   rackState(balls){
     let state=this.rackWorlds.get(balls);if(state)return state;
@@ -12880,17 +12787,13 @@ class RealBilliardsEngine {
     state={active:false,ticks:0,elapsed:0,cages};this.rackWorlds.set(balls,state);return state;
   }
   rackSubsteps(balls,enabled){
-    // 高速時は通常配置でも内部刻みを細分化し、1/600秒内の食い込みと
-    // 衝突法線誤差を抑える。ラックは従来の圧縮伝播用細分化を併用する。
-    const maxSpeed=Math.max(0,...balls.filter(b=>!b.pocketed&&!b.off).map(b=>hyp3(b.v[0],b.v[1],b.v[2])));
-    const speedSteps=maxSpeed>8?6:maxSpeed>5?4:maxSpeed>2.8?2:1;
-    if(!enabled)return speedSteps;const state=this.rackState(balls);
+    if(!enabled)return 1;const state=this.rackState(balls);
     const objectMotion=balls.some(b=>b.id!==0&&!b.pocketed&&!b.off&&hyp2(b.v[0],b.v[1])>.035);
     if(objectMotion&&!state.active)state.active=true;
     if(!state.active)return 1;
     state.ticks++;
     // 最初の圧縮・復元区間だけ1/2400秒相当で解き、ラックが開いた後は通常へ戻す。
-    return Math.max(speedSteps,state.ticks<=84?4:state.ticks<=132?2:1);
+    return state.ticks<=84?4:state.ticks<=132?2:1;
   }
   stabilizeRackCages(balls,dt,enabled){
     if(!enabled)return;const state=this.rackState(balls),objects=balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off);
@@ -12919,14 +12822,8 @@ class RealBilliardsEngine {
 }
 const REAL_ENGINE=new RealBilliardsEngine();
 const BILLIARDS_ENGINE_META=Object.freeze({name:'REAL BILLIARDS ENGINE',version:RealBilliardsEngine.VERSION,
-  pipeline:['cue-delivery','slide-roll','swept-toi-impact','throw-release','cushion-jaw','geometry-pocket','next-position'],
+  pipeline:['cue-delivery','slide-roll','impact-spin','throw-release','rack-compression','cushion-jaw','pocket-acceptance','next-position'],
   deterministic:true,unitSystem:'m-kg-s-rad'});
-
-function legalTablePlacement(x,y,ballId=null){
-  x=Math.max(-PH.HX,Math.min(PH.HX,x));y=Math.max(-PH.HY,Math.min(PH.HY,y));
-  for(const pk of POCKETS){const rx=x-pk.M[0],ry=y-pk.M[1],s=rx*pk.n[0]+ry*pk.n[1],lat=Math.abs(rx*pk.t[0]+ry*pk.t[1]);if(s>-PH.R*.2&&lat<pk.mouth/2+PH.R*.35){const push=PH.R*1.08-s;x-=pk.n[0]*push;y-=pk.n[1]*push;}}
-  return [Math.max(-PH.HX,Math.min(PH.HX,x)),Math.max(-PH.HY,Math.min(PH.HY,y))];
-}
 
 function makeBall(id, x, y) {
   return { id, p: [x, y, PH.R], v: [0, 0, 0], w: [0, 0, 0], pocketed: false, off: false, strokeElev: 0, masseGrip: 0,
@@ -13069,8 +12966,10 @@ function stepBall(b, dt) {
     const sp = hyp2(b.v[0], b.v[1]);
     if (sp > 1e-9) {
       // 織り方向によるごく小さな速度差。湿度が高いほど差が出る。
-      const grain = 1 + ENV.grain * ((b.v[0]*b.v[0]-b.v[1]*b.v[1])/(sp*sp));
-      const dec = Math.min(sp, ENV.muR * grain * PH.G * dt);
+      const dir = Math.atan2(b.v[1], b.v[0]);
+      const grain = 1 + ENV.grain * Math.cos(2 * dir);
+      // 高速域はラシャの変形・空気抵抗も増える。実台の「強打ほど早く失速」を二乗項で再現。
+      const dec = Math.min(sp, (ENV.muR * grain * PH.G + 0.018 * sp * sp) * dt);
       b.v[0] -= dec * b.v[0] / sp;
       b.v[1] -= dec * b.v[1] / sp;
     }
@@ -13083,14 +12982,15 @@ function stepBall(b, dt) {
   b.w[2] = Math.abs(wz) <= dwz ? 0 : wz - Math.sign(wz) * dwz;
   // エレベーション＋横回転によるスワーブ。低速域ほど相対的に大きい。
   const spNow = hyp2(b.v[0], b.v[1]);
-  if (ul > rollEps && spNow > 0.03 && Math.abs(b.w[2]) > 1 && Math.abs(b.strokeElev || 0) > 0.01) {
+  if (spNow > 0.03 && Math.abs(b.w[2]) > 1 && Math.abs(b.strokeElev || 0) > 0.01) {
     const nx = -b.v[1] / spNow, ny = b.v[0] / spNow;
     // 高角度・大オフセット・中低速のマッセだけを追加増幅する。通常の横撞きや
     // 中心撞きジャンプは masseGrip がほぼ0なので、従来軌道を保持する。
-    const aSw = ENV.swerve * HIGH_ELEVATION_CALIBRATION.swerveCoupling * b.w[2] * Math.sin(b.strokeElev) * Math.min(4, spNow);
+    const masseCurve = 1 + 11 * Math.max(0, Math.min(1, b.masseGrip || 0));
+    const aSw = ENV.swerve * 0.00042 * masseCurve * b.w[2] * Math.sin(b.strokeElev) * Math.min(4, spNow);
     b.v[0] += nx * aSw * dt; b.v[1] += ny * aSw * dt;
-    b.strokeElev *= Math.max(0, 1 - dt * HIGH_ELEVATION_CALIBRATION.elevationDecayPerSec);
-    b.masseGrip *= Math.max(0, 1 - dt * HIGH_ELEVATION_CALIBRATION.clothGripDecayPerSec);
+    b.strokeElev *= Math.max(0, 1 - dt * 0.45);
+    b.masseGrip *= Math.max(0, 1 - dt * 1.35);
   }
   // 現実のわずかな台傾斜(最大でも約0.002g以下)を速度へ積算。
   if (spNow < 2.2) {
@@ -13109,26 +13009,42 @@ function stepBall(b, dt) {
 }
 
 // ---- 球-球 衝突(スロウ/スピン伝達込み) ----
-function collideBalls(b1, b2, dt=1/600) {
+function collideBalls(b1, b2) {
   if (b1.pocketed || b2.pocketed || b1._puzzleRide || b2._puzzleRide) return null;
-  const diameter=2*PH.R,p10=b1._prevP||b1.p,p20=b2._prevP||b2.p,
-    r0=vsub(p20,p10),dr=vsub(vsub(b2.p,p20),vsub(b1.p,p10));
-  let hitT=null;const A=vdot(dr,dr),B=2*vdot(r0,dr),C=vdot(r0,r0)-diameter*diameter;
-  if(C<=0)hitT=0;else if(A>1e-16){const D=B*B-4*A*C;if(D>=0){const root=(-B-Math.sqrt(D))/(2*A);if(root>=0&&root<=1)hitT=root;}}
-  const currentDist=vlen(vsub(b2.p,b1.p));if(hitT===null&&currentDist>=diameter)return null;
-  if(hitT===null)hitT=1;
-  b1.p=vadd(p10,vscale(vsub(b1.p,p10),hitT));b2.p=vadd(p20,vscale(vsub(b2.p,p20),hitT));
-  let dp=vsub(b2.p,b1.p),dist=vlen(dp);if(dist<1e-9)return null;const n=vscale(dp,1/dist);
-  const pen=Math.max(0,diameter-dist);if(pen){b1.p=vadd(b1.p,vscale(n,-pen/2));b2.p=vadd(b2.p,vscale(n,pen/2));}
-  const vrel=vsub(b1.v,b2.v),vn=vdot(vrel,n);if(vn<=0)return null;
-  const approach1=hyp2(b1.v[0],b1.v[1]),approach2=hyp2(b2.v[0],b2.v[1]),before1=REAL_ENGINE.surfaceState(b1),before2=REAL_ENGINE.surfaceState(b2),
+  const dp = vsub(b2.p, b1.p);
+  const dist = vlen(dp);
+  if (dist >= 2 * PH.R || dist < 1e-9) return null;
+  const n = vscale(dp, 1 / dist);
+  // 位置補正(食い込み解消)
+  const pen = 2 * PH.R - dist;
+  b1.p = vadd(b1.p, vscale(n, -pen / 2));
+  b2.p = vadd(b2.p, vscale(n, pen / 2));
+  const vrel = vsub(b1.v, b2.v);
+  const vn = vdot(vrel, n);
+  if (vn <= 0) return null; // 離れつつある
+  // 衝突前速度を履歴へ残す。法線成分だけでは薄い接触の「球の転び」を
+  // 過小評価するため、カイルンの最終球到達余力は手球の実速度で判定する。
+  const approach1 = hyp2(b1.v[0], b1.v[1]);
+  const approach2 = hyp2(b2.v[0], b2.v[1]);
+  const before1=REAL_ENGINE.surfaceState(b1),before2=REAL_ENGINE.surfaceState(b2),
     r1=vscale(n,PH.R),r2=vscale(n,-PH.R),s1=vadd(b1.v,vcross(b1.w,r1)),s2=vadd(b2.v,vcross(b2.w,r2));
   let u=vsub(s1,s2);u=vsub(u,vscale(n,vdot(u,n)));const ulen=vlen(u),material=REAL_ENGINE.ballContactMaterial(vn,ulen),Jn=material.normalImpulse;
-  b1.v=vadd(b1.v,vscale(n,-Jn/PH.M));b2.v=vadd(b2.v,vscale(n,Jn/PH.M));
-  if(ulen>1e-6){const t=vscale(u,1/ulen),P=vscale(t,-material.tangentialImpulse);b1.v=vadd(b1.v,vscale(P,1/PH.M));b1.w=vadd(b1.w,vscale(vcross(r1,P),1/PH.I));b2.v=vadd(b2.v,vscale(P,-1/PH.M));b2.w=vadd(b2.w,vscale(vcross(r2,vscale(P,-1)),1/PH.I));}
-  const remain=Math.max(0,1-hitT)*dt;b1.p=vadd(b1.p,vscale(b1.v,remain));b2.p=vadd(b2.p,vscale(b2.v,remain));
+  // 法線インパルス。接線方向は次のstick/slip判定で独立に解く。
+  b1.v = vadd(b1.v, vscale(n, -Jn / PH.M));
+  b2.v = vadd(b2.v, vscale(n, Jn / PH.M));
+  // 接触点の相対表面速度 → 摩擦(スロウ・スピン移り)
+  if (ulen > 1e-6) {
+    const t = vscale(u, 1 / ulen);
+    const Jt = material.tangentialImpulse;
+    const P = vscale(t, -Jt);
+    b1.v = vadd(b1.v, vscale(P, 1 / PH.M));
+    b1.w = vadd(b1.w, vscale(vcross(r1, P), 1 / PH.I));
+    b2.v = vadd(b2.v, vscale(P, -1 / PH.M));
+    b2.w = vadd(b2.w, vscale(vcross(r2, vscale(P, -1)), 1 / PH.I));
+  }
   const telemetry=REAL_ENGINE.contactTelemetry(before1,before2,b1,b2,n,material,ulen);
-  return {n,speed:vn,approach1,approach2,relativeSpeed:vlen(vrel),point:vadd(b1.p,vscale(n,PH.R)),releaseVz1:b1.v[2],releaseVz2:b2.v[2],toi:hitT,...telemetry};
+  return { n, speed: vn, approach1, approach2, relativeSpeed:vlen(vrel), point: vadd(b1.p, vscale(n, PH.R)),
+    releaseVz1:b1.v[2],releaseVz2:b2.v[2],...telemetry };
 }
 
 // 密接ラックでは、同じ瞬間に複数の接点へ衝撃が伝わる。球を配列順に1組ずつ
@@ -13236,34 +13152,32 @@ function resolveBallContacts(balls,events){
 }
 
 // ---- クッション ----
-function resolveCushion(b,n,facing=false,penetration=0,dt=1/2400,feature='cushion') {
-  n=vnorm(n);const preV=b.v.slice(),vn=vdot(preV,n),impact=Math.max(0,-vn),horizontalSpeed=hyp2(preV[0],preV[1]),
-    tangentApproach=Math.sqrt(Math.max(0,horizontalSpeed*horizontalSpeed-vn*vn)),incidenceDeg=Math.atan2(tangentApproach,Math.max(1e-9,impact))*180/Math.PI;
-  if(penetration>0)b.p=vadd(b.p,vscale(n,penetration+1e-8));
-  if(vn>=0){b._cushionCompression={meters:Math.max(0,penetration),recovered:Math.max(0,penetration),contactMs:0,impactSpeed:0,restitution:0,facing:!!facing,feature,forceN:0};return;}
-  const targetE=Math.max(.66,Math.min(.94,ENV.cushE+(facing?.018:0)-.010*Math.max(0,impact-3))),
-    dv=(1+targetE)*impact;
-  b.v=vadd(b.v,vscale(n,dv));
-  const Jn=PH.M*dv,r=vadd(vscale(n,-PH.R*.966),[0,0,.26*PH.R]);
-  // 鼻先接触速度は3Dで解く。低速・広角だけは、接触点すべり速度だけで高摩擦へ
-  // 張り付かないよう、入射角と法線衝突速度を併用して過剰な「開き」を抑える。
-  let u=vadd(b.v,vcross(b.w,r));u=vsub(u,vscale(n,vdot(u,n)));
-  const ul=vlen(u);if(ul>1e-6&&Jn>0){
-    const envScale=ENV.cushMu/Math.max(1e-9,PH.CU_MU),faceScale=facing?.90:1,
-      muFast=CUSHION_CALIBRATION.muFast*envScale*faceScale,muSlow=CUSHION_CALIBRATION.muSlow*envScale*faceScale,
-      baseMu=muFast+(muSlow-muFast)/(1+Math.exp((ul-CUSHION_CALIBRATION.transitionSpeed)/CUSHION_CALIBRATION.transitionWidth)),
-      smooth01=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);},
-      wide=smooth01((incidenceDeg-CUSHION_CALIBRATION.wideAngleStartDeg)/(CUSHION_CALIBRATION.wideAngleFullDeg-CUSHION_CALIBRATION.wideAngleStartDeg)),
-      slow=smooth01((CUSHION_CALIBRATION.slowImpactStart-impact)/(CUSHION_CALIBRATION.slowImpactStart-CUSHION_CALIBRATION.slowImpactFull)),
-      incidenceScale=1+CUSHION_CALIBRATION.wideSlowBoost*wide*slow,
-      surfaceMu=baseMu*incidenceScale,Jt=surfaceMu*Jn,P=vscale(vscale(u,1/ul),-Jt);
-    b.v=vadd(b.v,vscale(P,1/PH.M));b.w=vadd(b.w,vscale(vcross(r,P),1/PH.I));
+function resolveCushion(b, n, facing) {
+  const vn = vdot(b.v, n);
+  if (vn >= 0) return;
+  // WPAはポケットのフェーシングを通常クッションより硬く指定している。
+  const facingBoost = facing ? 0.025 : 0;
+  const eCush = Math.max(0.68, Math.min(0.93, ENV.cushE + facingBoost - 0.015 * Math.max(0, Math.abs(vn) - 3)));
+  const Jn = -(1 + eCush) * PH.M * vn;
+  b.v = vsub(b.v, vscale(n, (1 + eCush) * vn));
+  // ノーズ接触点: 外向き水平 + 中心より少し上
+  const r = vadd(vscale(n, -PH.R * 0.966), [0, 0, 0.26 * PH.R]);
+  let u = vadd(b.v, vcross(b.w, r));
+  u = vsub(u, vscale(n, vdot(u, n)));
+  u[2] *= 0.2; // ノーズは垂直方向をほぼ拘束しない(過大ホップ防止)
+  const ul = vlen(u);
+  if (ul > 1e-6) {
+    const surfaceMu = ENV.cushMu * (facing ? 0.90 : 1);
+    const Jt = Math.min(surfaceMu * Jn, (2 / 7) * PH.M * ul);
+    const P = vscale(vscale(u, 1 / ul), -Jt);
+    b.v = vadd(b.v, vscale(P, 1 / PH.M));
+    b.w = vadd(b.w, vscale(vcross(r, P), 1 / PH.I));
   }
-  const k=facing?3.55e6:3.05e6,maxCompression=facing?.0054:.0074,
-    compression=Math.min(maxCompression,Math.pow(Math.max(0,.5*PH.M*impact*impact)/Math.max(1,k),2/5)),
-    contactMs=Math.PI*Math.sqrt(PH.M/Math.max(1,1.5*k*Math.sqrt(Math.max(compression,1e-6))))*1000;
-  b._cushionCompression={meters:compression,recovered:Math.max(0,penetration),contactMs:Math.max(.5,Math.min(6,contactMs)),impactSpeed:impact,restitution:targetE,facing:!!facing,feature,forceN:Jn/Math.max(dt,1/12000)};
-  if(b.v[2]<0)b.v[2]=0;
+  if (b.v[2] < 0) b.v[2] = 0;
+  const elevation=Math.abs(b.strokeElev||0),horizontal=hyp2(b.v[0],b.v[1]),
+    railJump=elevation>10*Math.PI/180&&horizontal>1.8&&!facing;
+  if(railJump)b.v[2]=Math.max(b.v[2],Math.min(2.35,horizontal*Math.sin(elevation)*.44));
+  if (b.v[2] > (railJump?2.35:.25)) b.v[2] = railJump?2.35:.25;
 }
 
 function pocketCaptureWindow(pk, depth, speed, ball=null) {
@@ -13293,13 +13207,7 @@ function pocketKey(pk) {
   return pk.y < 0 ? 'tr' : 'br';
 }
 
-function cushionInwardNormal(c,qx,qy){
-  const ex=c.b[0]-c.a[0],ey=c.b[1]-c.a[1],l=Math.hypot(ex,ey)||1,n1=[-ey/l,ex/l,0],n2=[ey/l,-ex/l,0],mx=(c.a[0]+c.b[0])/2,my=(c.a[1]+c.b[1])/2;
-  const target=c.pocket?[mx-c.pocket.cx,my-c.pocket.cy]:[-mx,-my];
-  return n1[0]*target[0]+n1[1]*target[1]>=n2[0]*target[0]+n2[1]*target[1]?n1:n2;
-}
-
-function cushionsAndPockets(b, events, dt=1/2400) {
+function cushionsAndPockets(b, events) {
   if (b.pocketed) return;
   if (ENV.carom) {
     // UMB 3クッション用。表示座標は9ftへ等比写像するが、2:1比と公式球/台比を保つ。
@@ -13308,11 +13216,11 @@ function cushionsAndPockets(b, events, dt=1/2400) {
     else if (b.p[0] < -PH.HX) { b.p[0] = -PH.HX; n = [1, 0, 0]; rail = '-x'; }
     if (b.p[1] > PH.HY) { b.p[1] = PH.HY; n = [0, -1, 0]; rail = '+y'; }
     else if (b.p[1] < -PH.HY) { b.p[1] = -PH.HY; n = [0, 1, 0]; rail = '-y'; }
-    if (n) { resolveCushion(b,n,false,Math.max(0,Math.max(Math.abs(b.p[0])-PH.HX,Math.abs(b.p[1])-PH.HY)),dt,'carom-rail'); if (events) events.push({ type: 'cushion', id: b.id, rail }); }
+    if (n) { resolveCushion(b, n); if (events) events.push({ type: 'cushion', id: b.id, rail }); }
     return;
   }
-  if (checkPockets(b)) { if (events) {const ev={ type: 'pocket', id: b.id, pocket: b.pocket.type, pocketKey: pocketKey(b.pocket),
-    acceptance:b.pocketAcceptance?{...b.pocketAcceptance}:null };events.push(ev);if(typeof S!=='undefined'&&S.mode==='running')GAME_SFX.event(ev);} return; }
+  if (checkPockets(b)) { if (events) events.push({ type: 'pocket', id: b.id, pocket: b.pocket.type, pocketKey: pocketKey(b.pocket),
+    acceptance:b.pocketAcceptance?{...b.pocketAcceptance}:null }); return; }
   const flying = b.p[2] > PH.R * 1.9;
   if (flying) {
     // レール高より上 → 場外判定のみ
@@ -13331,13 +13239,17 @@ function cushionsAndPockets(b, events, dt=1/2400) {
     let u = ((b.p[0] - ax) * ex + (b.p[1] - ay) * ey) / ll;
     u = u < 0 ? 0 : (u > 1 ? 1 : u);
     const qx = ax + ex * u, qy = ay + ey * u;
-    const dx = b.p[0] - qx, dy = b.p[1] - qy,d = hyp2(dx, dy);
-    if(d>=PH.R||d<1e-9)continue;
-    const n=[dx/d,dy/d,0],penetration=PH.R-d;
-    const feature=c.rail==='jaw'?(u<.09||u>.91?'horn':'jaw'):c.rail==='jaw-back'?'jaw-back':c.rail==='pocket-back'?'pocket-back':'cushion';
-    const preVz=b.v[2];resolveCushion(b,n,c.rail!=='cushion'&&!['+x','-x','+y','-y'].includes(c.rail),penetration,dt,feature);
-    if (events) {const ev={ type: 'cushion', id: b.id, rail: c.rail, feature, segment:i, contact:[qx,qy],endpointRatio:u,
-      z:b.p[2],preVz,postVz:b.v[2],compression:b._cushionCompression?{...b._cushionCompression}:null };events.push(ev);if(typeof S!=='undefined'&&S.mode==='running')GAME_SFX.event(ev);}
+    const dx = b.p[0] - qx, dy = b.p[1] - qy;
+    const d = hyp2(dx, dy);
+    if (d >= PH.R || d < 1e-9) continue;
+    const nx = dx / d, ny = dy / d;
+    if (b.v[0] * nx + b.v[1] * ny >= 0) continue;      // 離れていく方向なら無視
+    b.p[0] = qx + nx * PH.R;
+    b.p[1] = qy + ny * PH.R;
+    const preVz=b.v[2];resolveCushion(b, [nx, ny, 0], c.rail === 'jaw');
+    const feature=c.rail==='jaw'?(u<.09||u>.91?'horn':'jaw'):'cushion';
+    if (events) events.push({ type: 'cushion', id: b.id, rail: c.rail, feature, segment:i, contact:[qx,qy],endpointRatio:u,
+      z:b.p[2],preVz,postVz:b.v[2] });
     return;
   }
 }
@@ -13441,34 +13353,29 @@ function rackContactSolverEnabled(){
   return rackGame&&(!S.rules.broken||(game==='straight'&&S.rules.straightContinuationBreak));
 }
 
-
-const GAME_SFX={ctx:null,last:0,ensure(){if(!this.ctx)this.ctx=new (window.AudioContext||window.webkitAudioContext)();return this.ctx;},tone(freq,dur=.035,gain=.035){try{const c=this.ensure(),o=c.createOscillator(),g=c.createGain();o.frequency.value=freq;g.gain.setValueAtTime(gain,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dur);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+dur);}catch{}},event(ev){if(!ev)return;if(ev.type==='ball')this.tone(700+Math.min(900,(ev.info?.speed||0)*120),.025,.025);else if(ev.type==='cushion')this.tone(280,.035,.025);else if(ev.type==='pocket')this.tone(120,.12,.04);}};
-
 function stepWorldSlice(balls, dt, events) {
   // Starting-pad devices must capture the cue before its first ordinary
   // collision; this also makes a closed-loop cannon a valid puzzle element.
   collectPuzzlePropEvents(balls,events);
   for (const b of balls) {
-    const beforeX = b.p[0];b._prevP=b.p.slice();
+    const beforeX = b.p[0];
     if(!stepPuzzleRide(b,dt,events))stepBall(b, dt);
     if (events && b.id !== 0 && beforeX > -PH.TABLE_W / 4 && b.p[0] <= -PH.TABLE_W / 4)
       events.push({ type: 'headcross', id: b.id });
   }
-  for(let pass=0;pass<3;pass++)for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){
-    const info=collideBalls(balls[i],balls[j],dt);if(info&&events){const ev={type:'ball',a:balls[i].id,b:balls[j].id,info};events.push(ev);if(typeof S!=='undefined'&&S.mode==='running')GAME_SFX.event(ev);}
-  }
-  for (const b of balls) if(!b._puzzleRide)cushionsAndPockets(b,events,dt);
-  // ジョー奥を抜けた球を「台上のまま無限移動」にしない安全境界。
-  for (const b of balls) if(!b.pocketed&&!b.off&&!b._puzzleRide &&
-      (Math.abs(b.p[0])>PH.TABLE_W/2+.22 || Math.abs(b.p[1])>PH.TABLE_H/2+.22)) {
-    b.off=true;b.v=[0,0,0];b.w=[0,0,0];
-    if(events)events.push({type:'off',id:b.id,reason:'table-boundary'});
-  }
+  const rackMode=rackContactSolverEnabled();
+  if(rackMode){resolveBallContacts(balls,events);REAL_ENGINE.stabilizeRackCages(balls,dt,true);}
+  else for (let i = 0; i < balls.length; i++)
+    for (let j = i + 1; j < balls.length; j++) {
+      const info = collideBalls(balls[i], balls[j]);
+      if (info && events) events.push({ type: 'ball', a: balls[i].id, b: balls[j].id, info });
+    }
+  for (const b of balls) if(!b._puzzleRide)cushionsAndPockets(b, events);
   collectPuzzlePropEvents(balls,events);
 }
 
 function stepWorld(balls,dt,events){
-  const maxSpeed=Math.max(0,...balls.filter(b=>!b.pocketed&&!b.off).map(b=>hyp3(b.v[0],b.v[1],b.v[2]))),substeps=maxSpeed>8?6:maxSpeed>5?4:maxSpeed>2.8?2:1,h=dt/substeps;
+  const rackMode=rackContactSolverEnabled(),substeps=REAL_ENGINE.rackSubsteps(balls,rackMode),h=dt/substeps;
   for(let i=0;i<substeps;i++)stepWorldSlice(balls,h,events);
 }
 
@@ -13480,7 +13387,6 @@ function allStopped(balls) {
 
 // ---- ショット予測シミュレーション(コーチ用) ----
 function simulateShot(srcBalls, prm, opts) {
-  globalThis.__billiardAISimulation?.();
   const o = opts || {};
   const maxT = o.maxT || 10, dt = o.dt || 1 / 600;
   const balls = srcBalls.map(cloneBall);
@@ -13600,9 +13506,9 @@ function kairunShotResult(stage,opening,ev) {
 // ===================== END PHYSICS CORE =====================
 
 if (typeof module !== 'undefined') {
-  module.exports = { PH, ENV, HIGH_ELEVATION_CALIBRATION, CUSHION_CALIBRATION, TABLE_PROFILES, POCKETS, CUSHIONS, TBL, v3, vadd, vsub, vscale, vdot, vcross, vlen, vnorm,
+  module.exports = { PH, POCKETS, CUSHIONS, TBL, v3, vadd, vsub, vscale, vdot, vcross, vlen, vnorm,
     BILLIARDS_ENGINE_META,RealBilliardsEngine,REAL_ENGINE,makeBall, cloneBall, strike, stepBall, stepWorld, stepWorldSlice,collideBalls, resolveCushion,
-    bounceSlate, allStopped, simulateShot, cushionsAndPockets, checkPockets, pocketCaptureWindow, legalTablePlacement, rebuildAndValidatePocketGeometry,
+    bounceSlate, allStopped, simulateShot, cushionsAndPockets, checkPockets, pocketCaptureWindow,
     kairunContacts, kairunShotResult };
 }
 
@@ -14038,7 +13944,7 @@ const LESSON_CATALOG=[...LESSONS,...PRO_SHOTS.filter(x=>x.replayable)];
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='3.6.0';
+const APP_VERSION='3.0.0';
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
   green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
@@ -14489,13 +14395,12 @@ function setBallSet(defs) {
 }
 
 // ---------- ライン/ゴースト/リング ----------
-function makeLine(color, maxPts, opacity, dashed=false) {
+function makeLine(color, maxPts, opacity) {
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(maxPts * 3), 3));
-  const opts={color,transparent:opacity!==undefined,opacity:opacity===undefined?1:opacity};
-  const mat=dashed?new THREE.LineDashedMaterial({...opts,dashSize:.035,gapSize:.022}):new THREE.LineBasicMaterial(opts);
+  const mat = new THREE.LineBasicMaterial({ color, transparent: opacity !== undefined, opacity: opacity === undefined ? 1 : opacity });
   const line = new THREE.Line(geo, mat);
-  line.userData.dashed=!!dashed;line.frustumCulled = false; line.visible = false;
+  line.frustumCulled = false; line.visible = false;
   scene.add(line);
   return line;
 }
@@ -14510,7 +14415,6 @@ function setLine(line, pts) {
   }
   line.geometry.setDrawRange(0, n);
   line.geometry.attributes.position.needsUpdate = true;
-  if(line.userData.dashed)line.computeLineDistances();
   line.visible = n > 1;
 }
 const predCue = makeLine(0xffb35c, 2600);
@@ -14518,13 +14422,6 @@ const predOb = makeLine(0xe9eef3, 2600);
 const predOther = [makeLine(0x6b7684, 2600, 0.65), makeLine(0x6b7684, 2600, 0.65)];
 const tanLine = makeLine(0x63d7e8, 2, 0.9);
 const trailLine = makeLine(0xa06c33, 2600, 0.9);
-const puzzleReviewActualLines=Array.from({length:16},()=>makeLine(0xff5b57,2600,.48));
-const puzzleReviewAnswerLines=Array.from({length:16},()=>makeLine(0x63e58a,2600,.62,true));
-let liveShotPaths=null,puzzleReviewVisible=false,puzzleReviewActualData={},puzzleReviewAnswerData={};
-function hidePuzzleReviewPaths(){puzzleReviewVisible=false;puzzleReviewActualData={};puzzleReviewAnswerData={};puzzleReviewActualLines.forEach(l=>l.visible=false);puzzleReviewAnswerLines.forEach(l=>l.visible=false);const legend=$('puzzleReviewLegend');if(legend){legend.classList.remove('show');legend.setAttribute('aria-hidden','true');}}
-function beginLiveShotPaths(){liveShotPaths={};for(const b of S.balls)liveShotPaths[b.id]=[b.p.slice()];}
-function sampleLiveShotPaths(){if(!liveShotPaths)return;for(const b of S.balls){const path=liveShotPaths[b.id]||(liveShotPaths[b.id]=[]);if(path.length<2600)path.push(b.p.slice());}}
-function showPuzzleReviewPaths(actualPaths,answerPaths){if(predTimer){clearTimeout(predTimer);predTimer=null;}hidePuzzleReviewPaths();puzzleReviewActualData=structuredClone(actualPaths||{});puzzleReviewAnswerData=structuredClone(answerPaths||{});let ai=0,bi=0;for(const [id,path] of Object.entries(actualPaths||{})){if(path?.length>1&&ai<puzzleReviewActualLines.length)setLine(puzzleReviewActualLines[ai++],path);}for(const [id,path] of Object.entries(answerPaths||{})){if(path?.length>1&&bi<puzzleReviewAnswerLines.length)setLine(puzzleReviewAnswerLines[bi++],path);}puzzleReviewVisible=ai+bi>0;const legend=$('puzzleReviewLegend');if(legend&&puzzleReviewVisible){legend.classList.add('show');legend.setAttribute('aria-hidden','false');}predCue.visible=predOb.visible=tanLine.visible=false;predOther.forEach(l=>l.visible=false);}
 
 const ghost = new THREE.Mesh(new THREE.SphereGeometry(PH.R, 20, 14),
   new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25, depthWrite: false }));
@@ -14904,21 +14801,11 @@ function updateCamera() {
 // ---------- 入力(ステージ) ----------
 const ray = new THREE.Raycaster();
 const planeY = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-const viewportState={w:0,h:0,dpr:0,revision:0};
-function syncViewportGeometry(force=false){
-  const box=stage.getBoundingClientRect(),w=Math.max(1,Math.round(box.width)),h=Math.max(1,Math.round(box.height)),dpr=Math.min(window.devicePixelRatio||1,2);
-  if(force||w!==viewportState.w||h!==viewportState.h||Math.abs(dpr-viewportState.dpr)>1e-6){
-    renderer.setPixelRatio(dpr);renderer.setSize(w,h,false);compatCanvas.width=Math.max(1,Math.floor(w*dpr));compatCanvas.height=Math.max(1,Math.floor(h*dpr));compatCanvas.style.width=w+'px';compatCanvas.style.height=h+'px';
-    viewportState.w=w;viewportState.h=h;viewportState.dpr=dpr;viewportState.revision++;updateCamera();camera.updateMatrixWorld(true);camera.updateProjectionMatrix();
-  }
-  return glCanvas.getBoundingClientRect();
-}
-function pickTable(e,forcePath='auto') {
-  const r = syncViewportGeometry(false);
+function pickTable(e) {
+  const r = glCanvas.getBoundingClientRect();
   // 2D互換表示は独自の等比スケールで描くため、Three.jsカメラのレイではなく
   // 画面上の見た目そのものから台座標へ戻す。これで低電力端末でも球を正確に掴める。
-  const useCanvas=forcePath==='canvas2d'||(forcePath==='auto'&&(!WEBGL_OK||ENV.carom)&&S.view==='top');
-  if (useCanvas) {
+  if ((!WEBGL_OK || ENV.carom) && S.view === 'top') {
     const cw = r.width, ch = r.height;
     const pad2d = tableCanvasPad(cw, ch);
     const scale2d = Math.min((cw - pad2d * 2) / (PH.TABLE_W + 0.34), (ch - pad2d * 2) / (PH.TABLE_H + 0.34));
@@ -14931,21 +14818,6 @@ function pickTable(e,forcePath='auto') {
   const pt = new THREE.Vector3();
   if (!ray.ray.intersectPlane(planeY, pt)) return null;
   return [pt.x, -pt.z];
-}
-function aimProjectionCheck(forcePath='auto'){
-  const r=syncViewportGeometry(true),cue=cueBall();if(!cue)return {ok:false,error:null,reason:'no cue ball'};
-  let event,path;
-  const useCanvas=forcePath==='canvas2d'||(forcePath==='auto'&&(!WEBGL_OK||ENV.carom)&&S.view==='top');
-  if(useCanvas){
-    const pad2d=tableCanvasPad(r.width,r.height),scale2d=Math.min((r.width-pad2d*2)/(PH.TABLE_W+.34),(r.height-pad2d*2)/(PH.TABLE_H+.34));
-    event={clientX:r.left+r.width/2+cue.p[0]*scale2d,clientY:r.top+r.height/2+cue.p[1]*scale2d};path='canvas2d';
-  }else{
-    camera.updateMatrixWorld(true);camera.updateProjectionMatrix();const projected=new THREE.Vector3(cue.p[0],0,-cue.p[1]).project(camera);
-    event={clientX:r.left+(projected.x+1)*.5*r.width,clientY:r.top+(1-projected.y)*.5*r.height};path='webgl';
-  }
-  const picked=pickTable(event,path);if(!picked)return {ok:false,error:null,reason:'unprojection failed',path};
-  const error=Math.hypot(picked[0]-cue.p[0],picked[1]-cue.p[1]);
-  return {ok:error<1e-6,error,path,world:[cue.p[0],cue.p[1]],picked,viewport:{...viewportState},css:{w:r.width,h:r.height}};
 }
 const pointers = new Map();
 let drag = null;
@@ -15023,17 +14895,12 @@ glCanvas.addEventListener('pointermove', e => {
     const p = pickTable(e);
     if (!p) return;
     const b = drag.ball;
-    let [nx,ny] = legalTablePlacement(p[0],p[1],b.id);
+    let nx = Math.max(-PH.HX, Math.min(PH.HX, p[0]));
+    const ny = Math.max(-PH.HY, Math.min(PH.HY, p[1]));
     if(S.rules&&b.id===0&&S.rules.game==='fujiyama'&&(!S.rules.broken||S.rules.ballInHandRestricted))
       nx=fujiyamaSide(MATCH.turn)==='low'?Math.min(nx,-W/4):Math.max(nx,W/4);
     else if (S.rules && b.id === 0 && (!S.rules.broken || S.rules.ballInHandRestricted || (S.rules.game === 'kairun' && S.rules.opening)))
       nx = Math.min(nx, -W / 4); // ブレイク／カイルン初球はキッチン内
-    // ルール制限後も同じポケット口押し戻しを通し、テスト・タップ・実ドラッグを一経路に統一。
-    [nx,ny]=legalTablePlacement(nx,ny,b.id);
-    if(S.rules&&b.id===0&&S.rules.game==='fujiyama'&&(!S.rules.broken||S.rules.ballInHandRestricted))
-      nx=fujiyamaSide(MATCH.turn)==='low'?Math.min(nx,-W/4):Math.max(nx,W/4);
-    else if (S.rules && b.id === 0 && (!S.rules.broken || S.rules.ballInHandRestricted || (S.rules.game === 'kairun' && S.rules.opening)))
-      nx = Math.min(nx, -W / 4);
     for (const o of S.balls)
       if (o !== b && !o.pocketed && Math.hypot(o.p[0] - nx, o.p[1] - ny) < 2 * PH.R) return;
     b.p[0] = nx; b.p[1] = ny;
@@ -15111,7 +14978,7 @@ function handleTableTap(e) {
     const ob = S.balls.find(b => b.id === S.tapTarget && !b.pocketed);
     if (pk && ob) {
       const id = S.tapTarget;
-      S.aim = tournamentCompensatedAim(CO.aimTo(cue, ob, pk), S.tipX, S.pivot);
+      S.aim = CO.aimTo(cue, ob, pk);
       S.aimTarget=id;S.aimPocket=pocketKey(pk);
       const travel = Math.hypot(ob.p[0] - cue.p[0], ob.p[1] - cue.p[1])
         + Math.hypot(pk.x - ob.p[0], pk.y - ob.p[1]);
@@ -15163,36 +15030,31 @@ function drawPad() {
   }
   $('padVal').textContent = txt;
 }
-let padDrag = null, lastPadTap = 0, tipFineMode=false, tipNudgeStep=.01;
-function normalizeTip(ox,oy,step=tipFineMode?.005:.01,snapCenter=true){
-  let m=Math.hypot(ox,oy);if(m>PAD_MAX){ox*=PAD_MAX/m;oy*=PAD_MAX/m;m=PAD_MAX;}
-  if(snapCenter&&m<.026){ox=0;oy=0;}else if(PAD_MAX-m<.018){ox*=PAD_MAX/m;oy*=PAD_MAX/m;}
-  const qv=v=>Math.round(v/step)*step;ox=qv(ox);oy=qv(oy);m=Math.hypot(ox,oy);if(m>PAD_MAX){ox*=PAD_MAX/m;oy*=PAD_MAX/m;}
-  return [Math.max(-PAD_MAX,Math.min(PAD_MAX,ox)),Math.max(-PAD_MAX,Math.min(PAD_MAX,oy))];
-}
-function commitTip(ox,oy,snapCenter=true){[S.tipX,S.tipY]=normalizeTip(ox,oy,undefined,snapCenter);drawPad();schedulePred(25);}
-function padSetAbsolute(e) {
-  const r = pad.getBoundingClientRect(),c = r.width / 2, rad = r.width * 0.42;
-  commitTip((e.clientX-r.left-c)/rad*PAD_RANGE,-(e.clientY-r.top-c)/rad*PAD_RANGE);
-}
-function padSetFine(e){
-  if(!padDrag)return;const r=pad.getBoundingClientRect(),rad=Math.max(1,r.width*.42),gain=.24;
-  commitTip(padDrag.tipX+(e.clientX-padDrag.x)/rad*PAD_RANGE*gain,padDrag.tipY-(e.clientY-padDrag.y)/rad*PAD_RANGE*gain);
+let padDrag = false, lastPadTap = 0;
+function padSet(e) {
+  const r = pad.getBoundingClientRect();
+  const c = r.width / 2, rad = r.width * 0.42;
+  let ox = (e.clientX - r.left - c) / rad * PAD_RANGE;
+  let oy = -(e.clientY - r.top - c) / rad * PAD_RANGE;
+  const m = Math.hypot(ox, oy);
+  if (m > PAD_MAX) { ox *= PAD_MAX / m; oy *= PAD_MAX / m; }
+  if (Math.hypot(ox, oy) < 0.035) { ox = 0; oy = 0; }
+  S.tipX = Math.round(ox * 100) / 100;
+  S.tipY = Math.round(oy * 100) / 100;
+  drawPad(); schedulePred();
 }
 pad.addEventListener('pointerdown', e => {
-  e.preventDefault();pad.setPointerCapture(e.pointerId);
-  const now=performance.now();if(now-lastPadTap<300){S.tipX=0;S.tipY=0;drawPad();schedulePred(0);padDrag=null;return;}
-  lastPadTap=now;padDrag={id:e.pointerId,x:e.clientX,y:e.clientY,tipX:S.tipX,tipY:S.tipY,fine:tipFineMode};
-  if(!padDrag.fine)padSetAbsolute(e);
+  e.preventDefault();
+  pad.setPointerCapture(e.pointerId);
+  padDrag = true;
+  const now = performance.now();
+  if (now - lastPadTap < 300) { S.tipX = 0; S.tipY = 0; drawPad(); schedulePred(); padDrag = false; return; }
+  lastPadTap = now;
+  padSet(e);
 });
-pad.addEventListener('pointermove', e => {if(!padDrag||padDrag.id!==e.pointerId)return;padDrag.fine?padSetFine(e):padSetAbsolute(e);});
-function endPadDrag(e){if(!padDrag||padDrag.id!==e.pointerId)return;padDrag=null;}
-pad.addEventListener('pointerup',endPadDrag);pad.addEventListener('pointercancel',endPadDrag);pad.addEventListener('lostpointercapture',endPadDrag);
-$('btnTipFine').addEventListener('click',()=>{tipFineMode=!tipFineMode;$('btnTipFine').classList.toggle('on',tipFineMode);$('btnTipFine').setAttribute('aria-pressed',String(tipFineMode));$('btnTipFine').textContent=tipFineMode?'精密ON':'精密';hint(tipFineMode?'撞点パッドを相対式の低感度ドラッグへ変更しました':'撞点パッドを通常の絶対位置指定へ戻しました');});
-function nudgeTip(dx,dy){commitTip(S.tipX+dx*tipNudgeStep,S.tipY+dy*tipNudgeStep,false);}
-document.querySelectorAll('[data-tip-nudge-x]').forEach(b=>bindHoldJog(b,()=>nudgeTip(+b.dataset.tipNudgeX,0)));
-document.querySelectorAll('[data-tip-nudge-y]').forEach(b=>bindHoldJog(b,()=>nudgeTip(0,+b.dataset.tipNudgeY)));
-document.querySelector('[data-tip-center]').addEventListener('click',()=>{S.tipX=0;S.tipY=0;drawPad();schedulePred(0);});
+pad.addEventListener('pointermove', e => { if (padDrag) padSet(e); });
+pad.addEventListener('pointerup', () => padDrag = false);
+pad.addEventListener('pointercancel', () => padDrag = false);
 
 // ---------- UI ----------
 let aimStepDeg=.1, jogTimer=null, jogDelay=null;
@@ -15491,8 +15353,7 @@ function placeRackedBallExact(b,x,y){
 
 // ---------- 予測 & アドバイザー ----------
 let predTimer = null;
-function schedulePred(ms,preserveReview=false) {
-  if(puzzleReviewVisible&&!preserveReview)hidePuzzleReviewPaths();
+function schedulePred(ms) {
   if (predTimer) clearTimeout(predTimer);
   predTimer = setTimeout(() => {
     predTimer = null;
@@ -15506,7 +15367,7 @@ function computePred() {
   if (!cue || cue.pocketed) { S.pred = null; updatePredVisuals(); return; }
   // Live guides favor responsiveness; the actual shot and final coaching
   // verification still run at 1/600 s.
-  S.pred = simulateShot(S.balls, prm(), { maxT: 7, dt: 1 / 600 });
+  S.pred = simulateShot(S.balls, prm(), { maxT: 7, dt: 1 / 300 });
   updatePredVisuals();
 }
 function updatePredVisuals() {
@@ -15751,14 +15612,12 @@ function tournamentFinalPlanAudit(plan,balls=S.balls,turn=MATCH.turn){
   return {ok:standardPlanIntentMatches(plan,sim,working,turn,legal),reason:'standard-intent',sim};
 }
 function shoot(fromAI, exactCoachDemo=false) {
-  if(!fromAI)MATCH.undoSnapshot={balls:S.balls.map(cloneBall),rules:S.rules?structuredClone(S.rules):null,turn:MATCH.turn,call:{...MATCH.call}};
   if (S.mode !== 'idle') return;
   if (MATCH.rackOver || MATCH.aiBusy && !fromAI) return;
   if (aiControlsTurn() && !fromAI) return;
   const cue = cueBall();
   if (!cue || cue.pocketed) return;
   if(PUZZLE.active){
-    hidePuzzleReviewPaths();
     const puzzle=puzzleCurrent();
     showAudioEnsure();resetShowDirector(puzzle);
     // 曲球は全端末で同じ正解になる競技標準環境に固定する。ユーザーが直前に
@@ -15818,7 +15677,6 @@ function shoot(fromAI, exactCoachDemo=false) {
   MATCH.shotStartedAt=performance.now();MATCH.shotForceStop=false;
   syncAuxButton();
   trailPts = [cue.p.slice()];
-  beginLiveShotPaths();
   ghost.visible = false;
   tanLine.visible = false;
   $('btnShot').disabled = true;
@@ -15826,12 +15684,6 @@ function shoot(fromAI, exactCoachDemo=false) {
   updateHUD();
   hint('');
 }
-
-function undoLastShot(){
-  const u=MATCH.undoSnapshot;if(!u||S.mode!=='idle')return false;S.balls=u.balls.map(cloneBall);if(u.rules)S.rules=structuredClone(u.rules);MATCH.turn=u.turn;MATCH.call={...u.call};MATCH.undoSnapshot=null;updateMeshes();updateHUD();hint('直前のショット前へ戻しました');return true;
-}
-window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undoLastShot();}});
-
 function startSink(b) {
   sinks.push({ b, t: 0, from: b.p.slice() });
 }
@@ -17244,7 +17096,7 @@ function verifyBallInHandDirectPlans(balls,placements,turn,options={}){
     for(const sm of scales)for(const [tx,ty] of profiles){
       if(expired()&&seeds.length>=12)break seedSearch;
       const prm={speed:base*sm,aim:tournamentCompensatedAim(aim,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot},
-        sim=simulateShot(baseBalls,prm,{maxT:10,dt:1/600}),tf=sim?.final.find(b=>b.id===p.id),cf=sim?.final.find(b=>b.id===0);
+        sim=simulateShot(baseBalls,prm,{maxT:10,dt:1/360}),tf=sim?.final.find(b=>b.id===p.id),cf=sim?.final.find(b=>b.id===0);
       if(!sim?.firstHit||sim.firstHit.obId!==p.id||!tf?.pocketed||tf.off||tf.pocketKey!==pocketKey(p.pk)||!cf||cf.pocketed||cf.off)continue;
       const nextGroup=plannedGroupForShot(turn,p.id),nextIds=plannedNextChoices(sim.final,turn,p.id),
         shape=nextIds.length?CO.shapeAt(sim.final,[cf.p[0],cf.p[1]],nextIds,nextGroup):null,
@@ -17349,7 +17201,7 @@ function ballInHandAggressiveFallback(placement,turn=MATCH.turn){
   const base=Math.atan2(ob.p[1]-cue.p[1],ob.p[0]-cue.p[0]),seeds=[];
   for(const da of [-18,-12,-7,-3,0,3,7,12,18])for(const speed of [1.5,2.2,3.1,4.2,5.3])
     for(const [tx,ty] of [[0,-.30],[0,0],[0,.28],[-.24,.05],[.24,.05]]){
-      const prm={speed,aim:base+da*D2R,elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot},sim=simulateShot(S.balls,prm,{maxT:12,dt:1/600}),
+      const prm={speed,aim:base+da*D2R,elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot},sim=simulateShot(S.balls,prm,{maxT:12,dt:1/360}),
         cf=sim?.final.find(b=>b.id===0),tf=sim?.final.find(b=>b.id===targetId);
       if(!sim?.firstHit||sim.firstHit.obId!==targetId||!cf||cf.pocketed||cf.off)continue;
       const A=analyzeRunEvents(sim.events||[]);if(!A.railAfter&&!A.pocketed.length)continue;
@@ -17387,7 +17239,7 @@ function aiPlanKickEscape(cue,ob,targetId){
   const legal=legalTargets(),seeds=[];
   for(const m of mirrorAim(cue,ob))for(const da of [-1.2,-.6,0,.6,1.2])for(const speed of [1.7,2.4,3.2]){
     const prm0={speed,aim:m.aim+da*D2R,elev:0,tipX:0,tipY:.06,pivotLen:S.pivot};
-    const sim=simulateShot(S.balls,prm0,{maxT:10,dt:1/600});if(!sim?.firstHit||!legal.includes(sim.firstHit.obId))continue;
+    const sim=simulateShot(S.balls,prm0,{maxT:10,dt:1/300});if(!sim?.firstHit||!legal.includes(sim.firstHit.obId))continue;
     const cf=sim.final.find(x=>x.id===0),tf=sim.final.find(x=>x.id===targetId);if(!cf||cf.pocketed||cf.off||!tf)continue;
     let firstAt=-1,cush=0,railAfter=false;
     for(let i=0;i<sim.events.length;i++){const e=sim.events[i];
@@ -17401,7 +17253,7 @@ function aiPlanKickEscape(cue,ob,targetId){
   }
   seeds.sort((a,b)=>a.score-b.score);
   for(const c of seeds.slice(0,5)){let ok=0;
-    for(const da of [-.12,0,.12]){const sim=simulateShot(S.balls,{...c.prm,aim:c.prm.aim+da*D2R},{maxT:10,dt:1/600});
+    for(const da of [-.12,0,.12]){const sim=simulateShot(S.balls,{...c.prm,aim:c.prm.aim+da*D2R},{maxT:10,dt:1/480});
       if(sim?.firstHit&&legal.includes(sim.firstHit.obId)&&!sim.final.find(x=>x.id===0)?.pocketed)ok++;}
     if(ok>=2)return {...c,confidence:ok/3,robust:ok/3};
   }
@@ -17615,11 +17467,11 @@ function planFujiyamaDevelopment(balls=S.balls,options={}){
     if(center&&slowOk){const robust=.40,r={...center,robust,confidence:robust,pressKillRobust:robust,positionRobust:robust,
         score:center.score+(1-robust)*4.2+(1-robust)*1.6,openingBook:true};r.winProb=tournamentCandidateWin(r,'special');return r;}}
   if(bookRoute)for(const [speed,da,ty] of [[4.5,-1,.35],[5.5,2,.50],[5.5,0,.20],[4.5,2,.35],[5.0,-2,.50]]){if(performance.now()>=refineAt)break;
-    const prm0={speed,aim:bookRoute.aim+da*D2R,elev:0,tipX:0,tipY:ty,pivotLen:S.pivot},x=fujiyamaDevelopmentResult(balls,simulateShot(balls,prm0,{maxT:13,dt:1/600}),bookRoute,prm0,turn);
+    const prm0={speed,aim:bookRoute.aim+da*D2R,elev:0,tipX:0,tipY:ty,pivotLen:S.pivot},x=fujiyamaDevelopmentResult(balls,simulateShot(balls,prm0,{maxT:13,dt:1/300}),bookRoute,prm0,turn);
     if(x)coarse.push({...x,openingBook:true});}
   developmentSearch: for(const route of routes){const base=Math.max(4.2,Math.min(6.0,3.95+route.cueDist*.62+route.pairDist*.45));
     for(const [da,sm,ty] of [[0,1,.22],[2,.88,.35],[-2,.96,.50],[1,1.08,.34],[-1,1.14,.24]]){if(performance.now()>=refineAt)break developmentSearch;
-      const prm0={speed:base*sm,aim:route.aim+da*D2R,elev:0,tipX:0,tipY:ty,pivotLen:S.pivot},x=fujiyamaDevelopmentResult(balls,simulateShot(balls,prm0,{maxT:13,dt:1/600}),route,prm0,turn);
+      const prm0={speed:base*sm,aim:route.aim+da*D2R,elev:0,tipX:0,tipY:ty,pivotLen:S.pivot},x=fujiyamaDevelopmentResult(balls,simulateShot(balls,prm0,{maxT:13,dt:1/300}),route,prm0,turn);
       if(x)coarse.push(x);}}
   coarse.sort((a,b)=>a.score-b.score);const tested=[];
   for(const seed of coarse.slice(0,fast?4:7)){if(performance.now()>=deadline)break;let ok=0,killOk=0,center=null;
@@ -17749,7 +17601,7 @@ function planFujiyamaLongCornerBank(balls=S.balls,options={}){
       [0,.98,spin*.32,.30],[0,.98,-spin*.32,.30],[-.8,1.04,spin*.42,.42],[.8,1.04,-spin*.42,.42],[0,1.10,spin*.24,.50],[0,1.10,-spin*.24,.50]);}
     for(const [da,sm,tx,ty] of profiles){if(performance.now()>=refineAt)break bankSearch;
       const prm={speed:base*sm,aim:tournamentCompensatedAim(route.aim+da*D2R,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot},
-        x=fujiyamaLongBankResult(balls,simulateShot(balls,prm,{maxT:16,dt:1/600}),route,prm,turn);if(x)coarse.push({...x,bankRoute:route});}
+        x=fujiyamaLongBankResult(balls,simulateShot(balls,prm,{maxT:16,dt:1/300}),route,prm,turn);if(x)coarse.push({...x,bankRoute:route});}
   }
   coarse.sort((a,b)=>a.score-b.score);const tested=[];
   for(const seed of coarse.slice(0,fast?4:7)){if(performance.now()>=deadline)break;let ok=0,homeOk=0,center=null;
@@ -17847,7 +17699,7 @@ function planFujiyamaOpeningSpectrum(options={}){
         [[1.22,-.82],[1.30,-.72],[1.38,-.58],[1.50,-.42],[1.62,-.30],[.96,-.34],[1,-.12],[.98,.08],[1.08,.32],[1.18,.48]]);
     for(const [sm,ty] of profiles){if(performance.now()>=refineAt)break openingSearch;
       const prm0={speed:base*sm,aim:route.aim,elev:0,tipX:0,tipY:ty,pivotLen:S.pivot},baseBalls=S.balls.map(cloneBall),cue=baseBalls.find(b=>b.id===0);cue.p=[route.x,route.y,PH.R];cue.pocketed=false;cue.off=false;
-      const x=fujiyamaOpeningOutcome(baseBalls,simulateShot(baseBalls,prm0,{maxT:12,dt:1/600}),route,prm0,turn);if(x)coarse.push(x);}}
+      const x=fujiyamaOpeningOutcome(baseBalls,simulateShot(baseBalls,prm0,{maxT:12,dt:1/300}),route,prm0,turn);if(x)coarse.push(x);}}
   coarse.sort((a,b)=>a.score-b.score);const tested=[],seeds=fujiyamaDiverseOpeningCandidates(coarse,fast?7:11);
   for(const seed of seeds){if(performance.now()>=deadline)break;let ok=0,homeOk=0,center=null;
     const route={pk:seed.pk,x:seed.fujiyamaCuePlacement[0],y:seed.fujiyamaCuePlacement[1],routeScore:0,openingBook:seed.openingBook};
@@ -18404,7 +18256,7 @@ function planFujiyamaAttackSpectrum(balls,options={}){
   for(const task of tasks){if(performance.now()>=refineAt)break;const {route,sm,tx,ty}=task,
       prm={speed:route.base*sm,aim:tournamentCompensatedAim(route.lineAim,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot},
       seed={targetId:route.targetId,pk:route.pk,lineAim:route.lineAim,prm,potEase:route.potEase,shotDifficulty:route.shotDifficulty,directGoal:route.directGoal},
-      x=fujiyamaAttackCandidate(balls,simulateShot(balls,prm,{maxT:13,dt:1/600}),seed,turn,legalIds);if(x)coarse.push({...x,seed});}
+      x=fujiyamaAttackCandidate(balls,simulateShot(balls,prm,{maxT:13,dt:1/300}),seed,turn,legalIds);if(x)coarse.push({...x,seed});}
   coarse.sort(fujiyamaDecisionCompare);const seeds=[],seen=new Set();for(const c of coarse){const k=c.kind+'|'+c.targetId+'|'+c.pocket;if(seen.has(k))continue;seen.add(k);seeds.push(c);if(seeds.length>=(fast?8:12))break;}
   const tested=[];for(const c of seeds){if(performance.now()>=deadline)break;let ok=0,misses=0,missControlSum=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.11,1,'a-'],[.11,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
@@ -18441,7 +18293,7 @@ function planFujiyamaPositionSpectrum(balls,options={}){
   // Five release-quality perturbations need a real slice of the mobile budget;
   // leaving only a few frames here caused a found candidate to be discarded.
   const refineAt=Math.max(performance.now(),deadline-(fast?360:300));
-  for(const seed of sampled){if(performance.now()>=refineAt)break;const x=fujiyamaPositionCandidate(balls,simulateShot(balls,seed.prm,{maxT:11,dt:1/600}),seed,turn,legalIds);if(x)coarse.push({...x,seed});}
+  for(const seed of sampled){if(performance.now()>=refineAt)break;const x=fujiyamaPositionCandidate(balls,simulateShot(balls,seed.prm,{maxT:11,dt:1/300}),seed,turn,legalIds);if(x)coarse.push({...x,seed});}
   coarse.sort((a,b)=>b.winProb-a.winProb);const tested=[];for(const c of coarse.slice(0,fast?5:8)){if(performance.now()>=deadline)break;let ok=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
       const prm={...c.prm,aim:c.prm.aim+da*D2R,speed:c.prm.speed*sm},seed={...c.seed,prm},sim=simulateShot(balls,prm,{maxT:12,dt:1/600}),out=fujiyamaShotOutcome(balls,sim,turn,legalIds);
@@ -18464,7 +18316,7 @@ function planFujiyamaCounterClearanceSpectrum(balls,options={}){
         [[.82,0,0,.16],[.90,-1.6,-.28,.22],[.90,1.6,.28,.22],[1,0,0,.32],[1.08,-2.2,.34,.18],[1.08,2.2,-.34,.18],[1.18,0,0,.24]]);
     for(const [sm,da,tx,ty] of profiles){if(performance.now()>=refineAt)break clearanceSearch;const lineAim=route.aim+da*D2R,
       prm={speed:Math.min(6.2,base*sm),aim:tournamentCompensatedAim(lineAim,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot},
-      x=fujiyamaCounterClearanceResult(balls,simulateShot(balls,prm,{maxT:14,dt:1/600}),route,prm,turn,legalIds);if(x)coarse.push({...x,seedRoute:route});}}
+      x=fujiyamaCounterClearanceResult(balls,simulateShot(balls,prm,{maxT:14,dt:1/300}),route,prm,turn,legalIds);if(x)coarse.push({...x,seedRoute:route});}}
   coarse.sort((a,b)=>b.winProb-a.winProb||b.clearanceDistance-a.clearanceDistance);const tested=[];
   for(const c of coarse.slice(0,fast?5:8)){if(performance.now()>=deadline)break;let ok=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
@@ -18481,7 +18333,7 @@ function planFujiyamaStrategicSacrificeSpectrum(balls,options={}){
       [[.82,0,0,.16],[.92,-1.2,-.18,.22],[.92,1.2,.18,.22],[1,0,0,.30],[1.10,-1.8,-.26,.26],[1.10,1.8,.26,.26],[1.18,0,0,.20]];
     for(const [sm,da,tx,ty] of profiles){if(performance.now()>=refineAt)break sacrificeSearch;const lineAim=route.aim+da*D2R,
       prm={speed:Math.min(6.3,base*sm),aim:tournamentCompensatedAim(lineAim,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot},
-      x=fujiyamaStrategicSacrificeResult(balls,simulateShot(balls,prm,{maxT:14,dt:1/600}),route,prm,turn,legalIds);if(x)coarse.push({...x,seedRoute:route});}}
+      x=fujiyamaStrategicSacrificeResult(balls,simulateShot(balls,prm,{maxT:14,dt:1/300}),route,prm,turn,legalIds);if(x)coarse.push({...x,seedRoute:route});}}
   coarse.sort((a,b)=>b.strategicSwing-a.strategicSwing||b.cueContainment-a.cueContainment);const tested=[];
   for(const c of coarse.slice(0,fast?4:7)){if(performance.now()>=deadline)break;let ok=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
@@ -18513,7 +18365,7 @@ function planFujiyamaJumpEscapeSpectrum(balls,options={}){
       const speed=Math.max(3.0,Math.min(6.4,(3.05+distance*.92)*sm));tasks.push({targetId:ob.id,aimOffset:da,lineAim:base,
         prm:{speed,aim:base+da*D2R,elev:elev*D2R,tipX:0,tipY:ty,pivotLen:S.pivot}});}}
   const sampled=evenlySample(tasks,fast?90:170),refineAt=Math.max(performance.now(),deadline-(fast?130:215));
-  for(const seed of sampled){if(performance.now()>=refineAt)break;const x=fujiyamaJumpEscapeCandidate(balls,simulateShot(balls,seed.prm,{maxT:13,dt:1/600}),seed,turn,legalIds);if(x)coarse.push({...x,seed});}
+  for(const seed of sampled){if(performance.now()>=refineAt)break;const x=fujiyamaJumpEscapeCandidate(balls,simulateShot(balls,seed.prm,{maxT:13,dt:1/300}),seed,turn,legalIds);if(x)coarse.push({...x,seed});}
   coarse.sort((a,b)=>b.winProb-a.winProb||b.jumpStraightness-a.jumpStraightness);const tested=[];
   for(const c of coarse.slice(0,fast?5:8)){if(performance.now()>=deadline)break;let ok=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
@@ -18550,7 +18402,7 @@ function planFujiyamaEightSafetySpectrum(balls,options={}){
   const priority=tasks.filter(seed=>Math.abs(seed.fraction)>=.68&&seed.prm.speed>=3.7&&Math.abs(seed.prm.tipX)>=.30&&seed.prm.tipY>=.18),sampled=[],seen=new Set();
   for(const seed of [...priority,...evenlySample(tasks,fast?52:92)]){const key=[seed.fraction,seed.prm.speed,seed.prm.tipX,seed.prm.tipY].join('|');if(seen.has(key))continue;seen.add(key);sampled.push(seed);}
   const refineAt=Math.max(performance.now(),deadline-(fast?280:360));for(const seed of sampled){if(performance.now()>=refineAt)break;
-    const x=fujiyamaPositionCandidate(balls,simulateShot(balls,seed.prm,{maxT:12,dt:1/600}),seed,turn,legalIds);if(x?.kind==='fujiyama-eight-safety')coarse.push({...x,seed});}
+    const x=fujiyamaPositionCandidate(balls,simulateShot(balls,seed.prm,{maxT:12,dt:1/300}),seed,turn,legalIds);if(x?.kind==='fujiyama-eight-safety')coarse.push({...x,seed});}
   coarse.sort((a,b)=>b.winProb-a.winProb||b.targetTravel-a.targetTravel);const tested=[];for(const c of coarse.slice(0,fast?5:8)){if(performance.now()>=deadline)break;let ok=0,center=null;
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){if(performance.now()>=deadline)break;
       const prm={...c.prm,aim:c.prm.aim+da*D2R,speed:c.prm.speed*sm},seed={...c.seed,prm},sim=simulateShot(balls,prm,{maxT:13,dt:1/600}),out=fujiyamaShotOutcome(balls,sim,turn,legalIds);
@@ -18720,7 +18572,7 @@ function planStraightOpeningBreak(options={}){
     let valid=1,attempted=1;
     for(const [da,sm] of [[-.05,1],[.05,1],[0,.985],[0,1.015]]){if(performance.now()>=deadline)break;attempted++;
       const balls=S.balls.map(cloneBall),c=balls.find(b=>b.id===0);c.p=[profile.pos[0],profile.pos[1],PH.R];c.pocketed=false;c.off=false;
-      const trial={...prm,aim:prm.aim+da*D2R,speed:prm.speed*sm},out=straightOpeningSafetyOutcome(balls,simulateShot(balls,trial,{maxT:14,dt:1/600}),target.id,false);
+      const trial={...prm,aim:prm.aim+da*D2R,speed:prm.speed*sm},out=straightOpeningSafetyOutcome(balls,simulateShot(balls,trial,{maxT:14,dt:1/480}),target.id,false);
       if(out&&out.behindHead&&out.escaped<=3)valid++;
     }
     verified.push({...center,profile,prm,targetId:target.id,robust:valid/attempted,physicsVerified:true});
@@ -18924,7 +18776,7 @@ function rotationRetainedBreakPlan(options={}){
   for(const [speed,tipY] of strokes)for(const da of offsets){
     if(performance.now()>=deadline-120)break;
     const prm0={speed,aim:base+da*D2R,elev:0,tipX:0,tipY,pivotLen:S.pivot},
-      sim=simulateShot(S.balls,prm0,{maxT:16,dt:1/600}),out=tournamentBreakOutcome(S.balls,sim,{...profile,speed},target,'rotation');
+      sim=simulateShot(S.balls,prm0,{maxT:16,dt:1/300}),out=tournamentBreakOutcome(S.balls,sim,{...profile,speed},target,'rotation');
     if(out)rough.push({...out,prm:prm0,offset:da,score:out.score+Math.abs(da)*.045+Math.abs(speed-8.85)*.018});
   }
   rough.sort((a,b)=>a.score-b.score);const exact=[];
@@ -18947,7 +18799,7 @@ function rotationRetainedBreakPlan(options={}){
   if(!exact.length)return null;
   exact.sort((a,b)=>a.score-b.score);const best=exact[0],variants=[[-.08,1],[.08,1],[0,.98],[0,1.02]];let ok=1,attempted=1;
   for(const [da,sm] of variants){if(performance.now()>=deadline)break;attempted++;
-    const prm0={...best.prm,aim:best.prm.aim+da*D2R,speed:best.prm.speed*sm},sim=simulateShot(S.balls,prm0,{maxT:16,dt:1/600});
+    const prm0={...best.prm,aim:best.prm.aim+da*D2R,speed:best.prm.speed*sm},sim=simulateShot(S.balls,prm0,{maxT:16,dt:1/480});
     if(tournamentBreakOutcome(S.balls,sim,{speed:prm0.speed},target,'rotation'))ok++;
   }
   const robust=ok/attempted;
@@ -19051,7 +18903,7 @@ function pushOutDirectReplyAudit(balls,turn,options={}){
         [[.82,0,-.32],[.92,0,-.16],[1,0,0],[1.10,0,.18],[1.22,0,.34],[1,-.20,.08],[1,.20,.08]];
     for(const [sm,tx,ty] of strokes){if(performance.now()>=deadline)break replySearch;
       const prm={speed:base*sm,aim:tournamentCompensatedAim(lineAim,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot},
-        sim=simulateShot(balls,prm,{maxT:11,dt:1/600}),tf=sim?.final.find(b=>b.id===id),cf=sim?.final.find(b=>b.id===0);physicalTrials++;
+        sim=simulateShot(balls,prm,{maxT:11,dt:1/360}),tf=sim?.final.find(b=>b.id===id),cf=sim?.final.find(b=>b.id===0);physicalTrials++;
       if(!sim?.firstHit||sim.firstHit.obId!==id||!tf?.pocketed||tf.off||tf.pocketKey!==pocketKey(opt.pk)||!cf||cf.pocketed||cf.off)continue;
       const continuation=tournamentReplyThreat(sim.final,turn),position=clamp01(.30+continuation*.70),
         score=-(.62+continuation*.38)+Math.abs(tx)*.05+Math.max(0,prm.speed-3.8)*.018;
@@ -19108,7 +18960,7 @@ function planTournamentPushOut(options={}){
     speeds=fast?[.72,1.08,1.48]:[.62,.82,1.04,1.30,1.62,1.92],tips=fast?[-.10,.10]:[-.20,0,.20],
     coarseEnd=Math.min(deadline,performance.now()+Math.max(120,(deadline-performance.now())*.38));
   pushSearch: for(let deg=0;deg<360;deg+=step)for(const speed of speeds)for(const tipX of tips){if(performance.now()>=coarseEnd)break pushSearch;
-    const prm0={speed,aim:deg*D2R,elev:0,tipX,tipY:.08,pivotLen:S.pivot},sim=simulateShot(S.balls,prm0,{maxT:9,dt:1/600}),
+    const prm0={speed,aim:deg*D2R,elev:0,tipX,tipY:.08,pivotLen:S.pivot},sim=simulateShot(S.balls,prm0,{maxT:9,dt:1/300}),
       final=pushOutLegalFinal(S.balls,sim),cf=final?.find(b=>b.id===0),tb=final?.find(b=>b.id===targetId);if(!cf||!tb)continue;
     const opponentThreat=tournamentReplyThreat(final,1-MATCH.turn),returnThreat=tournamentReplyThreat(final,MATCH.turn),
       staticWorst=Math.min(1-opponentThreat,returnThreat),rail=CO.railClearance([cf.p[0],cf.p[1]]),
@@ -19254,7 +19106,7 @@ function aiPlanPool(detail=false){
       const base=Math.max(1.25,Math.min(4.3,1.05+(opt.cueDist+opt.objDist)*.92));
       for(const sm of [.74,.88,1,1.16,1.34,1.50])for(const [tx,ty] of [[0,-.46],[0,-.26],[0,0],[0,.26],[0,.46],[-.22,-.05],[.22,-.05],[-.22,.22],[.22,.22]]){
         const prm0={speed:base*sm,aim:tournamentCompensatedAim(lineAim,tx,S.pivot),elev:0,tipX:tx,tipY:ty,pivotLen:S.pivot};
-        const sim=simulateShot(S.balls,prm0,{maxT:8,dt:1/600});if(!sim?.firstHit||sim.firstHit.obId!==id)continue;
+        const sim=simulateShot(S.balls,prm0,{maxT:8,dt:1/240});if(!sim?.firstHit||sim.firstHit.obId!==id)continue;
         const tf=sim.final.find(x=>x.id===id),cf=sim.final.find(x=>x.id===0);
         if(!tf?.pocketed||tf.off||tf.pocketKey!==pocketKey(opt.pk)||!cf||cf.pocketed||cf.off)continue;
         const badEight=currentGame==='eight'&&sim.final.some(x=>x.id===8&&x.pocketed)&&id!==8;if(badEight)continue;
@@ -19286,7 +19138,7 @@ function aiPlanPool(detail=false){
   for(const c of seeds){let ok=0,sum=0,center=null,missN=0,missThreat=0,positionOk=0,routeOk=0;const positionQualities=[],routeQualities=[];
     for(const [da,sm,tag] of [[0,1,'c'],[-.12,1,'a-'],[.12,1,'a+'],[0,.96,'s-'],[0,1.04,'s+']]){
       const prm0={...c.prm,aim:c.prm.aim+da*D2R,speed:c.prm.speed*sm};
-      const sim=simulateShot(S.balls,prm0,{maxT:11,dt:1/600}),tf=sim?.final.find(x=>x.id===c.ball),cf=sim?.final.find(x=>x.id===0);
+      const sim=simulateShot(S.balls,prm0,{maxT:11,dt:1/480}),tf=sim?.final.find(x=>x.id===c.ball),cf=sim?.final.find(x=>x.id===0);
       if(!sim?.firstHit||sim.firstHit.obId!==c.ball||!cf||cf.pocketed||cf.off){missN++;missThreat+=1;continue;}
       if(currentGame==='eight'&&sim.final.some(x=>x.id===8&&x.pocketed)&&c.ball!==8){missN++;missThreat+=1;continue;}
       if(!tf?.pocketed||tf.off||tf.pocketKey!==c.pocket){missN++;missThreat+=tournamentMissReplyThreat(sim,[c.ball],c.ball);continue;}
@@ -19941,7 +19793,7 @@ function quickVerifiedPoolEmergencyPlan(){
   for(const id of ids.slice(0,7))for(const opt of CO.potOptions(S.balls,[cue.p[0],cue.p[1]],id).slice(0,3)){
     const lineAim=Math.atan2(opt.ghost[1]-cue.p[1],opt.ghost[0]-cue.p[0]),base=Math.max(1.3,Math.min(3.9,1.1+(opt.cueDist+opt.objDist)*.84));
     for(const sm of [.82,1,1.18])for(const ty of [0,-.22,.22]){
-      const prm={speed:base*sm,aim:lineAim,elev:0,tipX:0,tipY:ty,pivotLen:S.pivot},sim=simulateShot(S.balls,prm,{maxT:11,dt:1/600}),
+      const prm={speed:base*sm,aim:lineAim,elev:0,tipX:0,tipY:ty,pivotLen:S.pivot},sim=simulateShot(S.balls,prm,{maxT:11,dt:1/300}),
         tf=sim?.final.find(b=>b.id===id),cf=sim?.final.find(b=>b.id===0);
       if(!sim?.firstHit||sim.firstHit.obId!==id||!tf?.pocketed||tf.off||tf.pocketKey!==pocketKey(opt.pk)||!cf||cf.pocketed||cf.off)continue;
       const next=plannedNextChoices(sim.final,MATCH.turn,id),shape=next.length?CO.shapeAt(sim.final,[cf.p[0],cf.p[1]],next,plannedGroupForShot(MATCH.turn,id)):null,
@@ -19965,7 +19817,7 @@ function quickVerifiedPoolEmergencyPlan(){
   }
   const auditedAttacks=emergencySeeds.map(r=>{let ok=0,center=null;const variants=tournamentStrokeAuditVariants(false);
     for(const v of variants){const prm={...r.prm,aim:r.prm.aim+v.da*D2R,speed:r.prm.speed*v.sm},
-      sim=simulateShot(S.balls,prm,{maxT:11,dt:1/600}),tf=sim?.final.find(b=>b.id===r.tid),cf=sim?.final.find(b=>b.id===0);
+      sim=simulateShot(S.balls,prm,{maxT:11,dt:1/300}),tf=sim?.final.find(b=>b.id===r.tid),cf=sim?.final.find(b=>b.id===0);
       if(!sim?.firstHit||sim.firstHit.obId!==r.tid||!tf?.pocketed||tf.off||tf.pocketKey!==r.pocket||!cf||cf.pocketed||cf.off)continue;
       ok++;if(v.tag==='center')center={sim,prm,cf};}
     const robust=ok/variants.length;return center&&robust>=.60?{...r,prm:center.prm,final:center.sim.final,cueRest:center.cf.p.slice(),robust,confidence:robust,physicsVerified:true}:null;
@@ -20041,7 +19893,6 @@ function tournamentBoundedRecoveryPlan(seed,audit,actor=MATCH.turn){
     commit:tournamentFinalPlanAudit(forced,S.balls,actor),forced:true}:null;
 }
 function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
-  finishAIThinking(plan?'候補比較完了・ショット確定':'緊急復旧プラン');
   if(token!==MATCH.aiToken||MATCH.turn!==actor||MATCH.rackOver||S.mode!=='idle'||(MATCH.mode==='spectator'&&MATCH.spectatorPaused))return;
   clearAIWatchdog();if(!plan)plan=quickAIEmergencyPlan();
   if(!plan||!plan.prm){MATCH.aiBusy=false;updateHUD();changeTurn('AI思考を安全解除 — プレイ可能な配置を再判定',false,false);return;}
@@ -20157,27 +20008,11 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
   }catch(err){console.error('AI execute error',err);const fallback=quickAIEmergencyPlan();if(fallback&&!recovered){setTimeout(()=>executeAIPlan(fallback,token,true,actor),0);return;}
     MATCH.aiBusy=false;updateHUD();changeTurn('AI処理を復旧し手番を進行',false,false);}
 }
-
-const AI_SEARCH_TELEMETRY={token:0,phase:'待機',phaseIndex:0,total:0,completed:0,simulations:0,legal:0,audited:0,started:0};
-function aiTelemetryReset(token){Object.assign(AI_SEARCH_TELEMETRY,{token,phase:'盤面・合法球を認識',phaseIndex:0,total:0,completed:0,simulations:0,legal:0,audited:0,started:performance.now()});}
-function aiTelemetryPhase(index,label,total=0){if(!MATCH.aiBusy)return;AI_SEARCH_TELEMETRY.phaseIndex=Math.max(AI_SEARCH_TELEMETRY.phaseIndex,index);AI_SEARCH_TELEMETRY.phase=label||AI_THINK_PHASES[index]||label;if(total>0){AI_SEARCH_TELEMETRY.total+=total;}}
-function aiTelemetryProgress(done=1,legal=0){if(!MATCH.aiBusy)return;AI_SEARCH_TELEMETRY.completed+=done;AI_SEARCH_TELEMETRY.legal+=legal;}
-function aiTelemetrySimulation(){if(MATCH.aiBusy)AI_SEARCH_TELEMETRY.simulations++;}
-function aiTelemetryAudit(n=1){if(MATCH.aiBusy)AI_SEARCH_TELEMETRY.audited+=n;}
-globalThis.__billiardAISimulation=aiTelemetrySimulation;globalThis.__billiardAITelemetry=AI_SEARCH_TELEMETRY;
-let aiThinkTimer=null,aiThinkStarted=0,aiThinkBudget=0,aiThinkToken=0;
-const AI_THINK_PHASES=['盤面・合法球を認識','直接入れとポジションを探索','バンク・キック・コンビを比較','セーフティと相手最善返球を評価','実球物理で再現性を監査','最終ショットを確定'];
-function showAIThinking(actor,budget,token){const panel=$('aiThinkingPanel');if(!panel)return;clearInterval(aiThinkTimer);aiThinkStarted=performance.now();aiThinkBudget=Math.max(1,budget);aiThinkToken=token;aiTelemetryReset(token);
-  $('aiThinkActor').textContent=(MATCH.names[actor]||'AI')+' · THINKING';panel.classList.add('show');panel.setAttribute('aria-hidden','false');updateAIThinking();aiThinkTimer=setInterval(updateAIThinking,180);}
-function updateAIThinking(){const panel=$('aiThinkingPanel');if(!panel||!panel.classList.contains('show'))return;const elapsed=performance.now()-aiThinkStarted,t=AI_SEARCH_TELEMETRY,taskP=t.total?Math.min(1,t.completed/t.total):0,phaseBase=Math.min(.88,t.phaseIndex/AI_THINK_PHASES.length),p=Math.min(.96,Math.max(phaseBase,phaseBase+taskP/AI_THINK_PHASES.length));
-  $('aiThinkElapsed').textContent=(elapsed/1000).toFixed(1)+'秒';$('aiThinkFill').style.width=(p*100).toFixed(1)+'%';$('aiThinkPhase').textContent=t.phase||AI_THINK_PHASES[0];$('aiThinkCount').textContent='実走 '+t.simulations+' / 評価 '+t.completed+(t.audited?' / 監査 '+t.audited:'');}
-function finishAIThinking(label='ショット確定'){clearInterval(aiThinkTimer);aiThinkTimer=null;const panel=$('aiThinkingPanel');if(!panel)return;$('aiThinkFill').style.width='100%';$('aiThinkPhase').textContent=label;setTimeout(()=>{panel.classList.remove('show');panel.setAttribute('aria-hidden','true');},360);}
-
 function scheduleAI(delayOverride=null){
   if(!aiControlsTurn()||MATCH.rackOver||S.app!=='practice'||S.mode!=='idle'||(MATCH.mode==='spectator'&&MATCH.spectatorPaused))return;
   cancelCoach(true);clearAIWatchdog();const actor=MATCH.turn,token=++MATCH.aiToken,budget=aiThinkingBudget(),profile=AI_STYLE_PROFILES[activeAIStyleKey(actor)];
   aiEnsureRecoveryState(actor);
-  MATCH.aiBusy=true;updateHUD();showAIThinking(actor,budget,token);hint(MATCH.names[actor]+(MATCH.mode==='spectator'?'［'+profile.label+'］':'')+' が全攻撃・ポジション・守備を比較中…');
+  MATCH.aiBusy=true;updateHUD();hint(MATCH.names[actor]+(MATCH.mode==='spectator'?'［'+profile.label+'］':'')+' が全攻撃・ポジション・守備を比較中…');
   MATCH.aiWatchdog=setTimeout(()=>{if(token!==MATCH.aiToken||MATCH.turn!==actor||!MATCH.aiBusy)return;
     const fallback=quickAIEmergencyPlan();cancelCoach(true);executeAIPlan(fallback,token,false,actor);},budget+Math.max(5000,budget*.35));
   setTimeout(()=>{
@@ -20210,23 +20045,13 @@ function rotateBalls(h) {
     ballMesh[b.id].quaternion.premultiply(_rq);
   }
 }
-const H_DT = 1 / 600, H_EPS = 1e-12;
-let hiddenAt = 0;
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) hiddenAt = performance.now();
-  else if (hiddenAt) {
-    const paused = performance.now() - hiddenAt;
-    if (MATCH.shotStartedAt) MATCH.shotStartedAt += paused;
-    last = performance.now();
-    hiddenAt = 0;
-  }
-});
+const H_DT = 1 / 600;
 let last = performance.now(), acc = 0;
 let frameErrShown = false;
 function fastForwardShotTail(){
   const events=[];let steps=0;
   // 表示だけ待たせず、予測と同じ1/600秒の物理計算を残り停止まで一括実行する。
-  while(!allStopped(S.balls)&&steps<14400){stepWorld(S.balls,H_DT,events);steps++;if(steps%4===0)sampleLiveShotPaths();}
+  while(!allStopped(S.balls)&&steps<14400){stepWorld(S.balls,H_DT,events);steps++;}
   if(S.runEvents&&events.length)S.runEvents.push(...events);
   if(PUZZLE.active&&events.length)processPuzzleShowEvents(events);
   for(const ev of events)if((ev.type==='pocket'||ev.type==='off')){
@@ -20255,28 +20080,24 @@ function frameBody(now) {
     const elapsed=MATCH.shotStartedAt?now-MATCH.shotStartedAt:0,
       // 高速対戦は、実際の結果を変えず残りの1/600秒物理を早めに一括計算する。
       // AI対戦が止まったように見える待ち時間を削り、通常テンポ／フリーは実時間表示を保つ。
-      timeScale=(PUZZLE.active&&PUZZLE.demo?(PUZZLE.timeScale||.78):(S.slow?.3:1)),
-      tailAt=(isCompetitiveMode()?(MATCH.matchTempo==='fast'?3800:7600):6500)/Math.max(.1,timeScale),
-      hardAt=(isCompetitiveMode()?(MATCH.matchTempo==='fast'?6200:13000):11000)/Math.max(.1,timeScale),
+      tailAt=isCompetitiveMode()?(MATCH.matchTempo==='fast'?3800:7600):6500,
+      hardAt=isCompetitiveMode()?(MATCH.matchTempo==='fast'?6200:13000):11000,
       motion=Math.max(0,...S.balls.filter(b=>!b.pocketed).map(b=>Math.max(vlen(b.v),PH.R*vlen(b.w))));
     if(MATCH.shotStartedAt&&!MATCH.shotForceStop&&(elapsed>hardAt||(elapsed>tailAt&&motion<.30))){
       MATCH.shotForceStop=true;fastForwardShotTail();
     }
     if(PUZZLE.active&&PUZZLE.demo&&PUZZLE.timeScale<.78&&now>SHOW.slowUntil)PUZZLE.timeScale=.78;
-    acc += dt * timeScale;
+    acc += dt * (PUZZLE.active&&PUZZLE.demo?(PUZZLE.timeScale||.78):(S.slow ? 0.3 : 1));
     const events = [];
     let n = 0, stepped = 0;
-    const due=Math.min(2400,Math.floor((acc+H_EPS)/H_DT));
-    while (n < due) {
+    while (acc >= H_DT && n < 2400) {
       stepWorld(S.balls, H_DT, events);
-      n++; stepped += H_DT;
+      acc -= H_DT; n++; stepped += H_DT;
       if (n % 4 === 0) {
         const c = cueBall();
         if (!c.pocketed) trailPts.push(c.p.slice());
-        sampleLiveShotPaths();
       }
     }
-    acc-=n*H_DT;if(Math.abs(acc)<H_EPS)acc=0;
     if (stepped > 0) rotateBalls(stepped);
     if (n > 0 && trailPts.length > 1)
       setLine(trailLine, trailPts.length > 2600 ? trailPts.slice(-2600) : trailPts);
@@ -20341,11 +20162,6 @@ function drawFallback2D(forceCompat) {
     };
     drawPath(S.pred.paths[0], 'rgba(255,179,92,.8)', [6, 5]);
     if (S.pred.firstHit) drawPath(S.pred.paths[S.pred.firstHit.obId], 'rgba(99,215,232,.72)', [4, 5]);
-  }
-  if(puzzleReviewVisible){
-    const drawReview=(path,color,dash)=>{if(!path||path.length<2)return;g.strokeStyle=color;g.lineWidth=2;g.setLineDash(dash);g.beginPath();path.forEach((p,i)=>(i?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1]))));g.stroke();g.setLineDash([]);};
-    Object.values(puzzleReviewActualData).forEach(path=>drawReview(path,'rgba(255,92,92,.66)',[]));
-    Object.values(puzzleReviewAnswerData).forEach(path=>drawReview(path,'rgba(92,232,142,.72)',[7,5]));
   }
   if(PUZZLE.active){
     const p=puzzleCurrent(),showColor=p?.show?.palette||'#63d7e8';
@@ -21182,7 +20998,7 @@ function stopPuzzleMotion(){
   S.mode='idle';MATCH.shotStartedAt=0;MATCH.shotForceStop=false;acc=0;sinks.length=0;$('btnShot').disabled=false;syncAuxButton();
 }
 function loadPuzzle(index,announce=true,preserveSession=false){
-  stopPuzzleMotion();hidePuzzleReviewPaths();hideShowOverlays();document.body.classList.remove('puzzle-demo-running');const session=preserveSession?{attempts:PUZZLE.attempts,hintLevel:PUZZLE.hintLevel,watchedDemo:PUZZLE.watchedDemo}:null;
+  stopPuzzleMotion();hideShowOverlays();document.body.classList.remove('puzzle-demo-running');const session=preserveSession?{attempts:PUZZLE.attempts,hintLevel:PUZZLE.hintLevel,watchedDemo:PUZZLE.watchedDemo}:null;
   PUZZLE.index=Math.max(0,Math.min(CURVE_PUZZLES.length-1,index|0));const p=puzzleCurrent();globalThis.__activePuzzleProps=p.props||[];
   PUZZLE.attempts=session?.attempts||0;PUZZLE.hintLevel=session?.hintLevel||0;PUZZLE.watchedDemo=!!session?.watchedDemo;
   PUZZLE.demo=false;PUZZLE.demoAtShot=false;PUZZLE.shotInProgress=false;$('btnPuzzleDemo').disabled=false;MATCH.lessonChallenge=null;S.rules=null;S.runEvents=null;
@@ -21280,8 +21096,7 @@ function puzzleInputDiagnosis(p){
 }
 function finishPuzzleAttempt(){
   if(!PUZZLE.active||!PUZZLE.shotInProgress)return;PUZZLE.shotInProgress=false;const p=puzzleCurrent(),demo=PUZZLE.demoAtShot,
-    actualPaths=liveShotPaths||{0:trailPts.slice()},
-    liveOutcome={paths:actualPaths,final:S.balls.map(b=>({id:b.id,p:b.p.slice(),pocketed:b.pocketed,off:b.off,pocketKey:b.pocketKey||pocketKey(b.pocket)}))},
+    liveOutcome={paths:{0:trailPts.slice()},final:S.balls.map(b=>({id:b.id,p:b.p.slice(),pocketed:b.pocketed,off:b.off,pocketKey:b.pocketKey||pocketKey(b.pocket)}))},
     result=curvePuzzleEvaluation(p,S.runEvents||[],liveOutcome);
   if($('showHudLive')){
     const left=result.remaining?.length||0,zone=p.expect?.cueFinishZone,cue=zone?liveOutcome.final.find(b=>b.id===0):null,
@@ -21301,12 +21116,11 @@ function finishPuzzleAttempt(){
     PUZZLE.progress[p.id]=Math.max(PUZZLE.progress[p.id]||0,stars);savePuzzleProgress();renderPuzzlePanel('CLEAR '+puzzleStarsText(stars)+' · '+puzzleProofText(p)+' · '+result.checks.join(' / '));
     hint('✓ TABLE CLEAR · 残球0 '+puzzleStarsText(stars)+' — 次の問題へ進めます');addEventLog('#'+p.number+' '+p.title,'TABLE CLEAR');
   }else{const diagnosis=puzzleInputDiagnosis(p),left=result.remaining?.length||0,
-      review='RETRY · 残球 '+left+' · '+diagnosis+' · 赤=今回 / 緑破線=正解 · '+result.checks.join(' / '),
-      answer=simulateShot(p.balls.map(b=>makeBall(b.id,b.x,b.y)),p.prm,{maxT:18,dt:H_DT}),
-      actualCopy=Object.fromEntries(Object.entries(actualPaths||{}).map(([id,path])=>[id,path.map(q=>q.slice())]));
-    // 失敗配置は持ち越さないが、今回と正解の軌跡だけは初期配置上へ重ねて残す。
-    loadPuzzle(PUZZLE.index,false,true);showPuzzleReviewPaths(actualCopy,answer?.paths||{});renderPuzzlePanel(review);
-    hint('未達 — 赤が今回、緑の破線が正解軌道です。惜しさを確認して角度・力・撞点を微調整してください');}
+      review='RETRY · 残球 '+left+' · '+diagnosis+' · 初期配置へ自動復帰 · '+result.checks.join(' / ');
+    // トリックは一撞き完結。失敗配置を次の試技へ持ち越さず、試技数とヒントだけを
+    // 保持して同じ問題を即座に初期状態へ戻す。
+    loadPuzzle(PUZZLE.index,false,true);renderPuzzlePanel(review);
+    hint('未達 — 残球 '+left+'。初期配置へ戻しました。'+diagnosis+'。盤面をドラッグして狙い直してください');}
 }
 function enterPuzzle(){
   if(S.app==='puzzle')return;if(S.app==='lesson')exitLesson();stopPuzzleMotion();if(S.mode==='place')exitPlace();
@@ -21318,7 +21132,7 @@ function enterPuzzle(){
   let last=0;try{last=+localStorage.getItem('billiard-side-pocket-puzzle-last-v12')||0;}catch(_){ }loadPuzzle(last,true,false);
 }
 function exitPuzzle(){
-  if(S.app!=='puzzle')return;stopPuzzleMotion();hidePuzzleReviewPaths();document.body.classList.remove('puzzle-demo-running');PUZZLE.active=false;PUZZLE.demo=false;globalThis.__activePuzzleProps=[];S.app='practice';
+  if(S.app!=='puzzle')return;stopPuzzleMotion();document.body.classList.remove('puzzle-demo-running');PUZZLE.active=false;PUZZLE.demo=false;globalThis.__activePuzzleProps=[];S.app='practice';
   puzzleNgRings.forEach(x=>x.ring.visible=false);puzzleObstacleRings.forEach(x=>x.visible=false);
   puzzleGateRings.forEach(x=>x.visible=false);puzzleAirHoops.forEach(x=>x.visible=false);puzzleFinishRing.visible=false;clearPuzzleProps();$('stage').classList.remove('showtime');trailLine.material.color.set(0xa06c33);hideShowOverlays();
   $('advisor').classList.remove('puzzleMode');$('puzzlePanel').classList.remove('show');$('proHud').style.display='';$('eventLog').style.display='';
@@ -22055,7 +21869,7 @@ function tournamentCandidateWindowShape(r){
   return nextId!=null&&futureId!=null?{...(r.shape||{}),nextId,futureId,nextPk:r.nextPk||r.shape?.nextPk||null}:null;
 }
 function tournamentWindowPotOutcome(balls,targetId,opt,prm){
-  const sim=simulateShot(balls,prm,{maxT:10,dt:1/600}),tb=sim?.final.find(b=>b.id===targetId),cb=sim?.final.find(b=>b.id===0);
+  const sim=simulateShot(balls,prm,{maxT:10,dt:1/300}),tb=sim?.final.find(b=>b.id===targetId),cb=sim?.final.find(b=>b.id===0);
   if(!sim?.firstHit||sim.firstHit.obId!==targetId||!tb?.pocketed||tb.off||tb.pocketKey!==pocketKey(opt.pk)||!cb||cb.pocketed||cb.off)return null;
   if(S.rules?.game==='eight'){
     const alive=new Set(balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off).map(b=>b.id)),group=MATCH.groups[MATCH.turn]||S.rules.group,
@@ -23246,7 +23060,7 @@ function planIntentionalFoul(balls,turn,auto=true){
   }
   const sampled=auto?evenlySample(tasks,180):evenlySample(tasks,320),seeds=[];
   for(const tk of sampled){
-    const sim=simulateShot(balls,tk.prm,{maxT:12,dt:1/600}),A=sim&&analyzeRunEvents(sim.events||[]),cf=sim?.final.find(b=>b.id===0);
+    const sim=simulateShot(balls,tk.prm,{maxT:12,dt:1/300}),A=sim&&analyzeRunEvents(sim.events||[]),cf=sim?.final.find(b=>b.id===0);
     if(!A||A.firstC===null||legal.has(A.firstC)||!cf||cf.pocketed||cf.off||A.off.length)continue;
     if(R.game==='eight'&&sim.final.some(b=>b.id===8&&b.pocketed))continue;
     const final=postStandardFoulState(sim.final,R.game,alive),replyThreat=tournamentReplyThreatWithBallInHand(final,1-turn),
@@ -23674,7 +23488,7 @@ function presentCoach(sel=0){
 }
 
 function deliverAIPlanFromCoach(plan){
-  if(!Coach.forAI)return;aiTelemetryPhase(5,AI_THINK_PHASES[5]);aiTelemetryAudit(plan?1:0);
+  if(!Coach.forAI)return;
   const done=Coach.onAIPlan,analysisMs=Math.max(0,performance.now()-(Coach.startedAt||performance.now()));
   if(plan)plan={...plan,analysisMs,searchCutoff:!!Coach.cutoff,worldSearch:true};
   Coach.token++;Coach.busy=false;Coach.active=false;Coach.auto=false;Coach.forAI=false;
@@ -23683,7 +23497,7 @@ function deliverAIPlanFromCoach(plan){
 }
 
 function coachChunks(tasks, runOne, onProgress, onDone, token=Coach.token, phaseDeadline=Coach.deadline) {
-  let i=0,lastReported=0;if(Coach.forAI)aiTelemetryPhase(Math.min(4,AI_SEARCH_TELEMETRY.phaseIndex+1),AI_THINK_PHASES[Math.min(4,AI_SEARCH_TELEMETRY.phaseIndex+1)],tasks.length);
+  let i = 0;
   const slice = () => {
     if (token !== Coach.token || S.app !== 'practice' || S.mode !== 'idle') {
       if(token===Coach.token) finishCoachIdle();
@@ -23699,7 +23513,7 @@ function coachChunks(tasks, runOne, onProgress, onDone, token=Coach.token, phase
       hint('コーチの計算に失敗しました: ' + (err && err.message ? err.message : err));
       return;
     }
-    if(Coach.forAI&&i>lastReported){aiTelemetryProgress(i-lastReported);lastReported=i;}onProgress(i / Math.max(1,tasks.length));
+    onProgress(i / tasks.length);
     if(phaseDeadline&&performance.now()>=phaseDeadline){
       if(Coach.deadline&&performance.now()>=Coach.deadline)Coach.cutoff=true;
       onDone();return;
@@ -26066,12 +25880,9 @@ document.querySelectorAll('.settingRow').forEach(row => {
     if (name) control.setAttribute('aria-label', name);
   }
 });
-const LOCKED_LAYERS = ['rotationFoulModal','fujiyamaRestartModal','fujiyamaReturnModal','optionModal'];
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  document.querySelectorAll('.drawer.show,.modalLayer.show').forEach(el => {
-    if (!LOCKED_LAYERS.includes(el.id)) closeLayer(el.id);
-  });
+  document.querySelectorAll('.drawer.show,.modalLayer.show').forEach(el => closeLayer(el.id));
 });
 
 function buildRuleTabs(active) {
@@ -26098,8 +25909,8 @@ function applyEnvironment() {
   ENV.cushE = PH.CU_E * (+$('cushionLive').value / 100) * (1 - Math.max(0, hum - 55) * 0.0015);
   ENV.cushMu = PH.CU_MU * humidFactor;
   const pc = $('pocketPreset').value;
-  ENV.pocketScale=1;ENV.shelfScale=1;
-  if(pc!==ACTIVE_TABLE_PROFILE)rebuildAndValidatePocketGeometry(pc);
+  ENV.pocketScale = pc === 'pro' ? 4.25/4.50 : pc === 'club' ? 4.75/4.50 : 1;
+  ENV.shelfScale = pc === 'pro' ? 1.75/1.50 : pc === 'club' ? 1.25/1.50 : 1;
   const bc = $('ballCondition').value;
   const cond = {polished:[0.88,1.01,0.86],match:[1,1,1],used:[1.18,.985,1.12],dirty:[1.48,.96,1.28]}[bc];
   ENV.bbMu = PH.BB_MU * cond[0]; ENV.bbE = PH.BB_E * cond[1]; ENV.muS *= cond[2];
@@ -26137,14 +25948,14 @@ function signedPct(x){const n=Math.round(x);return (n>0?'+':'')+n+'%';}
 function scheduleEnvironmentImpact(){clearTimeout(envImpactTimer);envImpactTimer=setTimeout(updateEnvironmentImpact,90);}
 function updateEnvironmentImpact(){
   const box=$('envImpact');if(!box)return;
-  const rollDelta=(PH.MU_R/ENV.muR-1)*100,cushDelta=(ENV.cushE/PH.CU_E-1)*100,profile=TABLE_PROFILES[ACTIVE_TABLE_PROFILE],pocketDelta=(profile.cornerMouth/TABLE_PROFILES.wpa.cornerMouth-1)*100,
-    shelfDelta=(profile.cornerShelf/TABLE_PROFILES.wpa.cornerShelf-1)*100;
+  const rollDelta=(PH.MU_R/ENV.muR-1)*100,cushDelta=(ENV.cushE/PH.CU_E-1)*100,pocketDelta=(ENV.pocketScale-1)*100,
+    shelfDelta=(ENV.shelfScale-1)*100;
   let outcome='現在の構えを変えると、ここに手球停止差と入れ判定差が出ます。';
   if(S.mode==='idle'&&cueBall()&&!cueBall().pocketed){
     const saved={...ENV};let now=null,base=null;
     try{
-      now=simulateShot(S.balls,prm(),{maxT:12,dt:1/600});Object.assign(ENV,tournamentEnvSnapshot());
-      base=simulateShot(S.balls,prm(),{maxT:12,dt:1/600});
+      now=simulateShot(S.balls,prm(),{maxT:12,dt:1/300});Object.assign(ENV,tournamentEnvSnapshot());
+      base=simulateShot(S.balls,prm(),{maxT:12,dt:1/300});
     }finally{Object.assign(ENV,saved);}
     const cn=now?.final?.find(b=>b.id===0),cb=base?.final?.find(b=>b.id===0);
     if(cn&&cb){const shift=Math.hypot(cn.p[0]-cb.p[0],cn.p[1]-cb.p[1])*100,
@@ -26172,9 +25983,7 @@ $('btnEnvStandard').addEventListener('click',()=>{
   applyEnvironment();hint('競技標準へ復帰 — コーチ予測と実際のショットは同じ物理結果になります');
 });
 applyClothTheme(clothThemeKey,false);
-buildPocketGeometry('wpa');
 applyEnvironment();
-setTimeout(()=>{rebuildPocketProfileVisuals();validatePocketGeometry(ACTIVE_TABLE_PROFILE);},0);
 
 function addEventLog(text, strong) {
   MATCH.log.unshift({text, strong, t:Date.now()}); MATCH.log = MATCH.log.slice(0,4);
@@ -26418,12 +26227,18 @@ document.querySelectorAll('#modeSeg button').forEach(b => b.addEventListener('cl
 }));
 
 // ---------- リサイズ / 起動 ----------
-function resize(force=false) {syncViewportGeometry(!!force);}
-new ResizeObserver(()=>resize(true)).observe(stage);
-window.addEventListener('orientationchange',()=>requestAnimationFrame(()=>resize(true)));
-window.visualViewport?.addEventListener('resize',()=>resize(true),{passive:true});
-window.addEventListener('resize',()=>resize(true),{passive:true});
-resize(true);
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  if (w && h) {
+    renderer.setSize(w, h, false);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    compatCanvas.width = Math.max(1, Math.floor(w * dpr));
+    compatCanvas.height = Math.max(1, Math.floor(h * dpr));
+    compatCanvas.style.width = w + 'px'; compatCanvas.style.height = h + 'px';
+  }
+}
+new ResizeObserver(resize).observe(stage);
+resize();
 drawPad();
 uiOuts();
 syncAuxButton();
@@ -26451,48 +26266,11 @@ window.__api = { S, PH, ENV, MATCH, POCKETS, CO, coachBank, coachKick, coachSpec
   aiControlsTurn, aiStyleBias, styleAdjustedCandidateValue, tournamentDecisionMatrix, scheduleAI,
   ballInHandDisciplineDoctrine, findTournamentBallInHandPlacement, findKairunBallInHandPlacement, findFujiyamaBallInHandPlacements,
   kairunContacts, kairunShotResult, kairunBuildTasks, evaluateKairunSim,
-  rack9Layout, rack8Layout, rack10Layout, randomizedRackOrder, APP_VERSION, HIGH_ELEVATION_CALIBRATION, CUSHION_CALIBRATION, CLOTH_THEMES, applyClothTheme,
+  rack9Layout, rack8Layout, rack10Layout, randomizedRackOrder, APP_VERSION, CLOTH_THEMES, applyClothTheme,
   resolveEightBreak, resolveNineIllegalBreak, eightBallGroupPlan, eightBallOpenPlan, tournamentShotScoringValue,
   fujiyamaLayout, fujiyamaKitchenContactPoints, fujiyamaInitialPoints, fujiyamaOwnIds, fujiyamaGoalKeys, fujiyamaInsideHomePos,
   judgeFujiyamaPro, beginFujiyamaRestart, planFujiyamaOpening, planFujiyamaDevelopment,
-  fujiyamaDevelopmentResult, fujiyamaShortRailGap, syncViewportGeometry, pickTable, aimProjectionCheck, viewportState, hidePuzzleReviewPaths, showPuzzleReviewPaths, normalizeTip, commitTip, nudgeTip };
-
-window.BILLIARD_LAB_TEST_API={
-  version:'3.6.0',
-  geometry(profile='wpa'){return rebuildAndValidatePocketGeometry(profile);},
-  allProfiles(){const out={};for(const key of Object.keys(TABLE_PROFILES))out[key]=rebuildAndValidatePocketGeometry(key);rebuildAndValidatePocketGeometry('wpa');return out;},
-  _railShot(speed,incDeg=0){
-    const saved={carom:ENV.carom,muR:ENV.muR,muS:ENV.muS,cushE:ENV.cushE,cushMu:ENV.cushMu};
-    ENV.carom=false;rebuildAndValidatePocketGeometry('wpa');
-    const b=makeBall(99,.43,PH.HY-.18),rad=incDeg*Math.PI/180;
-    b.v=[speed*Math.sin(rad),speed*Math.cos(rad),0];b.w=[-b.v[1]/PH.R,b.v[0]/PH.R,0];
-    const events=[];let hit=false,hitPos=null,hitOutNormal=0,maxPen=0,travelAfter=0,outAngle=null,steps=0,finite=true;
-    for(;steps<7200;steps++){
-      const before=b.p.slice(),ev0=events.length;stepWorld([b],1/600,events);
-      maxPen=Math.max(maxPen,Math.max(0,b.p[1]-PH.HY));
-      finite=finite&&[...b.p,...b.v,...b.w].every(Number.isFinite);
-      if(!hit&&events.slice(ev0).some(e=>e.type==='cushion')){hit=true;hitPos=b.p.slice();hitOutNormal=Math.max(0,-b.v[1]);}
-      if(hit){travelAfter+=hyp2(b.p[0]-before[0],b.p[1]-before[1]);
-        if(b.v[1]<0&&travelAfter>=.10&&b.p[2]<=PH.R+1e-5&&Math.abs(b.v[2])<.02){outAngle=Math.atan2(Math.abs(b.v[0]),Math.abs(b.v[1]))*180/Math.PI;break;}}
-      if(b.pocketed||b.off)break;
-    }
-    const outNormal=Math.max(0,-b.v[1]),incomingNormal=Math.max(1e-9,speed*Math.cos(rad)),result={speed,incDeg,hit,outAngle,outNormal,impactRatio:hitOutNormal/incomingNormal,settledRatio:outNormal/incomingNormal,maxPen,finite,steps,pocketed:b.pocketed,off:b.off,z:b.p[2]};
-    Object.assign(ENV,saved);return result;
-  },
-  cushion(){const rows=[.5,1,2,4,7,10].map(speed=>this._railShot(speed,0));return {path:'stepWorld@1/600',ok:rows.every(r=>r.hit&&r.finite&&r.impactRatio>.60&&r.impactRatio<.97&&r.maxPen<.0005),rows};},
-  cushionAngles(){const rows=[1,1.5,2,2.5,3,5].map(speed=>this._railShot(speed,30)),medium=rows.filter(r=>r.speed>=2&&r.speed<=3);return {path:'stepWorld@1/600',target:'30deg incidence; 2-3m/s => 33-35deg',ok:rows.every(r=>r.hit&&r.finite&&!r.pocketed&&!r.off&&r.outAngle>=33&&r.outAngle<=38.5)&&medium.every(r=>r.outAngle>=33&&r.outAngle<=35)&&rows.find(r=>r.speed===5).outAngle>=32&&rows.find(r=>r.speed===5).outAngle<=36,rows};},
-  wideAngleCushion(){const rows=[45,60,70].map(incDeg=>this._railShot(1,incDeg)),opening=rows.map(r=>r.outAngle-r.incDeg);return {target:'1m/s wide incidence opening +3 to +9deg',ok:rows.every((r,i)=>r.hit&&r.finite&&!r.pocketed&&!r.off&&opening[i]>=3&&opening[i]<=9.5),rows,opening};},
-  squirt(){const run=tipX=>{const b=makeBall(0,0,0),info=strike(b,{speed:3,aim:0,elev:0,tipX,tipY:0,pivotLen:.20,shaftKey:'ldwood'});return {tipX,angle:Math.atan2(b.v[1],b.v[0])*180/Math.PI,reported:info.squirtDeg};},left=run(-.45),center=run(0),right=run(.45);return {ok:left.angle<-.1&&Math.abs(center.angle)<1e-9&&right.angle>.1&&Math.abs(left.angle+right.angle)<1e-9,left,center,right};},
-  gearing(){const cue=makeBall(0,-.18,0),ob=makeBall(1,0,0);cue.v=[2.6,0,0];cue.w=[0,2.6/PH.R,95];const before=ob.w[2],events=[];for(let i=0;i<180;i++){stepWorld([cue,ob],1/600,events);if(events.some(e=>e.type==='ball'))break;}const hit=events.find(e=>e.type==='ball');return {ok:!!hit&&Math.abs(ob.w[2]-before)>1e-3&&Math.sign(ob.w[2])===-Math.sign(cue.w[2]),objectWz:ob.w[2],cueWz:cue.w[2],throwDeg:hit?.info?.throwDeg||0};},
-  frameCadence(){const seq=(total,fps)=>{const out=[],h=1/fps;let rem=total;while(rem>h+H_EPS){out.push(h);rem-=h;}if(rem>H_EPS)out.push(rem);return out;},run=chunks=>{const bs=[makeBall(0,-.55,-.05),makeBall(1,.15,.02)];strike(bs[0],{speed:4.2,aim:.08,elev:0,tipX:.28,tipY:.05,pivotLen:.20});let accumulator=0,steps=0;for(const dt of chunks){accumulator+=dt;const due=Math.floor((accumulator+H_EPS)/H_DT);for(let i=0;i<due;i++){stepWorld(bs,H_DT,[]);steps++;}accumulator-=due*H_DT;if(Math.abs(accumulator)<H_EPS)accumulator=0;}return {steps,remainder:accumulator,balls:bs.map(b=>({p:b.p.map(q),v:b.v.map(q),w:b.w.map(q),pocketed:b.pocketed,off:b.off}))};},total=2.4,a=run(seq(total,60)),b=run(seq(total,144));return {ok:a.steps===1440&&b.steps===1440&&JSON.stringify(a.balls)===JSON.stringify(b.balls),a,b};},
-  viewport(){return {...viewportState,canvas:{width:glCanvas.width,height:glCanvas.height,cssW:glCanvas.getBoundingClientRect().width,cssH:glCanvas.getBoundingClientRect().height}};},
-  aimProjection(path='auto'){return aimProjectionCheck(path);},
-  tipPrecision(){const ox=S.tipX,oy=S.tipY,of=tipFineMode;S.tipX=S.tipY=0;tipFineMode=true;nudgeTip(1,0);const right=[S.tipX,S.tipY];nudgeTip(-1,0);const centered=[S.tipX,S.tipY];const snapped=normalizeTip(.008,-.009);S.tipX=ox;S.tipY=oy;tipFineMode=of;drawPad();return {ok:Math.abs(right[0]-.01)<1e-9&&Math.abs(right[1])<1e-9&&Math.abs(centered[0])<1e-9&&snapped[0]===0&&snapped[1]===0,right,centered,snapped};},
-  reviewOverlay(){const actual={0:[[0,0],[.12,.03],[.22,.08]]},answer={0:[[0,0],[.10,.05],[.20,.11]]};showPuzzleReviewPaths(actual,answer);const result={ok:puzzleReviewVisible&&puzzleReviewActualLines[0].visible&&puzzleReviewAnswerLines[0].visible&&$('puzzleReviewLegend').classList.contains('show'),visible:puzzleReviewVisible,actual:puzzleReviewActualLines[0].visible,answer:puzzleReviewAnswerLines[0].visible,legend:$('puzzleReviewLegend').classList.contains('show')};hidePuzzleReviewPaths();return result;},
-  dragPlacement(){const rows=[];for(const pk of POCKETS){const p=legalTablePlacement(pk.M[0],pk.M[1],0),rx=p[0]-pk.M[0],ry=p[1]-pk.M[1],s=rx*pk.n[0]+ry*pk.n[1],lat=Math.abs(rx*pk.t[0]+ry*pk.t[1]);rows.push({key:pocketKey(pk),p,s,lat,safe:!(s>-PH.R*.2&&lat<pk.mouth/2+PH.R*.35)});}return {ok:rows.every(r=>r.safe),rows};},
-  deterministic(){const run=()=>this._railShot(3,30),a=run(),b=run();return {ok:JSON.stringify(a)===JSON.stringify(b),a,b};},
-  smoke(){const profiles=this.allProfiles(),cushion=this.cushion(),angles=this.cushionAngles(),wideAngles=this.wideAngleCushion(),squirt=this.squirt(),gearing=this.gearing(),frameCadence=this.frameCadence(),placement=this.dragPlacement(),deterministic=this.deterministic(),aimProjection=this.aimProjection(),tipPrecision=this.tipPrecision(),reviewOverlay=this.reviewOverlay();return {ok:Object.values(profiles).every(x=>x.ok)&&cushion.ok&&angles.ok&&wideAngles.ok&&squirt.ok&&gearing.ok&&frameCadence.ok&&placement.ok&&deterministic.ok&&aimProjection.ok&&tipPrecision.ok&&reviewOverlay.ok,profiles,cushion,angles,wideAngles,squirt,gearing,frameCadence,placement,deterministic,aimProjection,tipPrecision,reviewOverlay,viewport:this.viewport(),calibration:{highElevation:HIGH_ELEVATION_CALIBRATION,cushion:CUSHION_CALIBRATION},telemetry:{...AI_SEARCH_TELEMETRY}};}
-};
+  fujiyamaDevelopmentResult, fujiyamaShortRailGap };
 })();
 
 </script>
