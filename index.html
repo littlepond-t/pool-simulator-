@@ -46,7 +46,7 @@ body.runtime-ready #runtimeGate{opacity:0;visibility:hidden;pointer-events:none}
 @media (prefers-reduced-motion:reduce){#runtimeGate{animation-delay:.35s;animation-duration:.01s}}
 
 
-/* v5.0.1: JavaScriptを実行しない添付プレビューを、操作不能なゲーム画面として見せない。 */
+/* v5.0.2: JavaScriptを実行しない添付プレビューを、操作不能なゲーム画面として見せない。 */
 #noJsGate,#bootFailure{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:24px;
   background:radial-gradient(circle at 50% 30%,#12382a 0,#071b13 48%,#030b08 100%);color:#f1ead8}
 .noJsCard,.bootFailureCard{width:min(440px,100%);padding:25px 21px;border:1px solid rgba(203,166,91,.55);
@@ -986,9 +986,13 @@ button:disabled{cursor:not-allowed}
 /* v3.2 AI thinking telemetry */
 #aiThinkingPanel{position:absolute;left:50%;top:82px;transform:translateX(-50%) translateY(-10px);z-index:42;width:min(520px,calc(100vw - 28px));padding:12px 14px;border-radius:14px;background:rgba(5,10,18,.92);border:1px solid rgba(115,220,255,.42);box-shadow:0 16px 45px rgba(0,0,0,.45);backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:.18s ease;color:#eefaff}
 #aiThinkingPanel.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#aiThinkingPanel.show{pointer-events:auto}
 .aiThinkHead{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:12px;letter-spacing:.08em}.aiThinkHead b{font-size:13px}.aiThinkHead span{opacity:.75}
 .aiThinkBar{height:7px;margin:9px 0 7px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}.aiThinkBar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#69d6ff,#b2ffcf);transition:width .28s ease}
 .aiThinkMeta{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:11px;opacity:.9}.aiThinkPhase{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.aiThinkCount{font-variant-numeric:tabular-nums}
+.aiThinkActions{display:flex;justify-content:flex-end;gap:6px;margin-top:7px}.aiThinkActions button{min-height:30px;padding:4px 10px;border:1px solid rgba(115,220,255,.34);border-radius:8px;background:#0b2630;color:#dff8ff;font:800 10px var(--sans);cursor:pointer}.aiThinkActions button:last-child{border-color:rgba(255,179,92,.5);background:#302413;color:#ffd8a8}.aiThinkActions button:active{transform:translateY(1px)}
+.aiThinkActions,.aiThinkActions button{pointer-events:auto!important}
+@media (max-width:720px){#btnAIQuick{display:none!important}}
 </style>
 
 <style id="v400-ui-redesign">
@@ -1122,7 +1126,7 @@ button{min-width:0;overflow-wrap:anywhere}
 </style>
 
 <style id="v501-field-first-ui">
-/* v5.0.1 FIELD-FIRST UI
+/* v5.0.2 FIELD-FIRST UI
    The table is never covered by shot controls, AI telemetry or match chrome. */
 :root{--v5-header:46px;--v5-mode:40px;--v5-hud:46px;--v5-advisor:30px;--v5-tabs:40px;--v5-content:84px;--v5-actions:50px}
 #v5DeckToggle,#v5AdvancedToggle{display:none}
@@ -1184,7 +1188,7 @@ body:not(.v5-ai-thinking) #aiThinkingPanel{display:none!important}
   #aiThinkingPanel{position:static!important;inset:auto!important;transform:none!important;display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;
     width:100%!important;min-width:0!important;padding:2px 6px!important;border-radius:7px!important;opacity:1!important;background:#081d25!important;box-shadow:none!important;backdrop-filter:none!important;gap:6px!important;align-items:center!important}
   .aiThinkHead{display:contents!important}.aiThinkHead b{font-size:9px!important;white-space:nowrap}.aiThinkHead span{font-size:8.5px!important;grid-column:3!important;grid-row:1!important}
-  .aiThinkBar{grid-column:2!important;grid-row:1!important;height:5px!important;margin:0!important}.aiThinkMeta{grid-column:1/-1!important;grid-row:2!important;display:flex!important;justify-content:space-between!important;font-size:7.5px!important;line-height:1!important}
+  .aiThinkBar{grid-column:2!important;grid-row:1!important;height:5px!important;margin:0!important}.aiThinkMeta{grid-column:1/-1!important;grid-row:2!important;display:flex!important;justify-content:space-between!important;font-size:7.5px!important;line-height:1!important;padding-right:104px!important}.aiThinkActions{position:absolute!important;right:5px!important;bottom:2px!important;display:flex!important;gap:3px!important;margin:0!important}.aiThinkActions button{min-height:19px!important;height:19px!important;padding:1px 5px!important;border-radius:5px!important;font-size:7px!important;line-height:1!important}
 
   #deck{grid-row:4!important;position:relative!important;min-height:0!important;max-height:calc(var(--v5-tabs) + var(--v5-content) + var(--v5-actions) + env(safe-area-inset-bottom,0px) + 9px)!important;
     display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:var(--v5-tabs) var(--v5-content) var(--v5-actions)!important;
@@ -1241,7 +1245,7 @@ body:not(.v5-ai-thinking) #aiThinkingPanel{display:none!important}
   #shotReadout{position:static!important}
 }
 
-/* v5.0.1: compositor-driven heartbeat remains visible even while one physical
+/* v5.0.2: compositor-driven heartbeat remains visible even while one physical
    candidate occupies the JS thread. It prevents a valid deep audit from looking frozen. */
 body.v5-ai-thinking #aiThinkBar{position:relative;overflow:hidden}
 body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;width:38%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:v501AiHeartbeat .72s linear infinite;will-change:transform}
@@ -1254,7 +1258,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
     <section class="noJsCard">
       <b>このプレビューではゲームを実行できません</b>
       <p>iPhoneの添付ファイル表示・クイックルックではJavaScriptが停止するため、盤面もボタンも動きません。SafariまたはGitHub Pagesの公開URLで開いてください。</p>
-      <small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 5.0.1</small>
+      <small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 5.0.2</small>
     </section>
   </div>
 </noscript>
@@ -1271,11 +1275,11 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
     <div class="runtimeGateLogo">REAL POOL SIMULATOR</div>
     <h1>BILLIARDS LABO</h1>
     <p class="splashProducer">produced by littlepond</p>
-    <p class="splashVersion">Version 5.0.1</p>
+    <p class="splashVersion">Version 5.0.2</p>
   </section>
 </div>
 <script>
-// v5.0.1 boot diagnostics: a later exception must never leave a silent, empty table.
+// v5.0.2 boot diagnostics: a later exception must never leave a silent, empty table.
 (function(){
   window.__BILLIARD_BOOT_ERRORS=[];
   function messageOf(value){
@@ -1306,7 +1310,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
     <div class="brandTitles">
       <h1>REAL POOL SIMULATOR</h1>
       <h2>BILLIARDS LABO</h2>
-      <div class="brandMeta"><span>produced by littlepond</span><b>Ver. 5.0.1</b></div>
+      <div class="brandMeta"><span>produced by littlepond</span><b>Ver. 5.0.2</b></div>
     </div>
     <div class="brandActions">
       <button id="btnBrandHelp" type="button" aria-label="使い方"><i>?</i><span>ヘルプ</span></button>
@@ -1340,7 +1344,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">REAL POOL SIMULATOR <small>v5.0.1 · BILLIARDS LABO</small></span>
+      <span id="proBadge">REAL POOL SIMULATOR <small>v5.0.2 · BILLIARDS LABO</small></span>
       <span id="engineStatus" role="status" aria-label="REAL ENGINE 3 稼働中"><i></i><b>REAL ENGINE 3</b><small>IMPACT · SPIN · POCKET LIVE</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
@@ -1423,6 +1427,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
       <div class="aiThinkHead"><b id="aiThinkActor">AI THINKING</b><span id="aiThinkElapsed">0.0秒</span></div>
       <div class="aiThinkBar"><i id="aiThinkFill"></i></div>
       <div class="aiThinkMeta"><span class="aiThinkPhase" id="aiThinkPhase">盤面を認識中</span><span class="aiThinkCount" id="aiThinkCount">候補 0</span></div>
+      <div class="aiThinkActions"><button id="btnAIQuick" type="button">現在候補で即決</button><button id="btnAIStop" type="button">一時停止</button></div>
     </div>
     <section id="coachPicker" aria-hidden="true" aria-label="AIコーチ 全ショット候補">
       <div class="coachPickerHead"><b id="coachPickerTitle">全候補</b><span id="coachPickerSummary">盤面を見ながら比較できます</span><button id="btnCoachPickerClose" type="button" aria-label="候補一覧を閉じる">×</button></div>
@@ -1566,7 +1571,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③スピードを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-    <div class="appCredit"><b>REAL POOL SIMULATOR · Version 5.0.1</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+    <div class="appCredit"><b>REAL POOL SIMULATOR · Version 5.0.2</b><span>BILLIARDS LABO · produced by littlepond</span></div>
   </section>
 </div>
 
@@ -1669,7 +1674,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
-    <div class="appCredit"><b>REAL POOL SIMULATOR · Version 5.0.1</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+    <div class="appCredit"><b>REAL POOL SIMULATOR · Version 5.0.2</b><span>BILLIARDS LABO · produced by littlepond</span></div>
     <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
@@ -13191,7 +13196,7 @@ function vnorm(a) { const l = vlen(a); return l > 1e-12 ? vscale(a, 1 / l) : [0,
 // 入力値をいきなり「押し／引き」に分類せず、実際に的球へ届いた瞬間の速度、
 // 滑り、縦回転、横回転からスロウ、球離れ、ポケット受けを決める。
 class RealBilliardsEngine {
-  static VERSION='5.0.1';
+  static VERSION='5.0.2';
   constructor(){this.rackWorlds=new WeakMap();}
   clamp(x,a=0,b=1){return Math.max(a,Math.min(b,x));}
   cueDelivery(prm,shaft){
@@ -14515,7 +14520,7 @@ const LESSON_CATALOG=[...LESSONS,...PRO_SHOTS.filter(x=>x.replayable)];
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='5.0.1';
+const APP_VERSION='5.0.2';
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
   green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
@@ -14677,7 +14682,7 @@ function fallbackRenderer(targetCanvas,targetContext){
 }
 function enable2DRenderer(reason='WebGL unavailable'){
   WEBGL_OK=false;rendererFailureReason=String(reason?.message||reason||'WebGL unavailable');
-  syncCompatCanvasVisibility(true);compatCanvas.setAttribute('aria-label','2D互換表示');
+  compatCanvas.style.display='block';compatCanvas.setAttribute('aria-label','2D互換表示');
   fallback2d=compatCtx;renderer=fallbackRenderer(compatCanvas,compatCtx);
   document.documentElement.dataset.renderer='2d';
   console.warn('BILLIARD LAB: Canvas 2D fallback',rendererFailureReason);
@@ -14694,17 +14699,6 @@ if(!FORCE_2D){
   }catch(error){enable2DRenderer(error);}
 }else enable2DRenderer('2D compatibility mode requested');
 if(!renderer)enable2DRenderer('Renderer was not created');
-function syncCompatCanvasVisibility(redraw=false){
-  const show=!WEBGL_OK||!!ENV.carom;
-  compatCanvas.style.display=show?'block':'none';
-  compatCanvas.style.visibility=show?'visible':'hidden';
-  glCanvas.style.visibility=WEBGL_OK?'visible':'hidden';
-  if(show&&redraw){
-    requestAnimationFrame(()=>{try{resize(true);drawFallback2D(true);}catch(error){console.error('2D fallback redraw failed',error);}});
-  }
-  return show;
-}
-syncCompatCanvasVisibility(true);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
 renderer.shadowMap.enabled=WEBGL_OK;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -19636,7 +19630,7 @@ function planTournamentBreakBook(options={}){
     breakCuePlacement:cue,breakFamily:b.family,breakLabel:b.label,breakControl:b.label+' / PREVALIDATED 1/600 / 散り'+b.moved+'球',
     moved:b.moved,potted:b.potted,protectedBallPeak:b.peak,protectedBallSettled:b.settled,protectedBallControlled:game!=='nine'||(b.peak<=.10&&b.settled<=.07),
     openingRunQuality:b.opening,nextProb:b.opening,score:b.score,performanceScore:b.score,robust:.96,confidence:.96,
-    physicsVerified:true,legalBreakVerified:true,bookVerified:true,prevalidatedAt:'v5.0.1-default-environment'};
+    physicsVerified:true,legalBreakVerified:true,bookVerified:true,prevalidatedAt:'v5.0.2-default-environment'};
 }
 
 function planTournamentBreak(options={}){
@@ -20581,15 +20575,17 @@ function aiPlanKairun(){
 }
 function clearAIWatchdog(){if(MATCH.aiWatchdog){clearTimeout(MATCH.aiWatchdog);MATCH.aiWatchdog=null;}}
 function aiThinkingBudget(){
-  // v5: unchanged candidate lattice and final 1/600 audits, but persistent exact
-  // caches plus staged planning remove duplicate work.  This remains a ceiling,
-  // not a forced wait; the result is returned as soon as all required gates finish.
+  // v5.0.2: the full lattice remains available, but mobile AI is an anytime
+  // search.  It must return a fully audited best-so-far plan quickly instead
+  // of forcing the user to wait for every low-value branch.
   const mobile=compactPortrait(),game=S.rules?.game||currentGame,
-    complexity={nine:.90,ten:.96,eight:1.06,rotation:1.08,straight:1.10,kairun:1.14,fujiyama:1.14}[game]||1,
-    arena=MATCH.mode==='spectator'?1.03:1,base=(mobile?5200:8200)*complexity,
-    disciplineFloor=game==='kairun'?(mobile?7600:11000):game==='fujiyama'?(mobile?7200:10500):0;
-  return Math.round(Math.max(base,disciplineFloor)*arena);
+    complexity={nine:.90,ten:.96,eight:1.04,rotation:1.06,straight:1.08,kairun:1.14,fujiyama:1.14}[game]||1,
+    tempo=MATCH.matchTempo==='fast'?.78:1,
+    base=(mobile?1950:3600)*complexity*tempo,
+    disciplineFloor=game==='kairun'?(mobile?3200:5000):game==='fujiyama'?(mobile?3050:4800):0;
+  return Math.round(Math.max(base,disciplineFloor));
 }
+
 function quickVerifiedPoolEmergencyPlan(){
   const cue=cueBall();if(!cue)return null;let ids=legalTargets();
   if(S.rules?.game==='straight'&&S.rules.straightContinuationBreak){
@@ -20821,6 +20817,35 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
     MATCH.aiBusy=false;updateHUD();changeTurn('AI処理を復旧し手番を進行',false,false);}
 }
 
+const AI_RUNTIME_CONTROL={quick:false,cancelled:false};
+function requestAIQuickDecision(){
+  if(!MATCH.aiBusy)return false;
+  AI_RUNTIME_CONTROL.quick=true;Coach.cutoff=true;
+  const now=performance.now();if(Coach.deadline)Coach.deadline=Math.min(Coach.deadline,now+180);
+  AI_SEARCH_TELEMETRY.phase='現在の最善候補を最終監査';
+  hint('現在までの最善候補を1/600秒物理で確認して即決します');
+  updateAIThinking();return true;
+}
+function showAIPaused(reason='AI観戦を一時停止'){
+  const panel=$('aiThinkingPanel');if(!panel)return;
+  clearInterval(aiThinkTimer);aiThinkTimer=null;panel.classList.add('show');panel.setAttribute('aria-hidden','false');
+  $('aiThinkActor').textContent='AI ARENA · PAUSED';$('aiThinkPhase').textContent=reason+' — 盤面と設定を操作できます';
+  $('aiThinkElapsed').textContent='停止中';$('btnAIQuick').disabled=true;$('btnAIStop').textContent='観戦再開';
+}
+function resumeAIPlanning(){
+  if(MATCH.mode!=='spectator'||!MATCH.spectatorPaused)return false;
+  MATCH.spectatorPaused=false;$('btnAIQuick').disabled=false;$('btnAIStop').textContent='一時停止';
+  updateHUD();hint('AI観戦を再開します');scheduleAI(60);return true;
+}
+function cancelAIPlanning(reason='AI思考を一時停止',pauseSpectator=true){
+  if(!MATCH.aiBusy&&!Coach.forAI&&!(MATCH.mode==='spectator'&&MATCH.spectatorPaused))return false;
+  clearAIWatchdog();MATCH.aiToken++;AI_RUNTIME_CONTROL.cancelled=true;
+  cancelCoach(true);MATCH.aiBusy=false;MATCH.aiPlan=null;
+  if(MATCH.mode==='spectator'&&pauseSpectator){MATCH.spectatorPaused=true;showAIPaused(reason);}
+  else finishAIThinking(reason);
+  updateHUD();hint(reason+' — 盤面と設定を操作できます');
+  return true;
+}
 const AI_SEARCH_TELEMETRY={token:0,phase:'待機',phaseIndex:0,total:0,completed:0,simulations:0,legal:0,audited:0,started:0};
 function aiTelemetryReset(token){Object.assign(AI_SEARCH_TELEMETRY,{token,phase:'盤面・合法球を認識',phaseIndex:0,total:0,completed:0,simulations:0,legal:0,audited:0,started:performance.now()});}
 function aiTelemetryPhase(index,label,total=0){if(!MATCH.aiBusy)return;AI_SEARCH_TELEMETRY.phaseIndex=Math.max(AI_SEARCH_TELEMETRY.phaseIndex,index);AI_SEARCH_TELEMETRY.phase=label||AI_THINK_PHASES[index]||label;if(total>0){AI_SEARCH_TELEMETRY.total+=total;}}
@@ -20831,18 +20856,21 @@ globalThis.__billiardAISimulation=aiTelemetrySimulation;globalThis.__billiardAIT
 let aiThinkTimer=null,aiThinkStarted=0,aiThinkBudget=0,aiThinkToken=0;
 const AI_THINK_PHASES=['盤面・合法球を認識','直接入れとポジションを探索','バンク・キック・コンビを比較','セーフティと相手最善返球を評価','実球物理で再現性を監査','最終ショットを確定'];
 function showAIThinking(actor,budget,token){const panel=$('aiThinkingPanel');if(!panel)return;clearInterval(aiThinkTimer);aiThinkStarted=performance.now();aiThinkBudget=Math.max(1,budget);aiThinkToken=token;aiTelemetryReset(token);
+  $('btnAIQuick').disabled=false;$('btnAIQuick').textContent='現在候補で即決';$('btnAIStop').textContent=MATCH.mode==='spectator'?'一時停止':'中断';
   $('aiThinkActor').textContent=(MATCH.names[actor]||'AI')+' · THINKING';panel.classList.add('show');panel.setAttribute('aria-hidden','false');updateAIThinking();aiThinkTimer=setInterval(updateAIThinking,180);}
 function updateAIThinking(){const panel=$('aiThinkingPanel');if(!panel||!panel.classList.contains('show'))return;const elapsed=performance.now()-aiThinkStarted,t=AI_SEARCH_TELEMETRY,taskP=t.total?Math.min(1,t.completed/t.total):0,phaseBase=Math.min(.88,t.phaseIndex/AI_THINK_PHASES.length),p=Math.min(.96,Math.max(phaseBase,phaseBase+taskP/AI_THINK_PHASES.length));
   $('aiThinkElapsed').textContent=(elapsed/1000).toFixed(1)+'秒';$('aiThinkFill').style.width=(p*100).toFixed(1)+'%';$('aiThinkPhase').textContent=t.phase||AI_THINK_PHASES[0];$('aiThinkCount').textContent='実走 '+t.simulations+' / 評価 '+t.completed+(t.audited?' / 監査 '+t.audited:'');}
 function finishAIThinking(label='ショット確定'){clearInterval(aiThinkTimer);aiThinkTimer=null;const panel=$('aiThinkingPanel');if(!panel)return;$('aiThinkFill').style.width='100%';$('aiThinkPhase').textContent=label;setTimeout(()=>{panel.classList.remove('show');panel.setAttribute('aria-hidden','true');},360);}
+$('btnAIQuick')?.addEventListener('click',requestAIQuickDecision);
+$('btnAIStop')?.addEventListener('click',()=>{if(MATCH.mode==='spectator'&&MATCH.spectatorPaused)resumeAIPlanning();else cancelAIPlanning(MATCH.mode==='spectator'?'AI観戦を一時停止':'AI思考を中断',true);});
 
 function scheduleAI(delayOverride=null){
   if(!aiControlsTurn()||MATCH.rackOver||S.app!=='practice'||S.mode!=='idle'||(MATCH.mode==='spectator'&&MATCH.spectatorPaused))return;
-  cancelCoach(true);clearAIWatchdog();const actor=MATCH.turn,token=++MATCH.aiToken,budget=aiThinkingBudget(),profile=AI_STYLE_PROFILES[activeAIStyleKey(actor)];
+  cancelCoach(true);clearAIWatchdog();AI_RUNTIME_CONTROL.quick=false;AI_RUNTIME_CONTROL.cancelled=false;const actor=MATCH.turn,token=++MATCH.aiToken,budget=aiThinkingBudget(),profile=AI_STYLE_PROFILES[activeAIStyleKey(actor)];
   aiEnsureRecoveryState(actor);
   MATCH.aiBusy=true;updateHUD();showAIThinking(actor,budget,token);hint(MATCH.names[actor]+(MATCH.mode==='spectator'?'［'+profile.label+'］':'')+' が全攻撃・ポジション・守備を比較中…');
   MATCH.aiWatchdog=setTimeout(()=>{if(token!==MATCH.aiToken||MATCH.turn!==actor||!MATCH.aiBusy)return;
-    const fallback=quickAIEmergencyPlan();cancelCoach(true);executeAIPlan(fallback,token,false,actor);},budget+Math.max(5000,budget*.35));
+    const fallback=quickAIEmergencyPlan();cancelCoach(true);executeAIPlan(fallback,token,false,actor);},budget+Math.max(1800,budget*.24));
   setTimeout(()=>{
     if(token!==MATCH.aiToken||MATCH.turn!==actor||MATCH.rackOver||(MATCH.mode==='spectator'&&MATCH.spectatorPaused)){clearAIWatchdog();MATCH.aiBusy=false;updateHUD();return;}
     try{coachThink({auto:true,forAI:true,maxMs:budget,onAIPlan:plan=>executeAIPlan(plan,token,false,actor)});}
@@ -21549,7 +21577,7 @@ function selectLesson(i) {
   if(!les)return;
   setLessonMission(0,les.title,'到達目標: '+les.desc);
   ENV.carom = !!les.carom;
-  syncCompatCanvasVisibility(true);
+  compatCanvas.style.display = ENV.carom ? 'block' : 'none';
   setBallSet(lessonDefs(les));
   S.balls = les.balls.map(b => makeBall(b.id, b.x, b.y));
   if(ENV.carom)drawFallback2D(true);
@@ -21637,7 +21665,7 @@ function exitLesson() {
   S.aim = practiceSave.aim; S.speed = practiceSave.speed; S.elev = practiceSave.elev;
   S.tipX = practiceSave.tipX; S.tipY = practiceSave.tipY;
   ENV.carom = !!practiceSave.envCarom;
-  syncCompatCanvasVisibility(true);
+  compatCanvas.style.display = ENV.carom ? 'block' : 'none';
   $('spd').value = S.speed; $('elv').value = Math.round(S.elev);
   hideAimVis();
   uiOuts(); drawPad(); updateHint();
@@ -21855,7 +21883,7 @@ function loadPuzzle(index,announce=true,preserveSession=false){
   PUZZLE.attempts=session?.attempts||0;PUZZLE.hintLevel=session?.hintLevel||0;PUZZLE.watchedDemo=!!session?.watchedDemo;
   PUZZLE.demo=false;PUZZLE.demoAtShot=false;PUZZLE.shotInProgress=false;$('btnPuzzleDemo').disabled=false;MATCH.lessonChallenge=null;S.rules=null;S.runEvents=null;
   S.tapTarget=null;S.aimTarget=null;S.aimPocket=null;
-  applyPuzzleTournamentEnvironment(p);syncCompatCanvasVisibility(true);
+  applyPuzzleTournamentEnvironment(p);compatCanvas.style.display=ENV.carom?'block':'none';
   practiceLayout=p.balls.map(b=>({...b}));practiceDefs=p.balls.map(b=>ballDef(b.id));setBallSet(practiceDefs);
   S.balls=p.balls.map(b=>makeBall(b.id,b.x,b.y));sinks.length=0;trailPts=[];trailLine.visible=false;
   const start=p.challenge?.start||{aim:0,speed:2.4,elev:0,tipX:0,tipY:0,pivotLen:p.prm.pivotLen||.2};
@@ -21992,7 +22020,7 @@ function exitPuzzle(){
   $('advisor').classList.remove('puzzleMode');$('puzzlePanel').classList.remove('show');$('proHud').style.display='';$('eventLog').style.display='';
   $('btnPlace').style.display='';$('btnReset').style.display='';$('btnCoach').style.display='';$('btnShot').textContent='ショット';
   const x=PUZZLE.save;if(x){MATCH.mode=x.matchMode||'free';MATCH.rackOver=!!x.rackOver;currentGame=x.currentGame;practiceDefs=x.defs;practiceLayout=x.layout;setBallSet(practiceDefs);S.balls=x.balls;S.rules=x.rules;
-    S.aim=x.aim;S.speed=x.speed;S.elev=x.elev;S.tipX=x.tipX;S.tipY=x.tipY;S.pivot=x.pivot;S.slow=!!x.slow;Object.assign(ENV,x.environment||{});MATCH.humanError=x.humanError||0;syncCompatCanvasVisibility(true);
+    S.aim=x.aim;S.speed=x.speed;S.elev=x.elev;S.tipX=x.tipX;S.tipY=x.tipY;S.pivot=x.pivot;S.slow=!!x.slow;Object.assign(ENV,x.environment||{});MATCH.humanError=x.humanError||0;compatCanvas.style.display=ENV.carom?'block':'none';
     $('gameSelect').value=currentGame;$('spd').value=S.speed;$('elv').value=Math.round(S.elev);$('pv').value=Math.round(S.pivot*100);$('btnSlow').classList.toggle('on',S.slow);}
   $('pv').disabled=false;
   document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===(MATCH.mode==='free'?'practice':MATCH.mode)));
@@ -22155,29 +22183,29 @@ function tryFromLesson() {
   S.balls = practiceLayout.map(d => makeBall(d.id, d.x, d.y));
   // 9ボール系レッスンはルール適用で継続
   if (les.id === 'nine' || les.id === 'safety') {
-    ENV.carom=false;syncCompatCanvasVisibility(true);
+    ENV.carom=false;compatCanvas.style.display='none';
     const brokenInit = !(les.id === 'nine' && k === 0);
     currentGame = 'nine';
     rulesTemplate = () => ({ game: 'nine', broken: brokenInit, ballInHand: !brokenInit, targetAtShot: null, won: false, lost: false });
   } else if (les.id === 'eight') {
-    ENV.carom=false;syncCompatCanvasVisibility(true);
+    ENV.carom=false;compatCanvas.style.display='none';
     currentGame = 'eight';
     rulesTemplate = () => ({ game: 'eight', broken: true, ballInHand: false, group: 'solid', won: false, lost: false });
   } else if (les.id === 'rotation') {
-    ENV.carom=false;syncCompatCanvasVisibility(true);
+    ENV.carom=false;compatCanvas.style.display='none';
     currentGame='rotation';MATCH.points=[0,0];MATCH.raceTo=120;MATCH.rotationRackAwarded=[];
     rulesTemplate=()=>({game:'rotation',broken:true,ballInHand:false,ballInHandRestricted:false,targetAtShot:null,
       won:false,lost:false,pushAvailable:false});
   } else if (les.carom) {
-    currentGame='set4';ENV.carom=true;syncCompatCanvasVisibility(true);rulesTemplate=null;drawFallback2D(true);
+    currentGame='set4';ENV.carom=true;compatCanvas.style.display='block';rulesTemplate=null;drawFallback2D(true);
   } else if (les.kairun) {
     currentGame = 'kairun';
-    ENV.carom = false; syncCompatCanvasVisibility(true);
+    ENV.carom = false; compatCanvas.style.display = 'none';
     rulesTemplate = () => ({ game:'kairun', broken:true, ballInHand:k===0, targetAtShot:1,
       kairunStage:Math.min(2,k), opening:k===0, falsePenalty:true, won:false, lost:false });
   } else {
     currentGame = 'set4';
-    ENV.carom = false; syncCompatCanvasVisibility(true);
+    ENV.carom = false; compatCanvas.style.display = 'none';
     rulesTemplate = null;
   }
   S.rules = rulesTemplate ? rulesTemplate() : null;
@@ -22511,11 +22539,15 @@ const CO = {
     const bs = balls.map(cloneBall);
     strike(bs.find(b => b.id === 0), prm);
     const ev = [];
-    let t = 0,cue=bs.find(b=>b.id===0),last=cue?.p.slice()||[0,0,0],travel=0;
-    while (t < maxT && !allStopped(bs)) { stepWorld(bs, dt, ev);t += dt;
-      if(cue){travel+=Math.hypot(cue.p[0]-last[0],cue.p[1]-last[1],cue.p[2]-last[2]);last=cue.p.slice();}}
-    const result={ bs, ev, stopped: allStopped(bs),travelById:{0:travel} };
-    return key?aiPhysicsCacheSet(key,result):result;
+    let t = 0,cue=bs.find(b=>b.id===0),last=cue?.p.slice()||[0,0,0],travel=0,steps=0,aborted=false;
+    while (t < maxT && !allStopped(bs)) { stepWorld(bs, dt, ev);t += dt;steps++;
+      if(cue){travel+=Math.hypot(cue.p[0]-last[0],cue.p[1]-last[1],cue.p[2]-last[2]);last=cue.p.slice();}
+      // Chromium can expose queued touch input before the event callback itself
+      // runs.  Abandon only the current AI candidate, never a player shot, so a
+      // menu/mode/pause tap does not wait behind a multi-thousand-step rollout.
+      if((steps&31)===0&&Coach.forAI&&(AI_RUNTIME_CONTROL.cancelled||aiInputPending())){aborted=true;break;}}
+    const result={ bs, ev, stopped: !aborted&&allStopped(bs),aborted,travelById:{0:travel} };
+    return aborted?result:(key?aiPhysicsCacheSet(key,result):result);
   },
   hidden(bs, toId) {
     const a = bs.find(b => b.id === 0), t = bs.find(b => b.id === toId);
@@ -22756,17 +22788,18 @@ function tournamentWindowPotOutcome(balls,targetId,opt,prm){
   }
   return {sim,tb,cb};
 }
-function tournamentAuditWindowStroke(balls,targetId,opt,prm){
-  const variants=tournamentStrokeAuditVariants(),threshold=coachWorldSearch() ? .55 : .60;let ok=0,center=null;
+function tournamentAuditWindowStroke(balls,targetId,opt,prm,options={}){
+  const fast=!!options.fast,variants=fast?tournamentStrokeAuditVariants(false):tournamentStrokeAuditVariants(),threshold=fast ? .60 : (coachWorldSearch() ? .55 : .60);let ok=0,center=null;
   for(const v of variants){const trial={...prm,aim:prm.aim+v.da*D2R,speed:prm.speed*v.sm},out=tournamentWindowPotOutcome(balls,targetId,opt,trial);
     if(!out)continue;ok++;if(v.tag==='center')center={...out,prm:trial};}
   const robust=ok/variants.length;return {workable:!!center&&robust>=threshold,robust,attempts:variants.length,center};
 }
-function tournamentVerifyThirdShot(balls,cuePos,targetId,turn){
-  const options=CO.potOptions(balls,cuePos,targetId).slice(0,2),seeds=[];let attempts=0,makes=0;
-  for(const opt of options){const lineAim=Math.atan2(opt.ghost[1]-cuePos[1],opt.ghost[0]-cuePos[0]),
-    baseSpeed=Math.max(1.30,Math.min(3.65,1.08+(opt.cueDist+opt.objDist)*.80));
-    for(const scale of [.84,1,1.18])for(const [tipX,tipY] of [[0,0],[0,-.28],[0,.28],[-.18,.08],[.18,.08]]){attempts++;
+function tournamentVerifyThirdShot(balls,cuePos,targetId,turn,options={}){
+  const fast=!!options.fast,potOptions=CO.potOptions(balls,cuePos,targetId).slice(0,fast?1:2),seeds=[];let attempts=0,makes=0;
+  for(const opt of potOptions){const lineAim=Math.atan2(opt.ghost[1]-cuePos[1],opt.ghost[0]-cuePos[0]),
+    baseSpeed=Math.max(1.30,Math.min(3.65,1.08+(opt.cueDist+opt.objDist)*.80)),
+    scales=fast?[.88,1,1.14]:[.84,1,1.18],strokes=fast?[[0,0],[0,-.28],[0,.28]]:[[0,0],[0,-.28],[0,.28],[-.18,.08],[.18,.08]];
+    for(const scale of scales)for(const [tipX,tipY] of strokes){attempts++;
       const prm={speed:baseSpeed*scale,aim:tournamentCompensatedAim(lineAim,tipX,S.pivot),elev:0,tipX,tipY,pivotLen:S.pivot},
         out=tournamentWindowPotOutcome(balls,targetId,opt,prm);if(!out)continue;makes++;
       const nextIds=plannedNextChoices(out.sim.final,turn,targetId),shape=nextIds.length?CO.shapeAt(out.sim.final,out.cb.p,nextIds,plannedGroupForShot(turn,targetId)):null,
@@ -22775,28 +22808,29 @@ function tournamentVerifyThirdShot(balls,cuePos,targetId,turn){
       seeds.push({opt,prm,quality,cueRest:out.cb.p.slice(),final:out.sim.final,nextId:shape?.nextId||null});
     }}
   seeds.sort((a,b)=>b.quality-a.quality);let best=null,auditAttempts=0;
-  for(const seed of seeds.slice(0,3)){const audit=tournamentAuditWindowStroke(balls,targetId,seed.opt,seed.prm);auditAttempts+=audit.attempts;
+  for(const seed of seeds.slice(0,fast?1:3)){const audit=tournamentAuditWindowStroke(balls,targetId,seed.opt,seed.prm,{fast});auditAttempts+=audit.attempts;
     if(!audit.workable)continue;const rec={...seed,prm:audit.center.prm,cueRest:audit.center.cb.p.slice(),final:audit.center.sim.final,
       robust:audit.robust,quality:clamp01(audit.robust*.68+seed.quality*.32),physicsVerified:true};
     if(!best||rec.quality>best.quality)best=rec;}
   return {required:true,workable:!!best,quality:best?.quality||0,attempts:attempts+auditAttempts,makes,targetId,best,
     reason:best?'third ball physically potted across the execution window':'third ball has no reproducible physical pot'};
 }
-function tournamentVerifySecondShot(balls,cuePos,turn,shape){
-  const required=shape?.nextId!=null&&shape?.futureId!=null;
+function tournamentVerifySecondShot(balls,cuePos,turn,shape,auditOptions={}){
+  const fast=!!auditOptions.fast,required=shape?.nextId!=null&&shape?.futureId!=null;
   if(!required)return {required:false,workable:true,quality:1,attempts:0,makes:0,futureId:shape?.futureId??null};
   if(!Array.isArray(balls)||!Array.isArray(cuePos))return {required:true,workable:false,quality:0,attempts:0,makes:0,
     futureId:shape.futureId,reason:'post-shot state missing'};
   const nextId=shape.nextId,futureId=shape.futureId,all=CO.potOptions(balls,cuePos,nextId),wanted=shape.nextPk
     ?all.filter(o=>pocketKey(o.pk)===pocketKey(shape.nextPk)):[],options=[],seen=new Set();
-  for(const opt of [...wanted,...all]){const key=pocketKey(opt.pk);if(seen.has(key))continue;seen.add(key);options.push(opt);if(options.length>=2)break;}
+  for(const opt of [...wanted,...all]){const key=pocketKey(opt.pk);if(seen.has(key))continue;seen.add(key);options.push(opt);if(options.length>=(fast?1:2))break;}
   if(!options.length)return {required:true,workable:false,quality:0,attempts:0,makes:0,futureId,reason:'next ball has no direct pot'};
   const seeds=[];let attempts=0,makes=0;
   for(const opt of options){const lineAim=Math.atan2(opt.ghost[1]-cuePos[1],opt.ghost[0]-cuePos[0]),
     baseSpeed=Math.max(1.35,Math.min(3.75,1.15+(opt.cueDist+opt.objDist)*.82)),kind=shape.futureRouteKind||'stun',
     ys=kind.startsWith('follow')?[.24,.42]:kind.startsWith('draw')?[-.24,-.42]:[-.14,.14],
-    strokes=[[0,0],[0,ys[0]],[0,ys[1]],[-.20,ys[0]],[.20,ys[0]]];
-    for(const scale of [.82,1,1.22])for(const [tipX,tipY] of strokes){attempts++;
+    strokes=fast?[[0,0],[0,ys[0]],[0,ys[1]]]:[[0,0],[0,ys[0]],[0,ys[1]],[-.20,ys[0]],[.20,ys[0]]],
+    scales=fast?[.88,1,1.14]:[.82,1,1.22];
+    for(const scale of scales)for(const [tipX,tipY] of strokes){attempts++;
       const prm={speed:baseSpeed*scale,aim:tournamentCompensatedAim(lineAim,tipX,S.pivot),elev:0,tipX,tipY,pivotLen:S.pivot},
         out=tournamentWindowPotOutcome(balls,nextId,opt,prm);if(!out)continue;makes++;
       const future=CO.potOptions(out.sim.final,out.cb.p,futureId)[0];if(!future)continue;
@@ -22807,8 +22841,8 @@ function tournamentVerifySecondShot(balls,cuePos,turn,shape){
         futureDist:dist,futurePocket:pocketKey(future.pk),routeKind:kind});
     }}
   seeds.sort((a,b)=>b.quality-a.quality);let best=null,auditAttempts=0,thirdAttempts=0;
-  for(const seed of seeds.slice(0,4)){const audit=tournamentAuditWindowStroke(balls,nextId,seed.opt,seed.prm);auditAttempts+=audit.attempts;
-    if(!audit.workable)continue;const third=tournamentVerifyThirdShot(audit.center.sim.final,audit.center.cb.p,futureId,turn);thirdAttempts+=third.attempts;
+  for(const seed of seeds.slice(0,fast?1:4)){const audit=tournamentAuditWindowStroke(balls,nextId,seed.opt,seed.prm,{fast});auditAttempts+=audit.attempts;
+    if(!audit.workable)continue;const third=tournamentVerifyThirdShot(audit.center.sim.final,audit.center.cb.p,futureId,turn,{fast});thirdAttempts+=third.attempts;
     const rec={...seed,prm:audit.center.prm,cueRest:audit.center.cb.p.slice(),afterBalls:audit.center.sim.final,
       robust:audit.robust,third,thirdShotPlan:third.best?.prm||null,thirdShotRobust:third.best?.robust||0,
       quality:clamp01(audit.robust*.32+seed.quality*.18+third.quality*.50),direct:third.workable,physicsVerified:third.workable};
@@ -22818,9 +22852,9 @@ function tournamentVerifySecondShot(balls,cuePos,turn,shape){
     physicalWindowShots:workable?3:2,thirdShotWorkable:!!best?.third?.workable,thirdShotQuality:best?.third?.quality||0,
     reason:workable?'second and third shots physically potted across the execution window':'three-ball physical window failed'};
 }
-function tournamentAuditCandidateLookahead(r,turn=(typeof MATCH!=='undefined'?MATCH.turn:0)){
+function tournamentAuditCandidateLookahead(r,turn=(typeof MATCH!=='undefined'?MATCH.turn:0),options={}){
   if(!r||r.nextTransitionAudit)return r;const window=tournamentCandidateWindowShape(r);if(!window)return r;
-  const audit=tournamentVerifySecondShot(r.final,r.cueRest||r.rest,turn,window);
+  const audit=tournamentVerifySecondShot(r.final,r.cueRest||r.rest,turn,window,options);
   r.nextTransitionAudit=audit;r.nextShotWorkable=audit.workable;r.nextShotQuality=audit.quality;
   r.nextShotPlan=audit.best?.prm||null;r.thirdShotPlan=audit.best?.thirdShotPlan||null;
   r.physicalWindowIds=[r.tid??r.potId??r.ball,window.nextId,window.futureId].filter(x=>x!=null);
@@ -22836,10 +22870,12 @@ function tournamentAuditCandidateLookahead(r,turn=(typeof MATCH!=='undefined'?MA
 function tournamentAuditCandidatePool(list,role='attack',turn=(typeof MATCH!=='undefined'?MATCH.turn:0),minimum=2){
   const ordered=list.slice().sort((a,b)=>tournamentCandidateWin(b,role)-tournamentCandidateWin(a,role)||
     (a.score??0)-(b.score??0)),audited=[];let best=-Infinity;
+  const fast=!!Coach.forAI&&(compactPortrait()||AI_RUNTIME_CONTROL.quick||Coach.cutoff||
+    (Coach.deadline&&performance.now()>Coach.deadline-350));
   for(const candidate of ordered){
     const optimistic=tournamentCandidateWin(candidate,role);
-    if(audited.length>=minimum&&optimistic<=best+1e-12)break;
-    tournamentAuditCandidateLookahead(candidate,turn);audited.push(candidate);
+    if(audited.length>=minimum&&(optimistic<=best+1e-12||(Coach.deadline&&performance.now()>=Coach.deadline)))break;
+    tournamentAuditCandidateLookahead(candidate,turn,{fast});audited.push(candidate);
     best=Math.max(best,tournamentCandidateWin(candidate,role));
   }
   return audited.sort((a,b)=>tournamentCandidateWin(b,role)-tournamentCandidateWin(a,role)||(a.score??0)-(b.score??0));
@@ -24392,7 +24428,7 @@ function coachAvailable(){
 }
 function updateCoachButton(){
   const b=$('btnCoach');if(!b)return;
-  if(Coach.forAI){b.disabled=true;b.textContent=MATCH.mode==='spectator'?'AI思考中':'相手手番';return;}
+  if(Coach.forAI||MATCH.aiBusy){b.disabled=false;b.textContent=MATCH.mode==='spectator'?'× AI一時停止':'× AI思考中止';return;}
   if(Coach.busy){b.disabled=false;b.textContent='× 解析中止';return;}
   b.disabled=!coachAvailable();
   b.textContent=MATCH.coachMode==='off'?'コーチOFF':S.mode==='running'?'球の停止後':
@@ -24464,12 +24500,27 @@ function deliverAIPlanFromCoach(plan){
   if(done)setTimeout(()=>done(plan),0);
 }
 
-const COACH_TASK_SCHEDULER=(()=>{const q=[];let armed=false;const mc=typeof MessageChannel!=='undefined'?new MessageChannel():null;
+const COACH_TASK_SCHEDULER=(()=>{
+  const q=[];let armed=false;
   const flush=()=>{armed=false;const fn=q.shift();if(fn)fn();if(q.length)arm();};
-  if(mc)mc.port1.onmessage=flush;function arm(){if(armed)return;armed=true;if(mc)mc.port2.postMessage(0);else setTimeout(flush,0);}
-  return fn=>{q.push(fn);arm();};})();
+  function arm(){
+    if(armed)return;armed=true;
+    // MessageChannel can starve touch/click delivery in iOS WebKit when it is
+    // continuously reposted.  A zero-delay task gives input and rendering a
+    // scheduling point between every AI slice.
+    if(globalThis.scheduler?.postTask){
+      globalThis.scheduler.postTask(flush,{priority:'user-visible'}).catch(()=>setTimeout(flush,0));
+    }else setTimeout(flush,0);
+  }
+  return fn=>{q.push(fn);arm();};
+})();
+function aiInputPending(){
+  try{return !!navigator.scheduling?.isInputPending?.({includeContinuous:true});}catch(_){return false;}
+}
+
 function coachChunks(tasks, runOne, onProgress, onDone, token=Coach.token, phaseDeadline=Coach.deadline) {
   let i=0,lastReported=0,slices=0;if(Coach.forAI)aiTelemetryPhase(Math.min(4,AI_SEARCH_TELEMETRY.phaseIndex+1),AI_THINK_PHASES[Math.min(4,AI_SEARCH_TELEMETRY.phaseIndex+1)],tasks.length);
+  const liveDeadline=()=>{const a=phaseDeadline||0,b=Coach.deadline||0;return a&&b?Math.min(a,b):(a||b);};
   const slice = () => {
     if (token !== Coach.token || S.app !== 'practice' || S.mode !== 'idle') {
       if(token===Coach.token) finishCoachIdle();
@@ -24477,9 +24528,12 @@ function coachChunks(tasks, runOne, onProgress, onDone, token=Coach.token, phase
     }
     const t0 = performance.now();
     try {
-      const uiSliceBudget=(typeof compactPortrait==='function'&&compactPortrait())?5.5:10;
+      const uiSliceBudget=(typeof compactPortrait==='function'&&compactPortrait())?2.4:4.8;
       while (i < tasks.length && performance.now() - t0 < uiSliceBudget
-        && !(phaseDeadline&&performance.now()>=phaseDeadline)) runOne(tasks[i++]);
+        && !(liveDeadline()&&performance.now()>=liveDeadline())){
+        runOne(tasks[i++]);
+        if(aiInputPending())break;
+      }
     } catch (err) {
       finishCoachIdle();
       console.error('coach error', err);
@@ -24487,13 +24541,15 @@ function coachChunks(tasks, runOne, onProgress, onDone, token=Coach.token, phase
       return;
     }
     if(Coach.forAI&&i>lastReported){aiTelemetryProgress(i-lastReported);lastReported=i;}onProgress(i / Math.max(1,tasks.length));
-    if(phaseDeadline&&performance.now()>=phaseDeadline){
+    if(liveDeadline()&&performance.now()>=liveDeadline()){
       if(Coach.deadline&&performance.now()>=Coach.deadline)Coach.cutoff=true;
       onDone();return;
     }
     if (i < tasks.length) { slices++;
-      // Yield to paint frequently on phones; MessageChannel retains throughput between paints.
-      if((slices%3)===0)requestAnimationFrame(slice);else COACH_TASK_SCHEDULER(slice);return; }
+      // Always leave a scheduling point for touch, mode change and pause.
+      if(aiInputPending()||(slices%5)===0)requestAnimationFrame(()=>COACH_TASK_SCHEDULER(slice));
+      else COACH_TASK_SCHEDULER(slice);
+      return; }
     onDone();
   };
   COACH_TASK_SCHEDULER(slice);
@@ -24710,7 +24766,7 @@ function tournamentDirectFastLane(tasks,balls,cue,aliveAtStart,turn=MATCH.turn){
       (Math.abs(a.prm.tipX)-Math.abs(b.prm.tipX))*.65+(Math.abs(a.prm.tipY)-Math.abs(b.prm.tipY))*.12+
       (ar-br)*.16+(Math.abs(a.prm.speed-2.55)-Math.abs(b.prm.speed-2.55))*.035;
   }),picked=[],seen=new Set();
-  for(const tk of ranked){const key=tk.tid+'|'+pocketKey(tk.pk);if(seen.has(key))continue;seen.add(key);picked.push(tk);if(picked.length>=3)break;}
+  for(const tk of ranked){const key=tk.tid+'|'+pocketKey(tk.pk);if(seen.has(key))continue;seen.add(key);picked.push(tk);if(picked.length>=(compactPortrait()?1:3))break;}
   for(const tk of picked){const coarse=tournamentFastDirectProbe(balls,cue,tk,aliveAtStart,turn);if(!coarse)continue;
     const certified=tournamentMaxDirectCertificate(balls,coarse,aliveAtStart,turn);if(certified)return certified;}
   return null;
@@ -26502,6 +26558,7 @@ function renderCoach(sel) {
 }
 
 $('btnCoach').addEventListener('click', () => {
+  if(Coach.forAI||MATCH.aiBusy){cancelAIPlanning(MATCH.mode==='spectator'?'AI観戦を一時停止':'AI思考を中断',true);return;}
   if(Coach.busy){cancelCoach(true);$('advMsg').textContent='コーチ解析を中止しました。もう一度押せば現在配置から再開します。';return;}
   coachThink({auto:false});
 });
@@ -26764,7 +26821,7 @@ function loadPreset(game, style) {
   practiceLayout=applyRackMicroVariation(practiceLayout,currentGame,MATCH.rackCondition);
   practiceDefs = practiceLayout.map(b => ballDef(b.id));
   ENV.carom = false;
-  syncCompatCanvasVisibility(true);
+  compatCanvas.style.display = 'none';
   S.rules = rulesTemplate ? rulesTemplate() : null;
   setBallSet(practiceDefs);
   sinks.length = 0;
@@ -27194,7 +27251,7 @@ function configureGame(game, resetScore) {
   if(MATCH.mode==='spectator'&&game==='set4')game='nine';
   currentGame = game;
   $('gameSelect').value = game;
-  ENV.carom = false; syncCompatCanvasVisibility(true);
+  ENV.carom = false; compatCanvas.style.display = 'none';
   if (resetScore) { MATCH.racks = [0,0]; MATCH.points = [0,0]; MATCH.breaker = 0; MATCH.turn = game==='fujiyama'?MATCH.fujiyamaStarter:0;MATCH.rackSerial=0;
     if(game==='fujiyama'){MATCH.fujiyamaHalf=1;MATCH.fujiyamaHalfScores=[[0,0],[0,0]];MATCH.fujiyamaSides=MATCH.fujiyamaBaseSides.slice();}}
   else if (MATCH.rackOver && !['rotation','straight','kairun','fujiyama'].includes(game)) { MATCH.breaker = 1 - MATCH.breaker; MATCH.turn = MATCH.breaker; }
@@ -27243,6 +27300,11 @@ function setPlayMode(mode) {
   } else updateHUD();
 }
 
+document.addEventListener('pointerdown',e=>{
+  if(!MATCH.aiBusy)return;const target=e.target.closest('#modeSeg button,#btnMobileMenu,#btnBrandSettings,#btnLab,#btnNewRack,#btnSpectatorPause,#gameSelect,#opponentSelect,#raceSelect');
+  if(!target||target.id==='btnAIQuick'||target.id==='btnAIStop')return;
+  cancelAIPlanning('ユーザー操作でAI思考を中断',MATCH.mode==='spectator');
+},{capture:true,passive:true});
 $('gameSelect').addEventListener('change', e => configureGame(e.target.value, isCompetitiveMode()));
 $('opponentSelect').addEventListener('change', e => { MATCH.opponent = e.target.value; MATCH.names[1] = e.target.value === 'local' ? 'PLAYER 2' : 'AIプレイヤー2'; updateHUD(); });
 $('raceSelect').addEventListener('change', e => {
@@ -27375,7 +27437,8 @@ window.__api = { S, PH, ENV, MATCH, POCKETS, CO, coachBank, coachKick, coachSpec
   fujiyamaDevelopmentResult, fujiyamaShortRailGap, syncViewportGeometry, pickTable, aimProjectionCheck, viewportState, hidePuzzleReviewPaths, showPuzzleReviewPaths, normalizeTip, commitTip, nudgeTip, TOURNAMENT_PLANNING_DOCTRINE, tournamentWholeRackPlan, gameplaySeed, shuffled, rackConditionFor, applyEnvironment, tournamentAuditCandidateLookahead, tournamentClusterInterventionPlan, resetAIPhysicsCache, aiPhysicsCacheStats, aiSearchCacheStats, tournamentAuditCandidatePool, tournamentDirectFastLane, tournamentFastDirectProbe, tournamentMaxDirectCertificate };
 
 window.BILLIARD_LAB_TEST_API={
-  version:'5.0.1',
+  version:'5.0.2',
+  requestAIQuickDecision,cancelAIPlanning,resumeAIPlanning,aiThinkingBudget,
   rendererStatus(){return {webgl:WEBGL_OK,mode:WEBGL_OK?'webgl':'2d',reason:rendererFailureReason,bootErrors:(window.__BILLIARD_BOOT_ERRORS||[]).slice()};},
   breakArea(){
     const saved={game:S.rules?.game,mode:MATCH.breakAreaMode,rules:S.rules},rows=[];
