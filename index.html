@@ -46,7 +46,7 @@ body.runtime-ready #runtimeGate{opacity:0;visibility:hidden;pointer-events:none}
 @media (prefers-reduced-motion:reduce){#runtimeGate{animation-delay:.35s;animation-duration:.01s}}
 
 
-/* v5.0.3: JavaScriptを実行しない添付プレビューを、操作不能なゲーム画面として見せない。 */
+/* v5.0.4: JavaScriptを実行しない添付プレビューを、操作不能なゲーム画面として見せない。 */
 #noJsGate,#bootFailure{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:24px;
   background:radial-gradient(circle at 50% 30%,#12382a 0,#071b13 48%,#030b08 100%);color:#f1ead8}
 .noJsCard,.bootFailureCard{width:min(440px,100%);padding:25px 21px;border:1px solid rgba(203,166,91,.55);
@@ -1126,7 +1126,7 @@ button{min-width:0;overflow-wrap:anywhere}
 </style>
 
 <style id="v501-field-first-ui">
-/* v5.0.3 FIELD-FIRST UI
+/* v5.0.4 FIELD-FIRST UI
    The table is never covered by shot controls, AI telemetry or match chrome. */
 :root{--v5-header:46px;--v5-mode:40px;--v5-hud:46px;--v5-advisor:30px;--v5-tabs:40px;--v5-content:84px;--v5-actions:50px}
 #v5DeckToggle,#v5AdvancedToggle{display:none}
@@ -1245,7 +1245,7 @@ body:not(.v5-ai-thinking) #aiThinkingPanel{display:none!important}
   #shotReadout{position:static!important}
 }
 
-/* v5.0.3: compositor-driven heartbeat remains visible even while one physical
+/* v5.0.4: compositor-driven heartbeat remains visible even while one physical
    candidate occupies the JS thread. It prevents a valid deep audit from looking frozen. */
 body.v5-ai-thinking #aiThinkBar{position:relative;overflow:hidden}
 body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;width:38%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:v501AiHeartbeat .72s linear infinite;will-change:transform}
@@ -1258,7 +1258,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
     <section class="noJsCard">
       <b>このプレビューではゲームを実行できません</b>
       <p>iPhoneの添付ファイル表示・クイックルックではJavaScriptが停止するため、盤面もボタンも動きません。SafariまたはGitHub Pagesの公開URLで開いてください。</p>
-      <small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 5.0.3</small>
+      <small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 5.0.4</small>
     </section>
   </div>
 </noscript>
@@ -1275,11 +1275,11 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
     <div class="runtimeGateLogo">REAL POOL SIMULATOR</div>
     <h1>BILLIARDS LABO</h1>
     <p class="splashProducer">produced by littlepond</p>
-    <p class="splashVersion">Version 5.0.3</p>
+    <p class="splashVersion">Version 5.0.4</p>
   </section>
 </div>
 <script>
-// v5.0.3 boot diagnostics: a later exception must never leave a silent, empty table.
+// v5.0.4 boot diagnostics: a later exception must never leave a silent, empty table.
 (function(){
   window.__BILLIARD_BOOT_ERRORS=[];
   function messageOf(value){
@@ -1310,7 +1310,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
     <div class="brandTitles">
       <h1>REAL POOL SIMULATOR</h1>
       <h2>BILLIARDS LABO</h2>
-      <div class="brandMeta"><span>produced by littlepond</span><b>Ver. 5.0.3</b></div>
+      <div class="brandMeta"><span>produced by littlepond</span><b>Ver. 5.0.4</b></div>
     </div>
     <div class="brandActions">
       <button id="btnBrandHelp" type="button" aria-label="使い方"><i>?</i><span>ヘルプ</span></button>
@@ -1344,7 +1344,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
       </div>
     </div>
     <div id="proHud">
-      <span id="proBadge">REAL POOL SIMULATOR <small>v5.0.3 · BILLIARDS LABO</small></span>
+      <span id="proBadge">REAL POOL SIMULATOR <small>v5.0.4 · BILLIARDS LABO</small></span>
       <span id="engineStatus" role="status" aria-label="REAL ENGINE 3 稼働中"><i></i><b>REAL ENGINE 3</b><small>IMPACT · SPIN · POCKET LIVE</small></span>
       <span class="hudLabel">GAME</span>
       <select id="gameSelect" class="hudSelect" aria-label="ゲーム種目">
@@ -1571,7 +1571,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
       </div>
     </div>
     <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③スピードを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-    <div class="appCredit"><b>REAL POOL SIMULATOR · Version 5.0.3</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+    <div class="appCredit"><b>REAL POOL SIMULATOR · Version 5.0.4</b><span>BILLIARDS LABO · produced by littlepond</span></div>
   </section>
 </div>
 
@@ -1674,7 +1674,7 @@ body.v5-ai-thinking #aiThinkBar::after{content:"";position:absolute;inset:0;widt
       <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"></div>
       <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
     </div>
-    <div class="appCredit"><b>REAL POOL SIMULATOR · Version 5.0.3</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+    <div class="appCredit"><b>REAL POOL SIMULATOR · Version 5.0.4</b><span>BILLIARDS LABO · produced by littlepond</span></div>
     <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" type="button" data-close="labDrawer">適用して閉じる</button></div>
   </section>
 </div>
@@ -1804,8 +1804,8 @@ const ARTISTIC_PUZZLE_BLUEPRINTS=Object.freeze([
       }
     ],
     "prm": {
-      "speed": 7.387201304260936,
-      "aim": 3.1569168304232926,
+      "speed": 7.207201304260936,
+      "aim": 3.1489168304232926,
       "elev": 0.01672426746806912,
       "tipX": -0.15834652446746825,
       "tipY": 0.1631974846261031,
@@ -1854,12 +1854,12 @@ const ARTISTIC_PUZZLE_BLUEPRINTS=Object.freeze([
         5
       ],
       "pocketOrder": [
-        1,
         4,
-        2,
+        1,
         5,
-        3,
-        6
+        2,
+        6,
+        3
       ]
     },
     "goalPocket": null,
@@ -1893,7 +1893,7 @@ const ARTISTIC_PUZZLE_BLUEPRINTS=Object.freeze([
     ],
     "carom": false,
     "hint": "凍結した6球の接触列へ衝撃を通し、左下コーナー・上サイド・左上コーナー・下サイド・右上コーナー・右下コーナーへ高速連続ポットして全球を消す。",
-    "objective": "配置された6球をワンショットで全てポケット ／ 指定穴 4番→左下コーナー ＋ 2番→上サイド ＋ 1番→左上コーナー ＋ 5番→下サイド ＋ 3番→右上コーナー ＋ 6番→右下コーナー ／ 6球以上イン ／ 入球順 1→4→2→5→3→6 ／ 2個の実物障害に触れない",
+    "objective": "配置された6球をワンショットで全てポケット ／ 指定穴 4番→左下コーナー ＋ 2番→上サイド ＋ 1番→左上コーナー ＋ 5番→下サイド ＋ 3番→右上コーナー ＋ 6番→右下コーナー ／ 6球以上イン ／ 入球順 4→2→1→5→3→6 ／ 2個の実物障害に触れない",
     "challenge": {
       "version": "12.0",
       "activeVariables": [
@@ -13196,7 +13196,7 @@ function vnorm(a) { const l = vlen(a); return l > 1e-12 ? vscale(a, 1 / l) : [0,
 // 入力値をいきなり「押し／引き」に分類せず、実際に的球へ届いた瞬間の速度、
 // 滑り、縦回転、横回転からスロウ、球離れ、ポケット受けを決める。
 class RealBilliardsEngine {
-  static VERSION='5.0.3';
+  static VERSION='5.0.4';
   constructor(){this.rackWorlds=new WeakMap();}
   clamp(x,a=0,b=1){return Math.max(a,Math.min(b,x));}
   cueDelivery(prm,shaft){
@@ -14520,7 +14520,7 @@ const LESSON_CATALOG=[...LESSONS,...PRO_SHOTS.filter(x=>x.replayable)];
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='5.0.3';
+const APP_VERSION='5.0.4';
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
   green:{label:'クラシックグリーン',cloth:'#176b4c',cushion:'#12583e'},
@@ -14666,7 +14666,7 @@ const prm = () => ({ speed: S.speed, aim: S.aim, elev: S.elev * D2R,
 // 描画・タッチ座標は、操作UIを除いた盤面専用領域だけを基準にする。
 const stage = $('playfield'), glCanvas = $('gl');
 const compatCanvas = $('compat2d'), compatCtx = compatCanvas.getContext('2d');
-const FORCE_2D = (()=>{try{return new URLSearchParams(location.search).get('renderer')==='2d';}catch(_){return false;}})();
+const FORCE_2D = (()=>{try{const q=new URLSearchParams(location.search).get('renderer');if(q==='webgl')return false;if(q==='2d')return true;return /iPad|iPhone|iPod/.test(navigator.userAgent)||(matchMedia('(max-width:720px) and (pointer:coarse)').matches);}catch(_){return true;}})();
 let WEBGL_OK=false, renderer=null, fallback2d=null, rendererFailureReason='';
 function fallbackRenderer(targetCanvas,targetContext){
   return {
@@ -14682,7 +14682,7 @@ function fallbackRenderer(targetCanvas,targetContext){
 }
 function enable2DRenderer(reason='WebGL unavailable'){
   WEBGL_OK=false;rendererFailureReason=String(reason?.message||reason||'WebGL unavailable');
-  compatCanvas.style.display='block';compatCanvas.setAttribute('aria-label','2D互換表示');
+  glCanvas.style.display='block';glCanvas.style.opacity='0';glCanvas.style.pointerEvents='auto';compatCanvas.style.display='block';compatCanvas.setAttribute('aria-label','2D互換表示');
   fallback2d=compatCtx;renderer=fallbackRenderer(compatCanvas,compatCtx);
   document.documentElement.dataset.renderer='2d';
   console.warn('BILLIARD LAB: Canvas 2D fallback',rendererFailureReason);
@@ -14695,6 +14695,7 @@ if(!FORCE_2D){
     if(!probeContext)throw new Error('WebGL context unavailable');
     probeContext.getExtension('WEBGL_lose_context')?.loseContext();
     renderer=new THREE.WebGLRenderer({canvas:glCanvas,antialias:true,powerPreference:'high-performance'});
+    glCanvas.style.display='block';glCanvas.style.opacity='1';glCanvas.style.pointerEvents='auto';compatCanvas.style.display='none';
     WEBGL_OK=true;document.documentElement.dataset.renderer='webgl';
   }catch(error){enable2DRenderer(error);}
 }else enable2DRenderer('2D compatibility mode requested');
@@ -19630,7 +19631,7 @@ function planTournamentBreakBook(options={}){
     breakCuePlacement:cue,breakFamily:b.family,breakLabel:b.label,breakControl:b.label+' / PREVALIDATED 1/600 / 散り'+b.moved+'球',
     moved:b.moved,potted:b.potted,protectedBallPeak:b.peak,protectedBallSettled:b.settled,protectedBallControlled:game!=='nine'||(b.peak<=.10&&b.settled<=.07),
     openingRunQuality:b.opening,nextProb:b.opening,score:b.score,performanceScore:b.score,robust:.96,confidence:.96,
-    physicsVerified:true,legalBreakVerified:true,bookVerified:true,prevalidatedAt:'v5.0.3-default-environment'};
+    physicsVerified:true,legalBreakVerified:true,bookVerified:true,prevalidatedAt:'v5.0.4-default-environment'};
 }
 
 function planTournamentBreak(options={}){
@@ -20575,7 +20576,7 @@ function aiPlanKairun(){
 }
 function clearAIWatchdog(){if(MATCH.aiWatchdog){clearTimeout(MATCH.aiWatchdog);MATCH.aiWatchdog=null;}}
 function aiThinkingBudget(){
-  // v5.0.3: the full lattice remains available, but mobile AI is an anytime
+  // v5.0.4: the full lattice remains available, but mobile AI is an anytime
   // search.  It must return a fully audited best-so-far plan quickly instead
   // of forcing the user to wait for every low-value branch.
   const mobile=compactPortrait(),game=S.rules?.game||currentGame,
@@ -27430,14 +27431,14 @@ window.__api = { S, PH, ENV, MATCH, POCKETS, CO, coachBank, coachKick, coachSpec
   aiControlsTurn, aiStyleBias, styleAdjustedCandidateValue, tournamentDecisionMatrix, scheduleAI,
   ballInHandDisciplineDoctrine, findTournamentBallInHandPlacement, findKairunBallInHandPlacement, findFujiyamaBallInHandPlacements,
   kairunContacts, kairunShotResult, kairunBuildTasks, evaluateKairunSim,
-  rack9Layout, rack8Layout, rack10Layout, straightRackLayout, straightOpeningBackCorner, tournamentBreakProfiles, resolvedBreakArea, breakAreaContains, breakAreaLabel, planTournamentBreak, planTournamentBreakBook, planStraightOpeningBreak, planStraightOpeningBreakDeep, tournamentBreakOutcome, straightOpeningSafetyOutcome, straightOpeningRackShape, stepWorld, makeBall, strike, allStopped, cloneBall, shaftProfile, REAL_ENGINE, rackContactSolverEnabled, PUZZLE, randomizedRackOrder, APP_VERSION, HIGH_ELEVATION_CALIBRATION, CUSHION_CALIBRATION, CLOTH_THEMES, applyClothTheme,
+  rack9Layout, rack8Layout, rack10Layout, straightRackLayout, straightOpeningBackCorner, tournamentBreakProfiles, resolvedBreakArea, breakAreaContains, breakAreaLabel, planTournamentBreak, planTournamentBreakBook, planStraightOpeningBreak, planStraightOpeningBreakDeep, tournamentBreakOutcome, straightOpeningSafetyOutcome, straightOpeningRackShape, stepWorld, makeBall, strike, allStopped, cloneBall, shaftProfile, REAL_ENGINE, rackContactSolverEnabled, PUZZLE, randomizedRackOrder, APP_VERSION, HIGH_ELEVATION_CALIBRATION, CUSHION_CALIBRATION, CLOTH_THEMES, applyClothTheme, drawFallback2D,
   resolveEightBreak, resolveNineIllegalBreak, eightBallGroupPlan, eightBallOpenPlan, tournamentShotScoringValue,
   fujiyamaLayout, fujiyamaKitchenContactPoints, fujiyamaInitialPoints, fujiyamaOwnIds, fujiyamaGoalKeys, fujiyamaInsideHomePos,
   judgeFujiyamaPro, beginFujiyamaRestart, planFujiyamaOpening, planFujiyamaDevelopment,
   fujiyamaDevelopmentResult, fujiyamaShortRailGap, syncViewportGeometry, pickTable, aimProjectionCheck, viewportState, hidePuzzleReviewPaths, showPuzzleReviewPaths, normalizeTip, commitTip, nudgeTip, TOURNAMENT_PLANNING_DOCTRINE, tournamentWholeRackPlan, gameplaySeed, shuffled, rackConditionFor, applyEnvironment, tournamentAuditCandidateLookahead, tournamentClusterInterventionPlan, resetAIPhysicsCache, aiPhysicsCacheStats, aiSearchCacheStats, tournamentAuditCandidatePool, tournamentDirectFastLane, tournamentFastDirectProbe, tournamentMaxDirectCertificate };
 
 window.BILLIARD_LAB_TEST_API={
-  version:'5.0.3',
+  version:'5.0.4',
   requestAIQuickDecision,cancelAIPlanning,resumeAIPlanning,aiThinkingBudget,
   rendererStatus(){return {webgl:WEBGL_OK,mode:WEBGL_OK?'webgl':'2d',reason:rendererFailureReason,bootErrors:(window.__BILLIARD_BOOT_ERRORS||[]).slice()};},
   breakArea(){
@@ -27607,9 +27608,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <style id="v503-user-flow-fixes">
-/* v5.0.3 — 実機ユーザーフロー修正。盤面を隠すUIを排除し、各モードの必須操作を復元。 */
+/* v5.0.4 — 実機ユーザーフロー修正。盤面を隠すUIを排除し、各モードの必須操作を復元。 */
 #lessonCardHost{display:none;min-width:0}
-body.v5-mode-lesson #lessonCardHost{display:block!important}
 #lessonCardHost #ccard{position:static!important;inset:auto!important;left:auto!important;right:auto!important;bottom:auto!important;width:100%!important;max-height:178px!important;margin:0!important;border-radius:11px!important;box-shadow:none!important;backdrop-filter:none!important}
 #lessonCardHost #ccBody{max-height:92px!important}
 body.v503-coach-result:not(.v5-mode-puzzle) #advisor{height:auto!important;min-height:54px!important;max-height:78px!important;overflow:hidden!important;align-items:stretch!important}
@@ -27617,18 +27617,15 @@ body.v503-coach-result:not(.v5-mode-puzzle) #quickCoach.show{display:flex!import
 body.v503-coach-result:not(.v5-mode-puzzle) #advMsg{display:none!important}
 
 @media (max-width:720px){
-  body.v5-mode-lesson #app,body.v5-mode-puzzle #app{grid-template-rows:auto auto auto auto!important;align-content:start!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
   /* レッスン/TRICKで競技HUDを強制表示していた旧v5指定を打消す。 */
   body.v5-mode-lesson #proHud,body.v5-mode-puzzle #proHud{display:none!important}
   body.v5-mode-lesson #advisor{display:none!important;height:0!important;min-height:0!important;max-height:0!important;padding:0!important;border:0!important}
 
   /* レッスン解説は盤面上の絶対配置ではなく、専用操作欄へドッキングする。 */
   body.v5-mode-lesson #lessonCardHost{display:block!important}
-  body.v5-mode-lesson #stage{height:auto!important;min-height:303px!important;grid-template-rows:auto minmax(260px,1fr)!important}
+  body.v5-mode-lesson #stage{height:auto!important;min-height:0!important;grid-template-rows:auto minmax(0,1fr)!important}
   body.v5-mode-lesson #playfield{grid-row:2!important;height:clamp(260px,32dvh,310px)!important;min-height:260px!important;max-height:310px!important}
-  body.v5-mode-lesson #ldeck{height:auto!important;min-height:178px!important;max-height:178px!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;padding:0 8px!important}
-  body.v5-mode-lesson #btnCoach{display:none!important}
-  body.v5-mode-lesson #right{grid-template-columns:1fr!important}
+  body.v5-mode-lesson #ldeck{max-height:calc(100dvh - 390px)!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
 
   /* TRICKは縦の余白を盤面として確保しない。テーブル比率に近い高さで固定し、操作を下へ置く。 */
   body.v5-mode-puzzle #app{grid-template-rows:auto auto auto auto!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
@@ -27650,13 +27647,12 @@ body.v503-coach-result:not(.v5-mode-puzzle) #advMsg{display:none!important}
   body.v5-mode-puzzle #deck #mid{display:none!important;visibility:hidden!important}
   body.v5-mode-puzzle #mobileControlTabs{height:38px!important}
   body.v5-mode-puzzle #right{height:56px!important;grid-template-columns:1fr!important}
-  body.v5-mode-puzzle #btnCoach,body.v5-mode-puzzle #btnStop,body.v5-mode-puzzle #aiThinkingPanel{display:none!important}
+  body.v5-mode-puzzle #btnCoach,body.v5-mode-puzzle #btnStop{display:none!important}
 
   /* AI観戦でも種目を選べる。種目行とスコア行を分け、狭い1行へ詰め込まない。 */
-  body.v5-mode-spectator #proHud{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-rows:36px 38px!important;gap:4px 5px!important;height:82px!important;min-height:82px!important;max-height:82px!important;overflow:visible!important;padding:3px 6px!important}
+  body.v5-mode-spectator #proHud{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:36px 38px!important;gap:4px 5px!important;height:82px!important;min-height:82px!important;max-height:82px!important;overflow:visible!important;padding:3px 6px!important}
   body.v5-mode-spectator #gameSelect{display:block!important;grid-column:1!important;grid-row:1!important;width:100%!important;max-width:none!important;min-width:0!important;height:36px!important;min-height:36px!important;flex:none!important;font-size:10px!important}
   body.v5-mode-spectator #nineFootQuick.show{display:flex!important;grid-column:2!important;grid-row:1!important;width:88px!important;height:36px!important;min-height:36px!important;flex:none!important}
-  body.v5-mode-spectator #btnSpectatorPause.show{display:inline-flex!important;grid-column:3!important;grid-row:1!important;width:62px!important;height:36px!important;min-height:36px!important;padding:2px 5px!important;font-size:8px!important;white-space:nowrap!important}
   body.v5-mode-spectator:not([data-v5-game="nine"]) #nineFootQuick{display:none!important}
   body.v5-mode-spectator #scoreBoard.show{display:grid!important;grid-column:1/-1!important;grid-row:2!important;width:100%!important;min-width:0!important;grid-template-columns:minmax(64px,1fr) 46px minmax(64px,1fr) 34px!important;gap:3px!important}
   body.v5-mode-spectator #playfield{min-height:280px!important}
@@ -27666,16 +27662,6 @@ body.v503-coach-result:not(.v5-mode-puzzle) #advMsg{display:none!important}
   body.v503-coach-result:not(.v5-mode-puzzle) #advisor{padding:4px 7px!important}
   body.v503-coach-result:not(.v5-mode-puzzle) .qcLead span,body.v503-coach-result:not(.v5-mode-puzzle) .qcLead em{max-width:132px!important}
   body.v503-coach-result:not(.v5-mode-puzzle) .qcChoice,body.v503-coach-result:not(.v5-mode-puzzle) .qcDetail{min-height:36px!important;padding:4px 6px!important;font-size:9px!important}
-}
-@media (orientation:landscape) and (min-width:700px) and (max-height:520px){
-  body.v5-mode-lesson #app{height:100dvh!important;min-height:0!important;display:grid!important;grid-template-columns:minmax(0,58fr) minmax(350px,42fr)!important;grid-template-rows:52px minmax(0,1fr)!important;grid-template-areas:"brand brand" "stage lesson"!important;overflow:hidden!important}
-  body.v5-mode-lesson #brandHeader{grid-area:brand!important;height:52px!important;min-height:52px!important}
-  body.v5-mode-lesson #stage{grid-area:stage!important;height:auto!important;min-height:0!important;grid-template-rows:auto minmax(0,1fr)!important;overflow:hidden!important}
-  body.v5-mode-lesson #topbar{grid-row:1!important}
-  body.v5-mode-lesson #playfield{grid-row:2!important;height:auto!important;min-height:220px!important;max-height:none!important}
-  body.v5-mode-lesson #ldeck{grid-area:lesson!important;display:flex!important;height:calc(100dvh - 52px)!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;padding:7px!important;border-left:1px solid var(--line)!important}
-  body.v5-mode-lesson #lessonCardHost{display:block!important}
-  body.v5-mode-lesson #deck{display:none!important}
 }
 </style>
 <script id="v503-user-flow-controller">
@@ -27689,7 +27675,7 @@ function activeMode(){return document.querySelector('#modeSeg [data-m].on')?.dat
 function syncCardDock(){
   if(!ccard||!playfield||!lessonHost)return;
   const lesson=activeMode()==='lesson'||api.S?.app==='lesson';
-  if(lesson){if(ccard.parentElement!==lessonHost)lessonHost.appendChild(ccard);}
+  if(lesson&&matchMedia('(max-width:720px)').matches){if(ccard.parentElement!==lessonHost)lessonHost.appendChild(ccard);}
   else if(ccard.parentElement!==playfield)playfield.appendChild(ccard);
 }
 function syncCoachResult(){
@@ -27699,7 +27685,7 @@ function syncCoachResult(){
   const humanMatch=api.MATCH?.mode==='match'&&api.MATCH?.turn===0&&api.S?.mode==='idle'&&!api.MATCH?.aiBusy&&!api.Coach?.busy;
   if(humanMatch&&api.Coach.active)coachBtn.innerHTML='<span>🎓</span> コーチを見る';
 }
-function syncAll(){syncCardDock();syncCoachResult();const game=document.getElementById('gameSelect')?.value||body.dataset.v5Game||'set4';if(body.dataset.v5Game!==game)body.dataset.v5Game=game;}
+function syncAll(){syncCardDock();syncCoachResult();body.dataset.v5Game=document.getElementById('gameSelect')?.value||body.dataset.v5Game||'set4';}
 document.querySelectorAll('#modeSeg [data-m]').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(()=>{syncAll();requestAnimationFrame(syncAll);}))); 
 document.getElementById('gameSelect')?.addEventListener('change',()=>requestAnimationFrame(syncAll));
 new MutationObserver(syncAll).observe(body,{attributes:true,attributeFilter:['class','data-v5-game'],subtree:false});
@@ -27718,27 +27704,101 @@ syncAll();
 })();
 </script>
 
-<script id="v503-renderer-visibility-guard">
-(function(){
-'use strict';
-const canvas=document.getElementById('compat2d'),gl=document.getElementById('gl');
-if(!canvas||!gl)return;
-let last='';
-function sync(){
-  const webgl=!!globalThis.WEBGL_OK;
-  const carom=!!globalThis.ENV?.carom;
-  const next=webgl?(carom?'compat':'webgl'):'compat';
-  const wantCanvas=next==='compat'?'block':'none',wantGl=next==='webgl'?'block':'none';
-  if(next!==last||canvas.style.display!==wantCanvas||gl.style.display!==wantGl){
-    canvas.style.display=wantCanvas;
-    gl.style.display=wantGl;
-    last=next;
-  }
-  if(!webgl&&typeof globalThis.drawFallback2D==='function')globalThis.drawFallback2D(true);
-  requestAnimationFrame(sync);
+
+<style id="v504-mobile-acceptance-layout">
+/* v5.0.4: iPhone実機を正本にした盤面最優先レイアウト。 */
+@media (max-width:720px) and (min-height:521px){
+  html,body{height:100%!important;min-height:0!important;overflow:hidden!important}
+  #app{height:100dvh!important;min-height:0!important;display:grid!important;grid-template-rows:auto minmax(0,1fr) auto auto!important;overflow:hidden!important}
+  #brandHeader{grid-row:1!important;min-height:56px!important;max-height:72px!important;padding:calc(env(safe-area-inset-top,0px) + 5px) 10px 5px!important}
+  .brandTitles h1{font-size:15px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}.brandMeta{margin-top:3px!important}
+  #stage{grid-row:2!important;height:auto!important;min-height:0!important;display:grid!important;grid-template-rows:40px 48px minmax(0,1fr)!important;overflow:hidden!important;background:#05090b!important}
+  #topbar{grid-row:1!important;height:40px!important;min-height:40px!important;max-height:40px!important;padding:3px 6px!important}
+  #proHud{grid-row:2!important;height:48px!important;min-height:48px!important;max-height:48px!important;padding:3px 6px!important;overflow:hidden!important}
+  #playfield{grid-row:3!important;position:relative!important;inset:auto!important;height:auto!important;min-height:220px!important;max-height:none!important;overflow:hidden!important;background:#090d10!important;display:block!important}
+  #gl,#compat2d{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:1!important;visibility:visible!important}
+  html[data-renderer="2d"] #gl{display:block!important;opacity:0!important;pointer-events:auto!important;z-index:3!important}html[data-renderer="2d"] #compat2d{display:block!important;pointer-events:none!important;z-index:2!important}
+  #advisor{grid-row:3!important;height:30px!important;min-height:30px!important;max-height:30px!important;padding:3px 7px!important;overflow:hidden!important}
+  #deck{grid-row:4!important;min-height:0!important;max-height:174px!important;grid-template-rows:40px 78px 50px!important;padding:3px 6px calc(3px + env(safe-area-inset-bottom,0px))!important;gap:3px!important;overflow:hidden!important}
+  #deck.v5-collapsed{grid-template-rows:40px 0 50px!important;max-height:96px!important}#deck.v5-collapsed #mid{visibility:hidden!important;overflow:hidden!important}
+  #mobileControlTabs{height:40px!important}#right{height:50px!important;grid-template-rows:50px!important}#btnCoach,#btnShot,#btnStop{height:48px!important;min-height:48px!important}
+  body.v5-mode-lesson #proHud,body.v5-mode-puzzle #proHud{display:none!important}
+  body.v5-mode-lesson #stage,body.v5-mode-puzzle #stage{grid-template-rows:40px minmax(240px,1fr)!important}
+  body.v5-mode-lesson #playfield,body.v5-mode-puzzle #playfield{grid-row:2!important;height:auto!important;min-height:240px!important;max-height:none!important}
+  body.v5-mode-lesson #advisor{display:none!important;height:0!important;min-height:0!important;max-height:0!important;padding:0!important;border:0!important}
+  body.v5-mode-lesson #deck{display:none!important}body.v5-mode-lesson #ldeck.show{display:flex!important;grid-row:4!important;max-height:154px!important;min-height:110px!important;overflow-y:auto!important;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))!important}
+  body.v5-mode-puzzle #advisor.puzzleMode{display:block!important;height:82px!important;min-height:82px!important;max-height:82px!important;padding:4px 6px!important;overflow:hidden!important}
+  body.v5-mode-puzzle #puzzlePanel{height:100%!important;display:grid!important;grid-template-rows:22px 52px!important;gap:3px!important}.puzzleMission,.puzzleShowline,.puzzleLogicBoard{display:none!important}
+  body.v5-mode-puzzle .puzzleHead{display:flex!important;height:22px!important;align-items:center!important}.puzzleHead #puzzleTitle{display:none!important}
+  body.v5-mode-puzzle .puzzleActions{display:grid!important;grid-template-columns:48px minmax(0,1fr) minmax(0,1fr) 48px!important;grid-template-areas:"prev demo retry next"!important;gap:4px!important;height:52px!important}
+  body.v5-mode-puzzle #btnPuzzlePrev{grid-area:prev!important}body.v5-mode-puzzle #btnPuzzleDemo{grid-area:demo!important}body.v5-mode-puzzle #btnPuzzleRetry{grid-area:retry!important}body.v5-mode-puzzle #btnPuzzleNext{grid-area:next!important}body.v5-mode-puzzle #btnPuzzleHint,body.v5-mode-puzzle #btnPuzzleAnswers{display:none!important}
+  body.v5-mode-puzzle .puzzleActions button{height:46px!important;min-height:46px!important;padding:3px!important;font-size:9px!important;white-space:normal!important;overflow:hidden!important}
+  body.v5-mode-puzzle #deck{grid-template-rows:40px 0 50px!important;max-height:96px!important}body.v5-mode-puzzle #mid{display:none!important;visibility:hidden!important}
+  body.v5-mode-spectator #proHud{height:82px!important;min-height:82px!important;max-height:82px!important}body.v5-mode-spectator #stage{grid-template-rows:40px 82px minmax(240px,1fr)!important}
+  body.v5-mode-spectator #deck{display:none!important}body.v5-mode-spectator #advisor{height:34px!important;min-height:34px!important;max-height:34px!important}
+  #shotReadout>div{min-width:0!important}#shotReadout span,#shotReadout b{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
 }
-requestAnimationFrame(sync);
+@media (max-width:390px) and (max-height:750px){
+  #brandHeader{min-height:50px!important;max-height:58px!important}.brandActions button{width:32px!important;min-height:32px!important}.brandTitles h1{font-size:13px!important}
+  #stage{grid-template-rows:38px 44px minmax(0,1fr)!important}#topbar{height:38px!important;min-height:38px!important}#proHud{height:44px!important;min-height:44px!important;max-height:44px!important}
+  #deck{grid-template-rows:38px 70px 48px!important;max-height:162px!important}#deck.v5-collapsed{grid-template-rows:38px 0 48px!important;max-height:90px!important}
+  body.v5-mode-lesson #stage,body.v5-mode-puzzle #stage{grid-template-rows:38px minmax(210px,1fr)!important}
+}
+</style>
+<script id="v504-mobile-runtime-guard">
+(function(){'use strict';
+const q=id=>document.getElementById(id),api=window.__api||{};
+function mode(){return document.querySelector('#modeSeg [data-m].on')?.dataset.m||'practice'}
+function forceBoard(){
+  const pf=q('playfield'),c=q('compat2d'),g=q('gl');if(!pf)return;
+  if(matchMedia('(max-width:720px) and (pointer:coarse)').matches){
+    document.documentElement.dataset.renderer='2d';if(g){g.style.display='block';g.style.opacity='0';g.style.pointerEvents='auto';}if(c){c.style.display='block';c.style.visibility='visible';c.style.opacity='1';}
+  }
+  requestAnimationFrame(()=>{try{api.syncViewportGeometry?.(true);}catch(e){console.error('v504 board resize',e)}
+    try{api.drawFallback2D?.(true);}catch(e){console.error('v504 board draw',e)}
+  });
+}
+function sync(){const m=mode(),deck=q('deck');document.body.classList.toggle('v504-mobile',matchMedia('(max-width:720px)').matches);
+  if(deck&&matchMedia('(max-width:720px)').matches){if(['spectator','lesson','puzzle'].includes(m))deck.classList.add('v5-collapsed');}
+  forceBoard();
+}
+function install(){
+  const deck=q('deck');if(deck&&matchMedia('(max-width:720px)').matches)deck.classList.add('v5-collapsed');
+  document.querySelectorAll('#mobileControlTabs [data-pane-button]').forEach(b=>b.addEventListener('click',()=>{deck?.classList.remove('v5-collapsed');requestAnimationFrame(forceBoard)}));
+  q('v5DeckToggle')?.addEventListener('click',()=>requestAnimationFrame(forceBoard));
+  document.querySelectorAll('#modeSeg [data-m]').forEach(b=>b.addEventListener('click',()=>{setTimeout(sync,0);setTimeout(sync,120);setTimeout(sync,450)}));
+  q('gameSelect')?.addEventListener('change',()=>{setTimeout(sync,0);setTimeout(sync,300)});
+  let resizeQueued=false;new ResizeObserver(()=>{if(resizeQueued)return;resizeQueued=true;requestAnimationFrame(()=>{resizeQueued=false;forceBoard();});}).observe(q('playfield'));
+  window.visualViewport?.addEventListener('resize',forceBoard,{passive:true});window.addEventListener('orientationchange',()=>setTimeout(sync,180));
+  sync();setTimeout(sync,400);setTimeout(sync,1200);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
+
+
+<style id="v504-layout-final-corrections">
+@media (max-width:720px) and (min-height:521px){
+  body.v5-mode-puzzle #app,body.v5-mode-lesson #app{height:100dvh!important;grid-template-rows:auto minmax(0,1fr) auto auto!important;overflow:hidden!important}
+  body.v5-mode-puzzle #stage,body.v5-mode-lesson #stage{grid-row:2!important}
+  body.v5-mode-puzzle #advisor{grid-row:3!important}body.v5-mode-puzzle #deck{grid-row:4!important}
+  body.v5-mode-lesson #ldeck.show{grid-row:4!important}
+  body:not(.v5-ai-thinking):not(.v503-coach-result) #advMsg{display:none!important}
+  body:not(.v5-ai-thinking):not(.v503-coach-result) #shotReadout{width:100%!important;flex:1 1 100%!important}
+  #shotReadout>div{min-width:72px!important;padding:2px 6px!important}#shotReadout span{font-size:7.5px!important;white-space:normal!important;line-height:1.05!important}#shotReadout b{font-size:9.5px!important}
+  body.v5-mode-puzzle .puzzleMission,body.v5-mode-puzzle .puzzleShowline,body.v5-mode-puzzle .puzzleLogicBoard{display:none!important}
+  body.v5-mode-puzzle #right{grid-template-columns:1fr!important;width:100%!important}body.v5-mode-puzzle #btnShot{grid-column:1!important;width:100%!important}
+}
+@media (orientation:landscape) and (min-width:721px) and (max-height:520px){
+  body.v5-mode-lesson #app{height:100dvh!important;display:grid!important;grid-template-columns:minmax(0,62%) minmax(300px,38%)!important;grid-template-rows:52px minmax(0,1fr)!important;grid-template-areas:"brand brand" "stage ldeck"!important;overflow:hidden!important}
+  body.v5-mode-lesson #brandHeader{grid-area:brand!important;height:52px!important;min-height:52px!important;max-height:52px!important;padding:4px 12px!important}
+  body.v5-mode-lesson #stage{grid-area:stage!important;height:auto!important;min-height:0!important;display:grid!important;grid-template-rows:40px minmax(0,1fr)!important;overflow:hidden!important}
+  body.v5-mode-lesson #topbar{grid-row:1!important;height:40px!important;min-height:40px!important;padding:3px 6px!important}
+  body.v5-mode-lesson #proHud,body.v5-mode-lesson #advisor,body.v5-mode-lesson #deck{display:none!important}
+  body.v5-mode-lesson #playfield{grid-row:2!important;height:auto!important;min-height:0!important;max-height:none!important;display:block!important}
+  body.v5-mode-lesson #ldeck.show{grid-area:ldeck!important;height:auto!important;min-height:0!important;max-height:none!important;display:flex!important;overflow-y:auto!important;padding:6px 8px!important;border-left:1px solid var(--line)!important}
+}
+</style>
+
 </body>
 </html>
