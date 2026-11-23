@@ -1859,8 +1859,12 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 }
 </style>
 
+<style data-v855-grade-tag>
+#matchSetupModal #gradeHint{grid-column:1/-1}
+#p0Name[data-grade]::after,#p1Name[data-grade]::after{content:attr(data-grade);margin-left:6px;padding:0 5px;border:1px solid rgba(214,180,106,.55);border-radius:6px;font-size:.72em;font-weight:700;color:#e8cf8f;vertical-align:1px;white-space:nowrap}
+</style>
 <style data-v8545-phone-landscape>
-/* v8.54.5 スマホ横向き（高さ520px以下）の最終層。
+/* v8.55.0 スマホ横向き（高さ520px以下）の最終層。
    旧層は保持し、ここで確定させる。盤面は左列に最大、右列は上から
    得点板（常時表示）→ AI思考・案内 → 操作盤／観戦時はショット振り返り。
    旧層では得点板と新ラックが盤面の下に隠れ、狙い欄が82px枠で切れ、
@@ -1985,7 +1989,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
     width:var(--v8545-side-in)!important;max-width:none!important;height:100px!important;max-height:100px!important;margin:0!important;transform:none!important}
 }
 
-/* v8.54.5 縦向き：AI推奨ボタン（例「ブレイク 成功—%・勝率30%」）の2行目が42px枠から落ちていた */
+/* v8.55.0 縦向き：AI推奨ボタン（例「ブレイク 成功—%・勝率30%」）の2行目が42px枠から落ちていた */
 @media (max-width:1024px) and (orientation:portrait) and (min-height:521px){
   html body #app .qcChoice{overflow:hidden!important;line-height:1.08!important;padding-top:2px!important;padding-bottom:2px!important}
   html body #app .qcChoice *{line-height:1.08!important}
@@ -2007,7 +2011,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <section class="noJsCard">
 <b>このプレビューではゲームを実行できません</b>
 <p>iPhoneの添付ファイル表示・クイックルックではJavaScriptが停止するため、盤面もボタンも動きません。SafariまたはGitHub Pagesの公開URLで開いてください。</p>
-<small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 8.54.5</small>
+<small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 8.55.0</small>
 </section>
 </div>
 </noscript>
@@ -2027,7 +2031,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="runtimeGateLogo">REAL POOL SIMULATOR</div>
 <h1>BILLIARDS LABO</h1>
 <p class="splashProducer">produced by littlepond</p>
-<p class="splashVersion">Version 8.54.5</p>
+<p class="splashVersion">Version 8.55.0</p>
 </section>
 </div>
 <script data-v6-source="scripts/00-boot-diagnostics.js">
@@ -2074,7 +2078,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="brandTitles">
 <h1>REAL POOL SIMULATOR</h1>
 <h2>BILLIARDS LABO</h2>
-<div class="brandMeta"><span>produced by littlepond</span><b>Ver. 8.54.5</b></div>
+<div class="brandMeta"><span>produced by littlepond</span><b>Ver. 8.55.0</b></div>
 </div>
 <div class="brandActions">
 <button aria-label="使い方" id="btnBrandHelp" type="button"><i>?</i><span>ヘルプ</span></button>
@@ -2107,7 +2111,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 </div>
 </div>
 <div id="proHud">
-<span id="proBadge">REAL POOL SIMULATOR <small>v8.54.5 · BILLIARDS LABO</small></span>
+<span id="proBadge">REAL POOL SIMULATOR <small>v8.55.0 · BILLIARDS LABO</small></span>
 <span aria-label="REAL ENGINE 6 稼働中" id="engineStatus" role="status"><i></i><b>REAL ENGINE 6</b><small>IMPACT · SPIN · POCKET · STRATEGY</small></span>
 <span class="hudLabel">GAME</span>
 <select aria-label="ゲーム種目" class="hudSelect" id="gameSelect">
@@ -2128,8 +2132,6 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <span class="hudLabel">VS</span>
 <select aria-label="対戦相手" class="hudSelect" id="opponentSelect">
 <option value="pro">AIプレイヤー2（総合研究）</option>
-<option value="a">AIプレイヤー2（A級設定）</option>
-<option value="b">AIプレイヤー2（B級設定）</option>
 <option value="local">2 PLAYER</option>
 </select>
 <select aria-label="先取数" class="hudSelect" id="raceSelect">
@@ -2367,7 +2369,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 </div>
 </div>
 <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③スピードを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.54.5</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.55.0</b><span>BILLIARDS LABO · produced by littlepond</span></div>
 </section>
 </div>
 <div aria-hidden="true" class="drawer" id="proShotDrawer">
@@ -2405,7 +2407,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <section aria-label="対戦設定" aria-modal="true" class="modalCard" role="dialog">
 <h3 id="matchSetupTitle">対戦設定</h3>
 <p id="matchSetupLead">対戦相手、試合形式、コーチの出し方を選びます。QUICK AUTOなら毎球の最善手を自動で構え、解説画面を開きません。</p>
-<div id="spectatorProfileNote"><b>AI STRATEGY LAB</b><span>AIプレイヤー1・AIプレイヤー2とも現在は開発・検証中です。同じ探索条件で、違うのは判断の評価軸です。</span></div>
+<div id="spectatorProfileNote"><b>AI STRATEGY LAB</b><span>AIプレイヤー1・AIプレイヤー2とも現在は開発・検証中です。同じ探索条件で、違うのは判断の評価軸と、設定した腕前（段位）です。</span></div>
 <div class="modalGrid">
 <label id="opponentSetupRow">対戦相手<select aria-label="対戦相手" id="mobileOpponentSelect"></select></label>
 <label id="spectatorP0StyleRow">AIプレイヤー1 の戦型<select aria-label="AIプレイヤー1の戦型" id="mobileSpectatorP0Style">
@@ -2420,6 +2422,11 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <label id="spectatorP1ShaftRow">AIプレイヤー2 のシャフト<select aria-label="AIプレイヤー2のシャフト" id="mobileSpectatorP1Shaft">
 <option value="maple">トラディショナル・メイプル</option><option selected="" value="ldwood">低見越しウッド</option><option value="carbon">低見越しカーボン（黒）</option>
 </select></label>
+<label id="opponentGradeRow">AIプレイヤー2 の腕前（段位）<select aria-label="対戦AIの段位" id="mobileOpponentGrade"><option value="ideal">理論値（撞き誤差なし）</option><option value="world">世界トップ</option><option value="pro">プロ</option><option value="sa">SA級</option><option value="a">A級</option><option value="b">B級</option><option value="c">C級</option></select></label>
+<label id="spectatorP0GradeRow">AIプレイヤー1 の腕前（段位）<select aria-label="AIプレイヤー1の段位" id="mobileSpectatorP0Grade"><option value="ideal">理論値（撞き誤差なし）</option><option value="world">世界トップ</option><option value="pro">プロ</option><option value="sa">SA級</option><option value="a">A級</option><option value="b">B級</option><option value="c">C級</option></select></label>
+<label id="spectatorP1GradeRow">AIプレイヤー2 の腕前（段位）<select aria-label="AIプレイヤー2の段位" id="mobileSpectatorP1Grade"><option value="ideal">理論値（撞き誤差なし）</option><option value="world">世界トップ</option><option value="pro">プロ</option><option value="sa">SA級</option><option value="a">A級</option><option value="b">B級</option><option value="c">C級</option></select></label>
+<label id="gradeMentalRow">メンタルと調子<select aria-label="山場の重圧と調子" id="mobileGradeMental"><option value="full">山場の重圧＋ラックごとの調子</option><option value="pressure">山場の重圧のみ</option><option value="flat">毎球同じ精度</option></select></label>
+<div class="settingMeta" id="gradeHint"></div>
 <label id="opponentShaftRow">AIプレイヤー2 のシャフト<select aria-label="対戦AIのシャフト" id="mobileOpponentShaft">
 <option value="maple">トラディショナル・メイプル</option><option value="ldwood">低見越しウッド</option><option selected="" value="carbon">低見越しカーボン（黒）</option>
 </select></label>
@@ -2466,11 +2473,12 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="settingRow"><label>チョーク状態</label><select id="chalk"><option selected="" value="fresh">良好</option><option value="thin">薄い</option><option value="poor">不足</option></select></div>
 </div>
 <div class="settingGroup"><h3>ストローク再現性</h3>
+<div class="settingRow"><label>あなたの腕前</label><select aria-label="あなたの腕前（段位）" id="humanGrade"><option value="custom">スライダーで指定</option><option value="ideal">理論値（撞き誤差なし）</option><option value="world">世界トップ</option><option value="pro">プロ</option><option value="sa">SA級</option><option value="a">A級</option><option value="b">B級</option><option value="c">C級</option></select></div>
 <div class="settingRow"><label>実行誤差 <output id="accuracyOut">0%（予測一致）</output></label><input id="humanError" max="100" min="0" type="range" value="0"/></div>
 <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"/></div>
 <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
 </div>
-<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.54.5</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.55.0</b><span>BILLIARDS LABO · produced by littlepond</span></div>
 <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" data-close="labDrawer" type="button">適用して閉じる</button></div>
 </section>
 </div>
@@ -15763,7 +15771,7 @@ if(typeof module!=='undefined')module.exports=RULES_DOMAIN;
 // DOM、描画、乱数、試合進行から独立したV6の意思決定契約。
 // AI、コーチ、実行直前監査、Node回帰試験は同じ判定を共有する。
 const STRATEGY_DOMAIN=(()=>{
-  const VERSION='8.54.5',MINIMUM_PLANNING_WINDOW=3;
+  const VERSION='8.55.0',MINIMUM_PLANNING_WINDOW=3;
   // 「理想値」は候補順位、「上限値」は物理的に不自然な線だけを落とす。
   // v6.0 は理想値をそのまま絶対上限にしていたため、合法で展開の良い線まで
   // 全滅し、弱い緊急ブレイクへ落ちることがあった。
@@ -27851,7 +27859,7 @@ globalThis.__BILLIARD_EXACT_ATTACK_WIDTH_CERTIFICATES__ = Object.freeze({
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='8.54.5';
+const APP_VERSION='8.55.0';
 const SUSPENDED_PLAY_MODES=Object.freeze(['lesson','puzzle']);
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
@@ -27891,7 +27899,7 @@ const MATCH = {
   call: { ball: null, pocket: null, safety: false },
   pushDeclared: false, rotationNoCall: false, rotationNoCallRule:'spot', rotationTarget:120, rotationRackAwarded:[], intentionalFoul: false,
   rackMode:'random', nineFoot:'nine', breakAreaMode:'auto', breakThreePointRule:'auto',
-  optionPending: null, humanError: 0,
+  optionPending: null, humanError: 0, humanGrade:'custom', aiGrades:['ideal','ideal'], gradeMental:'full', gradeForm:null, lastExecution:null,
   lastActual: null, lastIdeal: null, log: [], rackOver: false,
   coachMode: 'quick', matchTempo: 'normal', autoCoachTimer: null, aiDecision: '',
   aiToken: 0, aiWatchdog: null, aiPlan:null, aiCommitTicket:null, shotStartedAt: 0, shotSimulatedTime:0, shotForceStop: false,
@@ -27996,6 +28004,14 @@ try{
   if(Array.isArray(shafts)&&shafts.length===2&&shafts.every(x=>SHAFT_PROFILES[x]))MATCH.aiShafts=shafts.slice();
   if(SHAFT_PROFILES[shaft])ENV.userShaftKey=shaft;
   if(['realistic','fixed','wide'].includes(variance))MATCH.tableVariance=variance;
+  // 段位。保存が無ければ、実機ではプロ同士を初期値にする（物理試験・監査の
+  // 自動実行環境は理論値のまま、証明書と同じ入力で撞く）。
+  const gradeKeys=['ideal','world','pro','sa','a','b','c'],grades=JSON.parse(localStorage.getItem('billiard-ai-grades-v1')||'null'),
+    mental=localStorage.getItem('billiard-grade-mental'),hg=localStorage.getItem('billiard-human-grade');
+  if(Array.isArray(grades)&&grades.length===2&&grades.every(x=>gradeKeys.includes(x)))MATCH.aiGrades=grades.slice();
+  else if(!/Headless/.test(navigator.userAgent||''))MATCH.aiGrades=['pro','pro'];
+  if(['full','pressure','flat'].includes(mental))MATCH.gradeMental=mental;
+  if(hg==='custom'||gradeKeys.includes(hg))MATCH.humanGrade=hg;
 }catch(_){ }
 const BALL_DEF = [
   { id: 0, name: '白', color: '#f4f1ea', x: -0.70, y: 0 },
@@ -29867,6 +29883,9 @@ function shotTrajectoryVisualState(){
   };
 }
 function actualStroke(base, fromAI) {
+  if(!fromAI&&MATCH.humanGrade&&MATCH.humanGrade!=='custom'&&STROKE_GRADES[MATCH.humanGrade])
+    return gradedStroke(base,MATCH.humanGrade,{actor:MATCH.turn});
+  if(!fromAI)MATCH.lastExecution=null;
   const p = {...base};
   let level = MATCH.humanError;
   // 観戦モードは戦型にかかわらず全員同じ世界最高精度。差は意思決定の評価軸だけに置く。
@@ -29894,6 +29913,142 @@ function actualStroke(base, fromAI) {
   if (m > .58) { p.tipX *= .58/m; p.tipY *= .58/m; }
   MATCH.lastIdeal = {...base}; MATCH.lastActual = {...p};
   return p;
+}
+
+// ---- 段位別ストローク再現モデル（v8.55） ----
+// 理論値（撞き誤差ゼロ）から C級 まで、同じ判断に「その腕で撞いたら」の
+// ばらつきを足す。誤差は一律ではなく、実際の撞球で効く条件で増える：
+// 長い撞き出し・強打・横撞点・強い引き押し・キュー上げ・レールブリッジ・
+// 球越しブリッジ・試合の山場（プレッシャー）・その日の調子。
+// 物理は変えない。変えるのは撞く入力（方向・速度・撞点・キュー角）だけ。
+const STROKE_GRADES=Object.freeze({
+  ideal:Object.freeze({key:'ideal',label:'理論値（撞き誤差なし）',short:'理論値',flaw:0,aim:0,speed:0,tip:0,elev:0,spin:0,power:0,draw:0,bridge:1,pressure:1,form:0,reach:0,touch:0,cut:0,miscue:0,threshold:.46}),
+  world:Object.freeze({key:'world',label:'世界トップ',short:'世界トップ',aim:0.027,speed:0.017,tip:0.01,flaw:0.01,elev:.22,spin:.55,power:.45,draw:.35,bridge:1.14,pressure:1.03,form:.035,reach:.10,touch:.5,cut:0.05,miscue:0.03,threshold:.44}),
+  pro:Object.freeze({key:'pro',label:'プロ',short:'プロ',aim:0.033,speed:0.024,tip:0.014,flaw:0.02,elev:.30,spin:.70,power:.55,draw:.45,bridge:1.20,pressure:1.06,form:.05,reach:.12,touch:.6,cut:0.1,miscue:0.05,threshold:.46}),
+  sa:Object.freeze({key:'sa',label:'SA級',short:'SA級',aim:0.042,speed:0.034,tip:0.019,flaw:0.035,elev:.42,spin:.90,power:.65,draw:.55,bridge:1.26,pressure:1.10,form:.07,reach:.14,touch:.7,cut:0.25,miscue:0.1,threshold:.48}),
+  a:Object.freeze({key:'a',label:'A級',short:'A級',aim:0.048,speed:0.052,tip:0.025,flaw:0.1,elev:.58,spin:1.15,power:.75,draw:.70,bridge:1.32,pressure:1.15,form:.09,reach:.16,touch:.8,cut:0.9,miscue:0.18,threshold:.50}),
+  b:Object.freeze({key:'b',label:'B級',short:'B級',aim:0.105,speed:0.07,tip:0.034,flaw:0.11,elev:.80,spin:1.3,power:.90,draw:.90,bridge:1.42,pressure:1.22,form:.12,reach:.19,touch:1.0,cut:0.45,miscue:0.32,threshold:.40}),
+  c:Object.freeze({key:'c',label:'C級',short:'C級',aim:0.16,speed:0.098,tip:0.048,flaw:0.15,elev:1.10,spin:2.00,power:1.10,draw:1.0,bridge:1.56,pressure:1.30,form:.16,reach:.23,touch:1.3,cut:0.5,miscue:0.5,threshold:.34}),
+});
+const STROKE_GRADE_ORDER=Object.freeze(['ideal','world','pro','sa','a','b','c']);
+function strokeGrade(key){return STROKE_GRADES[key]||STROKE_GRADES.ideal;}
+function aiStrokeGradeKey(actor=MATCH.turn){
+  const grades=Array.isArray(MATCH.aiGrades)?MATCH.aiGrades:['ideal','ideal'];
+  return STROKE_GRADES[grades[actor]]?grades[actor]:'ideal';
+}
+function strokeErrorContext(base,balls=S.balls){
+  const cue=(balls||[]).find(b=>b.id===0&&!b.pocketed&&!b.off),ctx={firstDist:.7,railBridge:0,overBall:false,factors:[]};
+  if(!cue)return ctx;const dx=Math.cos(base.aim||0),dy=Math.sin(base.aim||0),R=PH.R;let first=Infinity;
+  for(const b of balls){if(b.id===0||b.pocketed||b.off)continue;const rx=b.p[0]-cue.p[0],ry=b.p[1]-cue.p[1],
+    t=rx*dx+ry*dy,perp=Math.abs(rx*dy-ry*dx);
+    if(t>0&&perp<2*R){const d=t-Math.sqrt(4*R*R-perp*perp);if(d<first){first=d;ctx.cutSin=Math.min(1,perp/(2*R));}}
+    // 手球の真後ろ（ブリッジを置く側）に球があるとブリッジが不安定になる。
+    if(t<0&&t>-.24&&perp<2*R+.018)ctx.overBall=true;}
+  if(Number.isFinite(first))ctx.firstDist=Math.max(0,first);
+  // 撞く側（手球の後方）のクッションまでの距離。近いほどレールブリッジになる。
+  const bx=-dx,by=-dy,limX=PH.HX+R,limY=PH.HY+R,
+    tx=Math.abs(bx)>1e-9?((bx>0?limX:-limX)-cue.p[0])/bx:Infinity,ty=Math.abs(by)>1e-9?((by>0?limY:-limY)-cue.p[1])/by:Infinity,
+    back=Math.max(0,Math.min(tx,ty));
+  ctx.railBridge=back<.035?2:back<.11?1:0;ctx.backRoom=back;
+  return ctx;
+}
+function strokePressureLevel(actor,plan){
+  if(MATCH.gradeMental==='flat'||MATCH.mode==='free')return 0;
+  const R=S.rules||{},race=Number(MATCH.raceTo)||0,racks=MATCH.racks||[0,0];let level=0;
+  const target=plan?.targetId??plan?.tid??plan?.ball??plan?.potId??null;
+  if(R.game==='nine'&&target===9||R.game==='ten'&&target===10||R.game==='eight'&&target===8)level+=1;
+  if(['rotation','straight'].includes(R.game)){const goal=R.game==='rotation'?(MATCH.rotationTarget||120):race,
+    pts=(MATCH.points||[0,0])[actor]||0;if(goal>0&&pts>=goal*.88)level+=.7;}
+  if(race>1){if(racks[0]===race-1&&racks[1]===race-1)level+=1;else if(racks[actor]===race-1)level+=.5;}
+  if(R.wasBreak===false&&R.broken===false)level*=.5;
+  return Math.min(1.6,level);
+}
+function strokeFormFactor(actor,gradeKey){
+  const g=strokeGrade(gradeKey);if(!g.form||MATCH.gradeMental==='flat'||MATCH.gradeMental==='pressure')return 1;
+  const serial=MATCH.rackSerial||0;MATCH.gradeForm=MATCH.gradeForm||{};
+  const row=MATCH.gradeForm[actor];
+  if(!row||row.serial!==serial||row.grade!==gradeKey){
+    // ラックごとの調子。中央値1・対数正規。好調ラックも不調ラックも出る。
+    const value=Math.exp(RNG.normal()*g.form);MATCH.gradeForm[actor]={serial,grade:gradeKey,value};return value;}
+  return row.value;
+}
+function finalizeStrokeContact(p){
+  const tm=Math.hypot(p.tipX,p.tipY),grip=0.58*ENV.chalkGrip;p.miscue=tm>grip;
+  if(p.miscue){const f=Math.max(.35,grip/Math.max(tm,1e-6));p.tipX*=f;p.tipY*=f;p.speed*=.58+.18*RNG.next();p.aim+=RNG.normal()*1.2*D2R;}
+  const m=Math.hypot(p.tipX,p.tipY);if(m>.58){p.tipX*=.58/m;p.tipY*=.58/m;}
+  return p;
+}
+function gradedStroke(base,gradeKey,options={}){
+  const g=strokeGrade(gradeKey),actor=options.actor??MATCH.turn;
+  if(g.key==='ideal'){const p=finalizeStrokeContact({...base});
+    MATCH.lastExecution={grade:'ideal',actor,aimDeg:0,speedPct:0,tipX:0,tipY:0,elevDeg:0,factors:[],sigmaAimDeg:0};
+    MATCH.lastIdeal={...base};MATCH.lastActual={...p};return p;}
+  const ctx=strokeErrorContext(base,options.balls||S.balls),speed=Math.max(.1,base.speed||0),
+    tipX=Math.abs(base.tipX||0),tipY=Math.abs(base.tipY||0),elevDeg=(base.elev||0)*R2D,
+    squirt=shaftProfile(ENV.shaftKey).squirt,pressure=strokePressureLevel(actor,options.plan),
+    form=strokeFormFactor(actor,g.key),mental=(1+(g.pressure-1)*pressure)*form,factors=[];
+  let aimK=1,speedK=1,tipK=1;
+  // 厚みの見立て違い。真っ直ぐは並べやすく、カットが強いほど当て点の判断がぶれる。
+  if(g.cut&&ctx.cutSin>.26){aimK*=1+g.cut*ctx.cutSin;if(ctx.cutSin>.7)factors.push('薄い当たり');}
+  if(ctx.firstDist>.9){aimK*=1+g.reach*(ctx.firstDist-.9)/.5;factors.push('長い撞き出し');}
+  if(speed>3.2){const k=g.power*Math.min(1.4,(speed-3.2)/4.5);aimK*=1+k;tipK*=1+k*.8;factors.push(speed>6.5?'ブレイク級の強打':'強打');}
+  if(speed<1.15){speedK*=1+g.touch*(1.15-speed)/.8;factors.push('タッチの弱い球');}
+  if(tipX>.12){aimK*=1+g.spin*(tipX-.12)/.4*squirt;factors.push('横撞点（見越し）');}
+  if(tipY>.30){tipK*=1+g.draw*(tipY-.30)/.25;aimK*=1+g.draw*.35*(tipY-.30)/.25;factors.push((base.tipY||0)<0?'強い引き':'強い押し');}
+  if(elevDeg>6){const k=g.elev*Math.min(3,(elevDeg-6)/12);aimK*=1+k;tipK*=1+k*.6;factors.push('キュー上げ');}
+  if(ctx.railBridge){const k=ctx.railBridge===2?(g.bridge-1)*1.8+1:g.bridge;aimK*=k;tipK*=k;factors.push(ctx.railBridge===2?'クッション際の手球':'レールブリッジ');}
+  if(ctx.overBall){aimK*=g.bridge*1.05;tipK*=g.bridge;factors.push('球越しブリッジ');}
+  if(pressure>=.5)factors.push(pressure>=1.4?'大きな山場':'山場の一球');
+  if(form>1.08)factors.push('調子が今ひとつ');else if(form<.93)factors.push('好調');
+  // 人のストロークは正規分布だけでは表せない。たまに出る「乱れた一撞き」を
+  // 段位ごとの頻度で混ぜる（低い段位ほど多い）。山場では出やすくなる。
+  // ブレイクは毎ラック繰り返す決まった動作。強打の割に構えと撞点は安定している。
+  const routine=options.plan?.kind==='break'?.6:1;
+  const flaw=g.flaw>0&&RNG.next()<g.flaw*Math.min(2,mental*mental)*routine,flawK=flaw?2.6:1;
+  if(flaw)factors.unshift('ストロークの乱れ');
+  const aimSigma=g.aim*aimK*mental*flawK*routine*D2R,speedSigma=g.speed*speedK*mental*flawK,tipSigma=g.tip*tipK*mental*flawK*routine,
+    elevSigma=g.elev*D2R*(elevDeg>6?1:.15)*mental*flawK;
+  const p={...base};
+  p.aim+=RNG.normal()*aimSigma;
+  p.speed=Math.max(.3,p.speed*(1+RNG.normal()*speedSigma));
+  // 横方向の撞点ずれは見越し（スカート）で方向誤差に直結するため、狙いの誤差と
+  // 二重に数えないよう小さく、縦方向（引き・押しの効き）は段位どおりに散らす。
+  p.tipX=(p.tipX||0)+RNG.normal()*tipSigma*.2;p.tipY=(p.tipY||0)+RNG.normal()*tipSigma;
+  p.elev=Math.max(0,(p.elev||0)+RNG.normal()*elevSigma);
+  // 限界近くの撞点。上手い人ほど、ぶれてもタップが滑る前に撞き切る。
+  // チョーク限界を越えたぶれが本当にミスキューになるかは段位の確率で決める。
+  {const grip=.58*ENV.chalkGrip,bm=Math.hypot(base.tipX||0,base.tipY||0),pm=Math.hypot(p.tipX,p.tipY);
+    if(pm>grip&&bm<=grip&&RNG.next()>=g.miscue){const k=grip*.995/pm;p.tipX*=k;p.tipY*=k;}}
+  // 横撞点の見越し補正の読み違い。キューのスカート量に比例して系統的に残る。
+  if(tipX>.12)p.aim+=RNG.normal()*g.aim*.6*g.spin*squirt*(tipX/.5)*mental*D2R;
+  finalizeStrokeContact(p);
+  const wrap=x=>Math.atan2(Math.sin(x),Math.cos(x));
+  MATCH.lastExecution={grade:g.key,actor,aimDeg:wrap(p.aim-base.aim)*R2D,speedPct:((p.speed/Math.max(1e-6,base.speed))-1)*100,
+    tipX:(p.tipX-(base.tipX||0)),tipY:(p.tipY-(base.tipY||0)),elevDeg:((p.elev||0)-(base.elev||0))*R2D,factors,
+    sigmaAimDeg:aimSigma*R2D,sigmaSpeedPct:speedSigma*100,pressure,form,flaw,miscue:!!p.miscue};
+  MATCH.lastIdeal={...base};MATCH.lastActual={...p};
+  return p;
+}
+// 「展開を変える」系の一打は、実際に何を動かすのかで言い分ける。
+// 球が2〜3個しか無いのに「密集を崩す」と出すと、見ている人を誤らせる。
+function developmentDecisionLabel(plan,balls=S.balls){
+  const id=plan?.targetId??plan?.ball,target=(balls||[]).find(b=>b.id===id&&!b.pocketed&&!b.off),
+    alive=(balls||[]).filter(b=>b.id!==0&&!b.pocketed&&!b.off),m=plan?.stateProgress||{},
+    kick=(plan?.cushionsBefore||0)>0?(plan.cushionsBefore+'クッションで当て、'):'';
+  const clustered=!!target&&alive.some(b=>b.id!==target.id&&Math.hypot(b.p[0]-target.p[0],b.p[1]-target.p[1])<PH.R*2.5);
+  const railBound=Number.isFinite(m.targetRailBefore)&&m.targetRailBefore<PH.R*.6&&(m.railRelease||0)>=.3;
+  if(clustered&&alive.length>=4)return kick+'密集を崩して展開を変える';
+  if(railBound)return kick+'クッション際の球を離して次の線を作る';
+  if(alive.length<=3)return kick+'入れずに球の配置を変え、相手に難しい球を残す';
+  return kick+'球を動かして次の展開を作る';
+}
+function strokeExecutionSummary(ex=MATCH.lastExecution){
+  if(!ex||ex.grade==='ideal')return '';
+  const g=strokeGrade(ex.grade),sign=x=>(x>=0?'+':'−')+Math.abs(x),mm=x=>Math.abs(x*PH.R*1000).toFixed(1),
+    aim=sign(+ex.aimDeg.toFixed(2))+'°',spd=sign(Math.round(ex.speedPct))+'%',
+    tipShift=Math.hypot(ex.tipX,ex.tipY)>.004?' · 撞点 '+mm(Math.hypot(ex.tipX,ex.tipY))+'mmずれ':'';
+  return g.short+'の撞き：方向 '+aim+' · 強さ '+spd+tipShift+(ex.miscue?' · ミスキュー':'')+
+    (ex.factors?.length?'（'+ex.factors.slice(0,3).join('・')+'）':'');
 }
 function aiStrokeLegality(sim,plan=null,legalIds=null){
   if(!sim)return false;const A=analyzeRunEvents(sim.events||[]),legal=legalIds||legalTargets(),
@@ -29985,6 +30140,14 @@ function kairunPlanIntentMatches(plan,sim,stage=S.rules?.kairunStage||0,opening=
   return !result.falseKairun&&progress>=required;
 }
 function tournamentAIStroke(base,plan){
+  MATCH.lastExecution=null;
+  const gradeKey=aiStrokeGradeKey(MATCH.turn);
+  if(gradeKey!=='ideal'&&plan?.kind!=='intentional-foul'){
+    // 段位設定中は、決断した一打をその腕で撞く。意図どおりになるまで
+    // 撞き直す抽選はしない（外れも、出しの狂いも、その段位の現実）。
+    const intended=plan?.veteranShotRoutine?.status==='COMMITTED'?veteranCommittedStroke(base,plan):{...base};
+    return gradedStroke(intended,gradeKey,{actor:MATCH.turn,plan});
+  }
   if(plan?.veteranShotRoutine?.status==='COMMITTED'){
     // 決断後は候補を探し直さない。現台1/600秒で合格した一つの完成映像を、
     // 構え・撞点・キュースピードまで同じ入力で再現する。
@@ -30553,7 +30716,7 @@ function renderShotReviewDock(){
     metrics='方向 '+(Number(stroke.aim||0)*R2D).toFixed(1)+'° · '+Number(stroke.speed||0).toFixed(2)+'m/s · '+tip+mental;
   if(title)title.textContent=prefix+' '+review.shotNo+' · '+review.actorName+' · '+review.kind+target;
   if(decision){decision.textContent=review.decision||review.kind;decision.title=decision.textContent;}
-  if(reason){reason.textContent=(review.reason||'選択理由を保存')+' / '+metrics;reason.title=reason.textContent;}
+  if(reason){reason.textContent=(review.reason||'選択理由を保存')+' / '+metrics+(review.execution?' / '+review.execution:'');reason.title=reason.textContent;}
 }
 function updateHistoryButtons(){
   const undo=$('btnUndo'),redo=$('btnRedo');if(undo)undo.disabled=S.mode!=='idle'||SHOT_HISTORY.undo.length===0;if(redo)redo.disabled=S.mode!=='idle'||SHOT_HISTORY.redo.length===0;
@@ -30720,6 +30883,8 @@ function shoot(fromAI, exactCoachDemo=false, launchRecovery=false, committedPlan
   shotLaunchSideEffect('target-selection',()=>resetShotTargetSelection());
   shotLaunchSideEffect('target-caption',()=>clearDisplayedObjectTarget('ショット進行中'));
   if (actual.miscue) shotLaunchSideEffect('miscue-log',()=>addEventLog('撞点がチョーク限界を超え、ミスキューが発生', 'MISCUE'));
+  if(MATCH.lastExecution&&MATCH.lastExecution.grade!=='ideal')shotLaunchSideEffect('stroke-grade-log',()=>{const text=strokeExecutionSummary();
+    addEventLog(text,'STROKE');const last=SHOT_HISTORY.undo.at(-1);if(last?.review&&!last.review.execution){last.review.execution=text;renderShotReviewDock();}});
   // カイルンの転がり中の読み: 発射直前の盤面と実際に撞く入力を複製する。
   // 発射処理そのものには関与せず、失敗しても打球は変わらない。
   const kairunRollRead=fromAI&&!PUZZLE.active&&S.rules?.game==='kairun'?shotLaunchSideEffect('kairun-roll-snapshot',()=>({
@@ -32251,7 +32416,9 @@ function aiHasReasonableShot(){
   let best=0;
   for(const id of targets){for(const opt of CO.potOptions(S.balls,[cue.p[0],cue.p[1]],id))best=Math.max(best,tournamentPotProbability(opt));}
   const lev=tournamentLeverage(),style=activeAIStyleKey(MATCH.turn),styleThreshold=style==='attack'?.40:style==='defense'?.54:style==='balanced'?.48:.46;
-  return best>(MATCH.mode==='spectator'?styleThreshold:(MATCH.opponent==='pro'?.46:.58))-Math.max(0,lev.aggression*.22);
+  // 段位が下がるほど守りの引き出しが減り、入りそうなら狙いに行く。
+  const gradeShift=strokeGrade(aiStrokeGradeKey(MATCH.turn)).threshold-.46;
+  return best>(MATCH.mode==='spectator'?styleThreshold:.46)+gradeShift-Math.max(0,lev.aggression*.22);
 }
 function cuePlacementOpen(balls,x,y){
   if(S.rules?.ballInHandRestricted){
@@ -39434,6 +39601,21 @@ async function planKairunTurnCooperative(balls=S.balls,options={}){
   // A newly verified longer continuation may still replace it below.
   exact.sort((a,b)=>Number(!!b.continuationRecall)-Number(!!a.continuationRecall)||
     kairunStyleSortScore(a)-kairunStyleSortScore(b));let best=exact[0];
+  // 段位の撞き誤差がある選手は、中心線しか通らない細い線を選ばない。
+  // 上位の実走済み候補を同じ許容幅で比べ、通る幅が広い線を採る。
+  // 次STEPの比較より先に行う（撞けない線の続きを読んでも意味がない）。
+  if(aiStrokeGradeKey(MATCH.turn)!=='ideal'&&exact.length>1&&!expired(1700)){
+    const pool=[best,...exact.filter(x=>x!==best)].slice(0,3),scored=[];
+    for(const cand of pool){if(!alive()||expired(1300))break;let hits=1,tries=1;
+      for(const [da,sm] of kairunDeliveryVariants(stage)){if(!alive()||expired(1200))break;
+        const task={...(cand._cooperativeTask||cand),prm:{...cand.prm,aim:cand.prm.aim+da*D2R,speed:cand.prm.speed*sm}};
+        if(await kairunCooperativeEvaluate(working,task,stage,opening,token,{maxT:9,dt:PH.DT}))hits++;tries++;
+        if(tries===3&&hits===1)break;}
+      scored.push({cand,rate:hits/tries,tries});}
+    scored.sort((a,b)=>b.rate-a.rate||(b.cand===best)-(a.cand===best));
+    if(scored[0]&&scored[0].cand!==best&&scored[0].rate>(scored.find(x=>x.cand===best)?.rate??0)+.15){
+      best={...scored[0].cand,gradeRobustChoice:true};trace.gradeRobust=scored.map(x=>({rate:x.rate,tries:x.tries}));}
+  }
   // Compare the actual next stroke from different stopped leaves before
   // spending the remaining time perturbing a single attractive-looking hit.
   // An exhausted search is inconclusive, never proof that a leave is dead.
@@ -40458,6 +40640,8 @@ function professionalExperienceTemplate(prm,base,lineAim,shaftKey=null){
     pivotLen,delivery:prm?.delivery||'standard',attempts:0,successes:0,updatedAt:Date.now()};
 }
 function learnProfessionalExperience(row){
+  // 段位の撞き誤差が入った結果は、判断の良し悪しの証拠にしない。
+  if(row?.executionGrade&&row.executionGrade!=='ideal')return;
   learnProfessionalDecision(row);
   const sample=row?.experienceTemplate,key=row?.experienceKey;if(!key||!sample||!row.outcome)return;
   loadProfessionalExperience();const entry=PROFESSIONAL_EXPERIENCE.entries.get(key)||
@@ -49234,6 +49418,7 @@ function recordWorldClassOutcome(A,scratch,shooter){
     pocketEvents:A.pocketEvents.map(e=>({id:e.id,pocket:e.pocketKey})),
     targetMade:row.targetId!=null&&A.pocketed.includes(row.targetId),anyMade:A.pocketed.length>0,
     scratch:!!scratch,objectOff:A.off.filter(id=>id!==0),railAfter:!!A.railAfter,preliminaryFoul:foul};
+  row.executionGrade=MATCH.lastExecution?.grade||'ideal';
   const actual=MATCH.lastActual||{},expected=row.committedStroke||{},cue=cueBall(),pred=row.predictedCueRest;
   row.reproductionError={aimDeg:Math.abs(tournamentAngleDelta(actual.aim||0,expected.aim||0))*R2D,
     speedMps:Math.abs((actual.speed||0)-(expected.speed||0)),tip:Math.hypot((actual.tipX||0)-(expected.tipX||0),
@@ -49458,10 +49643,8 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
         const guardKey=aiPhysicsStateKey(S.balls)+'|'+actor,repeated=MATCH.ballInHandGuardKey===guardKey;
         MATCH.ballInHandGuardKey=guardKey;
         addEventLog('手球の置き場所が規則外で、規則内の合法線も確定できず — 同一局面の反復を止めて進行','BALL IN HAND GUARD');
-        if(repeated){finishAIThinking('競技時計処理');MATCH.fouls[actor]=(MATCH.fouls[actor]||0)+1;MATCH.shotNo++;updateHUD();
-          setTimeout(()=>{if(token===MATCH.aiToken&&MATCH.turn===actor&&!MATCH.rackOver&&S.mode==='idle')
-            changeTurn('手球フリーの合法配置を確定できず — 競技時計ファウルとして一度だけ進行',true,false);},0);return;}
-        aiStopSameStateLoop(actor,'ball-in-hand-placement-illegal');return;
+        // 手番は放棄しない。同一局面の反復だけを止め、有限停止の経路へ渡す。
+        aiStopSameStateLoop(actor,repeated?'ball-in-hand-placement-illegal-repeat':'ball-in-hand-placement-illegal');return;
       }
     }
     const veteranRoutine=buildVeteranShotRoutine(plan,commit,actor);
@@ -49535,7 +49718,7 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
     else if(plan.kind==='pot'&&plan.scoreFirst)MATCH.aiDecision='SCORE FIRST '+(routeLabel(plan)||(plan.ball||plan.tid)+'番')+
       ' / 現在球の成功幅'+Math.round(confidence*100)+'%を優先 / 停止配置から攻撃継続または完全ロックを再評価';
     else if(plan.kind==='pot'&&currentGame==='straight')MATCH.aiDecision='14-1 PATTERN '+(routeLabel(plan)||(plan.ball||plan.tid)+'番')+' / 成功'+Math.round(confidence*100)+'% / '+tournamentVision(plan);
-    else if(plan.kind==='pot')MATCH.aiDecision='ATTACK '+(routeLabel(plan)||(plan.ball||plan.tid)+'番から取り切り')+' / 成功'+Math.round(confidence*100)+'%・ラック勝率'+Math.round(Math.max(0,aiWin)*100)+'% / '+tournamentVision(plan);
+    else if(plan.kind==='pot')MATCH.aiDecision='ATTACK '+(routeLabel(plan)||(plan.ball||plan.tid)+'番から取り切り')+' / 入れ'+Math.round(confidence*100)+'%・取り切り見込み'+Math.round(Math.max(0,aiWin)*100)+'% / '+tournamentVision(plan);
     else if(plan.kind==='attack-attempt')MATCH.aiDecision='ATTACK TRY '+(plan.attemptLabel||'低確率の勝負球')+' / 成功'+Math.round(confidence*100)+'% — 守備だけに限定せず入れを狙う';
     else if(plan.kind==='kairun')MATCH.aiDecision='STEP '+[2,3,5][S.rules.kairunStage||0]+' '+plan.planLabel+
       (plan.verifiedTrials>0?' / 実走'+plan.successfulTrials+'/'+plan.verifiedTrials+'条件成立':' / 中心線の成立を確認')+
@@ -49550,7 +49733,7 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
     else if(plan.escape&&plan.calibration)MATCH.aiDecision=(plan.cushionsBefore||1)+'クッションで'+plan.targetId+'番へ / '+
       ((plan.bestPotProb??1)<=.001?'相手の直接の入れを残さない':'相手の入れを難しくする');
     else if(plan.pocketCombination)MATCH.aiDecision=plan.targetId+'番 → '+plan.potId+'番のコンビ / 次は'+(plan.nextId??'残り球')+'番';
-    else if(plan.escape)MATCH.aiDecision=(plan.developmentControl?'密集・難球を動かして展開を変える':'クッション・厚みを使って合法球へ')+' / 狙い '+(plan.targetId??plan.ball)+'番';
+    else if(plan.escape)MATCH.aiDecision=(plan.developmentControl?developmentDecisionLabel(plan):'クッション・厚みを使って合法球へ')+' / 狙い '+(plan.targetId??plan.ball)+'番';
     else if(plan.kind==='safety'&&plan.cashThenLockFollowup)MATCH.aiDecision='POT→LOCK STEP 2 — 前打で得点済み / 現配置で再監査した封鎖を実行 / 相手直接球'+
       Math.round((plan.bestPotProb||0)*100)+'%・最善返信'+Math.round((plan.replyThreat||0)*100)+'%';
     else if(plan.kind==='safety')MATCH.aiDecision=currentGame==='straight'
@@ -49562,7 +49745,10 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
       plan.kind==='pushout'?' / 受ける・返す両分岐実走':
       plan.kind==='safety'?' / 相手の直接・バンク・キック・ジャンプ返し監査':
       ' / 手球支配 '+plan.cueBallMastery.grade+' '+Math.round(plan.cueBallMastery.quality*100)+'%';
-    MATCH.aiDecision+=' / 熟考 '+((plan.analysisMs||0)/1000).toFixed(1)+'秒 / 最終物理監査'+(plan.commitVerified?'合格':'再確認');
+    // 表示する熟考時間は、この手番で考え始めてから決断までの実時間。
+    // 部分探索の計測値だけを出すと、長く待たせた手番が「0.0秒」と表示されていた。
+    const thinkWall=(typeof aiThinkStarted==='number'&&aiThinkStarted>0&&aiThinkToken===MATCH.aiToken)?performance.now()-aiThinkStarted:0;
+    MATCH.aiDecision+=' / 熟考 '+(Math.max(plan.analysisMs||0,thinkWall)/1000).toFixed(1)+'秒 / 最終物理監査'+(plan.commitVerified?'合格':'再確認');
     const profile=aiStyleProfile(actor);
     if(MATCH.mode==='spectator')MATCH.aiDecision=MATCH.aiDecision+' / '+(currentGame==='kairun'?'接触順と、停止後の次STEPを比較':profile.intent);
     addEventLog(MATCH.aiDecision,MATCH.mode==='spectator'?profile.tag:'AI');$('advMsg').textContent=MATCH.names[actor]+' — '+MATCH.aiDecision;
@@ -63097,12 +63283,16 @@ function syncMatchSetupModal() {
   opponent.value = $('opponentSelect').value;
   race.value = $('raceSelect').value;
   $('matchSetupTitle').textContent=spectator?'AI ARENA 観戦設定':'対戦設定';
-  $('matchSetupLead').textContent=spectator?'AIプレイヤー1とAIプレイヤー2の戦型を選びます。現在も開発・検証中で、探索条件は同じ、評価軸だけが変わります。':'対戦相手、試合形式、コーチの出し方を選びます。QUICK AUTOなら毎球の最善手を自動で構え、解説画面を開きません。';
+  $('matchSetupLead').textContent=spectator?'AIプレイヤー1とAIプレイヤー2の戦型を選びます。腕前（段位）も選べ、読みは同じ探索、撞きは段位どおりにぶれます。':'対戦相手、試合形式、コーチの出し方を選びます。QUICK AUTOなら毎球の最善手を自動で構え、解説画面を開きません。';
   $('spectatorProfileNote').classList.toggle('show',spectator);
   $('opponentSetupRow').style.display=spectator?'none':'';$('coachSetupRow').style.display=spectator?'none':'';
   $('spectatorP0StyleRow').style.display=spectator?'block':'none';$('spectatorP1StyleRow').style.display=spectator?'block':'none';
   $('spectatorP0ShaftRow').style.display=spectator?'block':'none';$('spectatorP1ShaftRow').style.display=spectator?'block':'none';
   $('opponentShaftRow').style.display=!spectator&&MATCH.opponent!=='local'?'block':'none';
+  $('opponentGradeRow').style.display=!spectator&&MATCH.opponent!=='local'?'block':'none';
+  $('spectatorP0GradeRow').style.display=spectator?'block':'none';$('spectatorP1GradeRow').style.display=spectator?'block':'none';
+  $('mobileOpponentGrade').value=aiStrokeGradeKey(1);$('mobileSpectatorP0Grade').value=aiStrokeGradeKey(0);$('mobileSpectatorP1Grade').value=aiStrokeGradeKey(1);
+  $('mobileGradeMental').value=MATCH.gradeMental||'full';updateGradeHint();
   $('mobileSpectatorP0Style').value=aiStyleKey(0);$('mobileSpectatorP1Style').value=aiStyleKey(1);
   $('mobileSpectatorP0Shaft').value=MATCH.aiShafts[0];$('mobileSpectatorP1Shaft').value=MATCH.aiShafts[1];$('mobileOpponentShaft').value=MATCH.aiShafts[1];
   $('mobileCoachMode').value=MATCH.coachMode;
@@ -63139,7 +63329,23 @@ $('btnMatchSetup').addEventListener('click', () => {
   syncMatchSetupModal();
   openLayer('matchSetupModal');
 });
-$('mobileOpponentSelect').addEventListener('change',e=>{$('opponentShaftRow').style.display=MATCH.mode!=='spectator'&&e.target.value!=='local'?'block':'none';});
+$('mobileOpponentSelect').addEventListener('change',e=>{const show=MATCH.mode!=='spectator'&&e.target.value!=='local'?'block':'none';
+  $('opponentShaftRow').style.display=show;$('opponentGradeRow').style.display=show;});
+const GRADE_HINT={
+  ideal:'理論値：決めた一打を寸分違わず撞く。読みと物理の答え合わせ用。',
+  world:'世界トップ：長いストレートも8割以上。外すのは極端な薄・長距離・山場くらい。',
+  pro:'プロ：中距離はほぼ外さない。長い薄球と強打・クッション際で時々外す。',
+  sa:'SA級：取り切る力はあるが、長い球と出しの精度でプロとの差が出る。',
+  a:'A級：普通の球は入る。長い・薄い・ひねりで外し、出しのズレからセーフティが増える。',
+  b:'B級：中距離は入るが長い球が苦手。乱れた一撞きが混ざり、取り切りは稀。',
+  c:'C級：近い球中心。引き・ひねり・ブリッジが崩れやすく、ファウルも出る。'};
+function updateGradeHint(){
+  const spectator=MATCH.mode==='spectator',keys=spectator?[$('mobileSpectatorP0Grade').value,$('mobileSpectatorP1Grade').value]:[$('mobileOpponentGrade').value];
+  $('gradeHint').textContent=[...new Set(keys)].map(k=>GRADE_HINT[k]||'').join(' / ')+
+    ($('mobileGradeMental').value==='full'?' 山場（ゲームボール・ヒルヒル）で精度が落ち、ラックごとに好不調が出ます。':
+     $('mobileGradeMental').value==='pressure'?' 山場（ゲームボール・ヒルヒル）だけ精度が落ちます。':' 状況によらず同じ精度で撞きます。');
+}
+for(const id of ['mobileOpponentGrade','mobileSpectatorP0Grade','mobileSpectatorP1Grade','mobileGradeMental'])$(id).addEventListener('change',updateGradeHint);
 $('btnApplyMatchSetup').addEventListener('click', () => {
   const spectator=MATCH.mode==='spectator',oldStyles=MATCH.aiStyles.join('|'),oldShafts=MATCH.aiShafts.join('|'),oldVariance=MATCH.tableVariance;
   const rackChanged=MATCH.rackMode!==$('mobileRackMode').value||MATCH.nineFoot!==$('mobileNineFoot').value||
@@ -63156,6 +63362,12 @@ $('btnApplyMatchSetup').addEventListener('click', () => {
   MATCH.aiStyles=[$('mobileSpectatorP0Style').value,$('mobileSpectatorP1Style').value];
   MATCH.aiShafts=spectator?[$('mobileSpectatorP0Shaft').value,$('mobileSpectatorP1Shaft').value]:[MATCH.aiShafts[0],$('mobileOpponentShaft').value];
   MATCH.tableVariance=$('mobileTableVariance').value;
+  const oldGrades=(MATCH.aiGrades||[]).join('|')+'|'+MATCH.gradeMental;
+  MATCH.aiGrades=spectator?[$('mobileSpectatorP0Grade').value,$('mobileSpectatorP1Grade').value]:[aiStrokeGradeKey(0),$('mobileOpponentGrade').value];
+  MATCH.gradeMental=$('mobileGradeMental').value;MATCH.gradeForm=null;
+  try{localStorage.setItem('billiard-ai-grades-v1',JSON.stringify(MATCH.aiGrades));localStorage.setItem('billiard-grade-mental',MATCH.gradeMental);}catch(_){ }
+  if(oldGrades!==MATCH.aiGrades.join('|')+'|'+MATCH.gradeMental)addEventLog((spectator?MATCH.names[0]+' '+strokeGrade(MATCH.aiGrades[0]).short+' / ':'')+
+    'AIプレイヤー2 '+strokeGrade(MATCH.aiGrades[1]).short+' · '+$('mobileGradeMental').selectedOptions[0].textContent,'GRADE');
   MATCH.rotationNoCallRule='spot';
   MATCH.rackMode=$('mobileRackMode').value;
   MATCH.nineFoot=$('mobileNineFoot').value;
@@ -63277,6 +63489,7 @@ function applyEnvironment() {
   const roll = +$('tableRoll').value / 100;
   ENV.tableRollX = roll * 0.010 * Math.cos(0.61); ENV.tableRollY = roll * 0.010 * Math.sin(0.61);
   MATCH.humanError = +$('humanError').value / 100;
+  MATCH.humanGrade=$('humanGrade').value||'custom';$('humanError').disabled=MATCH.humanGrade!=='custom';
   ENV.guide = $('guideMode').value;
   const baseSeed=Number($('seedInput').value)||1,rackSeed=MATCH.rackCondition?.active?Math.imul(MATCH.rackSerial||1,0x45d9f3b):0;
   RNG.set((baseSeed^rackSeed)>>>0);
@@ -63287,8 +63500,8 @@ function applyEnvironment() {
   $('cueMassOut').textContent = (+$('cueMass').value).toFixed(1) + 'oz';
   const shaft=shaftProfile(ENV.userShaftKey),squirt=Math.round(shaft.squirt*100),travel=signedPct((shaft.energy-1)*100),spin=signedPct((shaft.spin-1)*100);
   $('shaftImpact').textContent=shaft.label+'：見越し指数 '+squirt+' / 走り '+travel+' / スピン応答 '+spin+'。黒シャフトはカーボン選択時に描画されます。';
-  $('accuracyOut').textContent = MATCH.humanError ? '散らばり ' + Math.round(MATCH.humanError * 100) + '%' : '0%（予測一致）';
-  try{localStorage.setItem('billiard-shaft',ENV.userShaftKey);localStorage.setItem('billiard-seed',String(baseSeed));}catch(_){ }
+  $('accuracyOut').textContent = MATCH.humanGrade!=='custom'?strokeGrade(MATCH.humanGrade).short+'の撞き（段位で自動）':MATCH.humanError ? '散らばり ' + Math.round(MATCH.humanError * 100) + '%' : '0%（予測一致）';
+  try{localStorage.setItem('billiard-shaft',ENV.userShaftKey);localStorage.setItem('billiard-human-grade',MATCH.humanGrade);localStorage.setItem('billiard-seed',String(baseSeed));}catch(_){ }
   scheduleEnvironmentImpact();
   schedulePred(0);
 }
@@ -63323,17 +63536,18 @@ function updateEnvironmentImpact(){
       bp=base.final.filter(b=>b.id!==0&&b.pocketed).map(b=>b.id).join('・')||'なし';
       outcome='この構え: 手球停止差 '+shift.toFixed(1)+'cm / 入る球 標準['+bp+'] → 現在['+np+']';}
   }
-  const exact=MATCH.humanError<=0;
+  const graded=MATCH.humanGrade&&MATCH.humanGrade!=='custom',exact=graded?MATCH.humanGrade==='ideal':MATCH.humanError<=0;
   const humiditySpin=(PH.MU_SP/ENV.muSpin-1)*100,humidityGrip=(ENV.cushMu/PH.CU_MU-1)*100,
     rackVariation=MATCH.rackCondition?.active?' / ラック微差 '+MATCH.rackCondition.label:' / ラック微差 固定';
-  box.innerHTML='<strong>'+(exact?'COACH MATCH · 予測一致 ON':'HUMAN VARIANCE · 実行誤差 '+Math.round(MATCH.humanError*100)+'%')+'</strong>'
+  box.innerHTML='<strong>'+(exact?'COACH MATCH · 予測一致 ON':graded?'HUMAN VARIANCE · '+strokeGrade(MATCH.humanGrade).label+'の撞き':'HUMAN VARIANCE · 実行誤差 '+Math.round(MATCH.humanError*100)+'%')+'</strong>'
     +'<span>転がり '+signedPct(rollDelta)+' / スピン保持 '+signedPct(humiditySpin)+' / クッション出口 '+signedPct(cushDelta)
     +' / クッション噛み '+signedPct(humidityGrip)+' / ポケット受容幅 '+signedPct(pocketDelta)+' / 棚深さ '+signedPct(shelfDelta)
     +rackVariation+'<br>'+outcome+'</span>';
 }
-for (const id of ['clothSpeed','humidity','cushionLive','pocketPreset','tableRoll','ballCondition','shaftType','cueMass','tipType','chalk','humanError','seedInput','guideMode'])
+for (const id of ['clothSpeed','humidity','cushionLive','pocketPreset','tableRoll','ballCondition','shaftType','cueMass','tipType','chalk','humanGrade','humanError','seedInput','guideMode'])
   $(id).addEventListener($(id).tagName === 'SELECT' ? 'change' : 'input', applyEnvironment);
 $('shaftType').value=ENV.userShaftKey;
+$('humanGrade').value=MATCH.humanGrade||'custom';$('humanError').disabled=MATCH.humanGrade!=='custom'&&!!MATCH.humanGrade;
 $('ballAppearance').value=ballAppearanceKey;
 $('ballAppearance').addEventListener('change',e=>{applyBallAppearance(e.target.value);hint(ballAppearanceKey==='red-yellow'?'赤・黄セットを選択 — 8ボールとFUJIYAMAに適用':'標準のボールセットへ戻しました');});
 $('clothColor').value=clothThemeKey;
@@ -63343,7 +63557,7 @@ $('clothColor').addEventListener('change',e=>{
 });
 $('btnEnvStandard').addEventListener('click',()=>{
   const values={clothSpeed:100,humidity:45,cushionLive:100,pocketPreset:'wpa',tableRoll:0,ballCondition:'match',
-    shaftType:'ldwood',cueMass:19,tipType:'medium',chalk:'fresh',humanError:0,seedInput:20260711,guideMode:'full',clothColor:'blue'};
+    shaftType:'ldwood',cueMass:19,tipType:'medium',chalk:'fresh',humanGrade:'custom',humanError:0,seedInput:20260711,guideMode:'full',clothColor:'blue'};
   for(const [id,value] of Object.entries(values))$(id).value=value;
   applyClothTheme('blue',true);
   applyEnvironment();hint('競技標準へ復帰 — コーチ予測と実際のショットは同じ物理結果になります');
@@ -63437,7 +63651,9 @@ function updateHUD() {
   for(const i of [0,1]){const plate=$('p'+i+'Plate');for(const key of Object.keys(AI_STYLE_PROFILES))plate.classList.remove('ai-'+key);
     if(MATCH.mode==='spectator')plate.classList.add('ai-'+aiStyleKey(i));
     const ai=MATCH.mode==='spectator'||(MATCH.mode==='match'&&MATCH.opponent!=='local'&&i===1);
-    plate.title=MATCH.names[i]+' · '+shaftProfile(ai?MATCH.aiShafts[i]:ENV.userShaftKey).label;}
+    const gradeKey=ai?aiStrokeGradeKey(i):(MATCH.mode==='match'&&i===0&&MATCH.humanGrade&&MATCH.humanGrade!=='custom'?MATCH.humanGrade:null);
+    if(gradeKey&&gradeKey!=='ideal'||ai&&gradeKey==='ideal')$('p'+i+'Name').dataset.grade=strokeGrade(gradeKey).short;else delete $('p'+i+'Name').dataset.grade;
+    plate.title=MATCH.names[i]+' · '+shaftProfile(ai?MATCH.aiShafts[i]:ENV.userShaftKey).label+(gradeKey?' · '+strokeGrade(gradeKey).label:'');}
   const pointGame = currentGame === 'rotation' || currentGame === 'kairun' || currentGame === 'straight';
   $('p0Score').textContent = currentGame==='fujiyama'?(S.rules?.fujiyamaBS?'BS '+S.rules.fujiyamaBS.scores[0]:MATCH.points[0]+' / '+MATCH.fujiyamaHandicap[0]):(pointGame ? MATCH.points[0]+' / '+MATCH.raceTo : MATCH.racks[0]);
   $('p1Score').textContent = currentGame==='fujiyama'?(S.rules?.fujiyamaBS?'BS '+S.rules.fujiyamaBS.scores[1]:MATCH.points[1]+' / '+MATCH.fujiyamaHandicap[1]):(pointGame ? MATCH.points[1]+' / '+MATCH.raceTo : MATCH.racks[1]);
@@ -63705,7 +63921,7 @@ window.__api = { S, PH, ENV, MATCH, POCKETS, CO, coachBank, coachKick, coachSpec
   ballInHandDisciplineDoctrine, findTournamentBallInHandPlacement, findKairunBallInHandPlacement, quickKairunOpeningPlacement, findFujiyamaBallInHandPlacements,
   cuePlacementOpen,applyTournamentBallInHandPlacement,captureCoachHumanCue,restoreCoachHumanCue,scheduleCoachAfterCueMove,
   kairunContacts, kairunShotResult, kairunBuildTasks, evaluateKairunSim, kairunOrientationProfile,
-  kairunOpeningBookPrm,kairunOpeningCooperativeStates,kairunNaturalTasks,kairunGeometryTasks,kairunDeliveryRepairTasks,kairunContinuationSeedKey,rememberKairunContinuationSeed,kairunFutureAuditCooperative,kairunCooperativeTaskOrder,kairunSearchVerifiedStage,planKairunTurnCooperative,kairunGeometryTasksCooperative,kairunCooperativeEvaluate,kairunCooperativeMemoKey,kairunFinalWithSpots,beginKairunRollPonder,cancelKairunRollPonder,KAIRUN_ROLL_PONDER,KAIRUN_ROLL_PONDER_LIMITS,KAIRUN_CONTINUATION_SEEDS,KAIRUN_COOPERATIVE_SIM_MEMO,
+  kairunOpeningBookPrm,kairunOpeningCooperativeStates,kairunNaturalTasks,kairunGeometryTasks,kairunDeliveryRepairTasks,kairunContinuationSeedKey,rememberKairunContinuationSeed,kairunFutureAuditCooperative,kairunCooperativeTaskOrder,kairunSearchVerifiedStage,planKairunTurnCooperative,kairunGeometryTasksCooperative,kairunCooperativeEvaluate,kairunCooperativeMemoKey,kairunFinalWithSpots,beginKairunRollPonder,cancelKairunRollPonder,STROKE_GRADES,STROKE_GRADE_ORDER,strokeGrade,aiStrokeGradeKey,strokeErrorContext,strokePressureLevel,gradedStroke,strokeExecutionSummary,tournamentAIStroke,actualStroke,KAIRUN_ROLL_PONDER,KAIRUN_ROLL_PONDER_LIMITS,KAIRUN_CONTINUATION_SEEDS,KAIRUN_COOPERATIVE_SIM_MEMO,
   RACK_DOMAIN, RULES_DOMAIN, STRATEGY_DOMAIN, rack9Layout, rack8Layout, rack10Layout, rackRotationLayout, straightRackLayout, straightOpeningBackCorner, straightOpeningBookCandidate, straightOpeningAdaptiveProfiles, straightOpeningConditionKey, PRO_BREAK_EVIDENCE_MODEL, TRIANGLE_BREAK_DOCTRINE, triangleBreakGeometry, readRackForBreak, breakFamilyRoot, breakFamilyPosterior, profileRackReadFit, professionalBreakReadLabel, recordProfessionalBreakObservation, tournamentBreakProfiles, personalizedTournamentBreakProfiles, tournamentRackOrderSignature, breakHeadBall, breakProfileTargetBall, tournamentBreakProtectedMotion, nineBreakControlPass, tournamentBreakThreePointMode, breakThreePointRuleLabel, resolvedBreakArea, breakAreaContains, breakAreaLabel, tournamentBreakLegality, planTournamentBreak, planTournamentBreakAsync, planTournamentBreakBook, breakReleaseEvidence, verifyTournamentBreakPlan, planStraightOpeningBreak, planStraightOpeningBreakAsync, planStraightOpeningBreakDeep, planStraightContinuationBreak, planStraightContinuationBreakCooperative, straightPatternContext, straightEnsureEndPlan, straightBreakEntryGeometry, straightPowerDrawEntryGeometry, straightContinuationBreakMetrics, straightContinuationBreakOutcome, straightOpeningSpectatorProgressAudit, tournamentBreakOutcome, straightOpeningSafetyOutcome, straightOpeningRackShape, straightOpeningMetrics, simulateShotCooperative, stepWorld, makeBall, strike, allStopped, cloneBall, shaftProfile, REAL_ENGINE, rackContactSolverEnabled, PUZZLE, randomizedRackOrder, APP_VERSION, HIGH_ELEVATION_CALIBRATION, CUSHION_CALIBRATION, CLOTH_THEMES, applyClothTheme, ballDef, applyBallAppearance, groupBallColorsActive, ballGroupLabel,
   resolveEightBreak, resolveNineIllegalBreak, resolveTournamentThreePointIllegalBreak, eightBallGroupPlan, eightBallOpenPlan, tournamentShotScoringValue,
   fujiyamaLayout, fujiyamaKitchenContactPoints, fujiyamaInitialPoints, fujiyamaOwnIds, fujiyamaGoalKeys, fujiyamaInsideHomePos,
@@ -73170,7 +73386,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script data-v6-source="scripts/16-nine-world-class-test.js">
 (function(){
   const api=window.BILLIARD_LAB_TEST_API,core=window.__api;if(!api||!core)return;
-  api.version='8.54.5';
+  api.version='8.55.0';
   api.nineWorldClassDecisionGate=async function(){
     const saved={balls:core.S.balls,rules:core.S.rules,turn:core.MATCH.turn,mode:core.MATCH.mode,opp:core.MATCH.opponent,tempo:core.MATCH.matchTempo};
     const cases=[
