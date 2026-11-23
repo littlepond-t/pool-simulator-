@@ -1910,6 +1910,12 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
   html body #app #proHud #scoreBoard #gameStateWrap{min-width:0!important;height:100%!important;padding:0 2px!important}
   html body #app #proHud #scoreBoard #gameState{font-size:9px!important;white-space:nowrap!important}
   html body #app #proHud #scoreBoard #btnMatchSetup{display:none!important}
+  /* 中央列（54px）にローテーション目標点のセレクタが入ると右の選手枠へはみ出していた */
+  html body #app #proHud #scoreBoard #gameStateWrap{display:flex!important;flex-direction:column!important;justify-content:center!important;
+    align-items:stretch!important;gap:2px!important;overflow:hidden!important}
+  html body #app #proHud #scoreBoard #gameStateWrap #gameState{text-align:center!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  html body #app #proHud #scoreBoard #rotationTargetQuick{width:100%!important;min-width:0!important;max-width:100%!important;
+    height:18px!important;min-height:18px!important;font-size:9px!important;padding:0 2px!important;margin:0!important}
   /* 右列：得点板の下から使う */
   html body #app #advisor{margin-top:calc(var(--v8545-score) + 2 * var(--v8545-gap))!important}
   html body #app #deck{align-self:end!important;margin-top:0!important;
@@ -1946,6 +1952,28 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
   html body #app #deck[data-pane] #padTools{margin-top:4px!important;height:34px!important;gap:3px!important}
   html body #app #deck[data-pane] #padTools button{height:34px!important;min-height:34px!important;font-size:10px!important;padding:0 2px!important}
   html body #app #deck #mid{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
+  /* 対戦・フリー：AIコーチの推奨（勉強の中心）を横向きでも右列に1段で出す。
+     旧層は横向きで #advisor を常に消していたため、推奨チップが使えなかった。 */
+  html body:not(.v6-mode-spectator):not(.v6-mode-puzzle):not(.v6-mode-lesson) #app #advisor{display:block!important;align-self:start!important;
+    height:56px!important;min-height:56px!important;max-height:56px!important;margin-top:calc(var(--v8545-score) + 2 * var(--v8545-gap))!important;
+    padding:3px max(5px,env(safe-area-inset-right,0px)) 3px 5px!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important}
+  /* 横向きの右列はコーチ推奨の1段だけ。予測カード（初球・入る・手球走行）は盤面側の情報で、
+     右列では得点板と操作盤に重なるため出さない。 */
+  html body:not(.v6-mode-spectator) #app #advisor #shotReadout{display:none!important}
+  html body:not(.v6-mode-spectator) #app #advisor #quickCoach{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:5px!important;
+    height:48px!important;min-height:0!important;margin:0!important;overflow-x:auto!important;overflow-y:hidden!important}
+  html body:not(.v6-mode-spectator) #app #advisor #quickCoach>*{flex:0 0 auto!important}
+  html body:not(.v6-mode-spectator) #app #advisor #quickCoach .qcLead{flex:1 1 120px!important;min-width:0!important;max-width:none!important;overflow:hidden!important}
+  html body:not(.v6-mode-spectator) #app #advisor #quickCoach .qcCount{display:none!important}
+  html body:not(.v6-mode-spectator) #app #advisor #quickCoach .qcChoice{height:42px!important;min-height:42px!important;max-width:150px!important}
+  /* 撞点・キュー設定は背が高いので、そのタブを開いている間だけコーチ欄を畳む */
+  html body:not(.v6-mode-spectator) #app:has(#deck[data-pane="tip"],#deck[data-pane="cue"],#deck[data-pane="power"]) #advisor{display:none!important}
+  html body:not(.v6-mode-spectator):not(.v6-mode-puzzle):not(.v6-mode-lesson) #app:has(#deck[data-pane="tip"],#deck[data-pane="cue"],#deck[data-pane="power"]) #deck{
+    height:calc(100dvh - var(--v8545-hdr) - var(--v8545-score) - 2 * var(--v8545-gap))!important;
+    max-height:calc(100dvh - var(--v8545-hdr) - var(--v8545-score) - 2 * var(--v8545-gap))!important}
+  html body:not(.v6-mode-spectator):not(.v6-mode-puzzle):not(.v6-mode-lesson) #app #deck{
+    height:calc(100dvh - var(--v8545-hdr) - var(--v8545-score) - 56px - 3 * var(--v8545-gap))!important;
+    max-height:calc(100dvh - var(--v8545-hdr) - var(--v8545-score) - 56px - 3 * var(--v8545-gap))!important}
   html body #app #deck #aimRow{min-height:0!important;align-items:center!important}
   html body #app #deck #aimRow button,html body #app #deck #aimRow output{height:44px!important;min-height:44px!important}
   /* 観戦：右列をAI思考・解説に使い、振り返りを盤面から外す */
@@ -48896,11 +48924,27 @@ function buildGuaranteedBallInHandContactPlan(actor=MATCH.turn,options={}){
   const deadline=Number.isFinite(options.deadline)?options.deadline:performance.now()+900;
   const legal=legalTargets(),objects=S.balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off);if(!legal.length)return null;
   const target=objects.find(b=>b.id===legal[0])||objects.find(b=>legal.includes(b.id));if(!target)return null;
-  const placements=[];
+  const placements=[],seen=new Set(),
+    // The executor places the cue only where legalCommittedBallInHandPlacement
+    // allows (restricted kitchen, 2.18R clearance, playable bed). The former
+    // ring around the target ignored both, so after a rotation foul answered
+    // "behind the head string" it returned an out-of-kitchen point; the live
+    // cue was never moved, the commit key never matched, and the AI re-planned
+    // forever. Generate only points the executor will actually accept.
+    add=(x,y)=>{const p=legalTablePlacement(x,y,0),placement={x:p[0],y:p[1],score:0,directPlan:null,potProb:0},
+      key=Math.round(p[0]*1000)+','+Math.round(p[1]*1000);
+      if(seen.has(key)||!legalCommittedBallInHandPlacement({ballInHandPlacement:placement},S.balls,actor))return;
+      seen.add(key);placements.push(placement);};
   for(const radius of [.34,.46,.60,.76])for(let k=0;k<16;k++){
-    const a=k*Math.PI/8,x=target.p[0]-Math.cos(a)*radius,y=target.p[1]-Math.sin(a)*radius,p=legalTablePlacement(x,y,0);
-    if(objects.some(b=>hyp2(b.p[0]-p[0],b.p[1]-p[1])<2*PH.R+.004))continue;
-    placements.push({x:p[0],y:p[1],score:0,directPlan:null,potProb:0});
+    const a=k*Math.PI/8;add(target.p[0]-Math.cos(a)*radius,target.p[1]-Math.sin(a)*radius);
+  }
+  if(S.rules?.ballInHandRestricted&&S.rules?.game!=='fujiyama'){
+    // Kitchen-only ball in hand: scan the legal area behind the head string,
+    // nearest the target first, so a far target still gets a legal contact.
+    const lineX=-PH.TABLE_W/4,kitchen=[];
+    for(const x of [lineX-.01,lineX-.12,lineX-.26,lineX-.40])for(let k=-6;k<=6;k++)kitchen.push([x,k*(PH.HY-.06)/6]);
+    kitchen.sort((a,b)=>hyp2(a[0]-target.p[0],a[1]-target.p[1])-hyp2(b[0]-target.p[0],b[1]-target.p[1]));
+    for(const [x,y] of kitchen)add(x,y);
   }
   for(const placement of placements){
     const aim=Math.atan2(target.p[1]-placement.y,target.p[0]-placement.x);
@@ -49398,7 +49442,28 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
     else if(plan.cashThenLock)armCashThenLockSequence(plan,actor);
     else if(MATCH.pendingCashThenLock?.actor===actor&&
         MATCH.pendingCashThenLock.afterShotNo===(MATCH.shotNo||0))clearCashThenLockSequence(actor);
-    applyPlannedTournamentCue(plan);
+    const plannedCuePlaced=applyPlannedTournamentCue(plan);
+    // A ball-in-hand plan whose placement the rules refuse must never reach
+    // the address: its commit key describes a cue position the live table
+    // does not have, and the mismatch used to re-plan without end. Switch once
+    // to a placement the executor accepts, re-audited at production precision.
+    if(S.rules?.ballInHand&&S.rules?.broken!==false&&plan.ballInHandPlacement&&!plannedCuePlaced&&
+        !plan.breakCuePlacement&&!plan.fujiyamaCuePlacement&&!plan.straightCuePlacement){
+      const floor=buildGuaranteedBallInHandContactPlan(actor,{deadline:performance.now()+900}),
+        floorCommit=floor?tournamentFinalPlanAudit(floor,S.balls,actor):null;
+      if(floor&&floorCommit?.ok&&applyPlannedTournamentCue(floor)){
+        addEventLog('手球の置き場所が規則外（'+(S.rules.ballInHandRestricted?'ヘッドライン内限定':'配置不可')+'） — 規則内の配置で撃つ合法線へ切替','BALL IN HAND GUARD');
+        plan={...floor,commitVerified:true,commitReason:floorCommit.reason};commit=floorCommit;
+      }else{
+        const guardKey=aiPhysicsStateKey(S.balls)+'|'+actor,repeated=MATCH.ballInHandGuardKey===guardKey;
+        MATCH.ballInHandGuardKey=guardKey;
+        addEventLog('手球の置き場所が規則外で、規則内の合法線も確定できず — 同一局面の反復を止めて進行','BALL IN HAND GUARD');
+        if(repeated){finishAIThinking('競技時計処理');MATCH.fouls[actor]=(MATCH.fouls[actor]||0)+1;MATCH.shotNo++;updateHUD();
+          setTimeout(()=>{if(token===MATCH.aiToken&&MATCH.turn===actor&&!MATCH.rackOver&&S.mode==='idle')
+            changeTurn('手球フリーの合法配置を確定できず — 競技時計ファウルとして一度だけ進行',true,false);},0);return;}
+        aiStopSameStateLoop(actor,'ball-in-hand-placement-illegal');return;
+      }
+    }
     const veteranRoutine=buildVeteranShotRoutine(plan,commit,actor);
     if(!veteranRoutine){
       addEventLog('完成映像を固定できず、物理合格線を撞かず有限再解析','VETERAN COMMIT');
