@@ -1864,7 +1864,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 #p0Name[data-grade]::after,#p1Name[data-grade]::after{content:attr(data-grade);margin-left:6px;padding:0 5px;border:1px solid rgba(214,180,106,.55);border-radius:6px;font-size:.72em;font-weight:700;color:#e8cf8f;vertical-align:1px;white-space:nowrap}
 </style>
 <style data-v8545-phone-landscape>
-/* v8.57.0 スマホ横向き（高さ520px以下）の最終層。
+/* v8.57.1 スマホ横向き（高さ520px以下）の最終層。
    旧層は保持し、ここで確定させる。盤面は左列に最大、右列は上から
    得点板（常時表示）→ AI思考・案内 → 操作盤／観戦時はショット振り返り。
    旧層では得点板と新ラックが盤面の下に隠れ、狙い欄が82px枠で切れ、
@@ -1989,7 +1989,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
     width:var(--v8545-side-in)!important;max-width:none!important;height:100px!important;max-height:100px!important;margin:0!important;transform:none!important}
 }
 
-/* v8.57.0 縦向き：AI推奨ボタン（例「ブレイク 成功—%・勝率30%」）の2行目が42px枠から落ちていた */
+/* v8.57.1 縦向き：AI推奨ボタン（例「ブレイク 成功—%・勝率30%」）の2行目が42px枠から落ちていた */
 @media (max-width:1024px) and (orientation:portrait) and (min-height:521px){
   html body #app .qcChoice{overflow:hidden!important;line-height:1.08!important;padding-top:2px!important;padding-bottom:2px!important}
   html body #app .qcChoice *{line-height:1.08!important}
@@ -2011,7 +2011,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <section class="noJsCard">
 <b>このプレビューではゲームを実行できません</b>
 <p>iPhoneの添付ファイル表示・クイックルックではJavaScriptが停止するため、盤面もボタンも動きません。SafariまたはGitHub Pagesの公開URLで開いてください。</p>
-<small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 8.57.0</small>
+<small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 8.57.1</small>
 </section>
 </div>
 </noscript>
@@ -2031,7 +2031,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="runtimeGateLogo">REAL POOL SIMULATOR</div>
 <h1>BILLIARDS LABO</h1>
 <p class="splashProducer">produced by littlepond</p>
-<p class="splashVersion">Version 8.57.0</p>
+<p class="splashVersion">Version 8.57.1</p>
 </section>
 </div>
 <script data-v6-source="scripts/00-boot-diagnostics.js">
@@ -2078,7 +2078,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="brandTitles">
 <h1>REAL POOL SIMULATOR</h1>
 <h2>BILLIARDS LABO</h2>
-<div class="brandMeta"><span>produced by littlepond</span><b>Ver. 8.57.0</b></div>
+<div class="brandMeta"><span>produced by littlepond</span><b>Ver. 8.57.1</b></div>
 </div>
 <div class="brandActions">
 <button aria-label="使い方" id="btnBrandHelp" type="button"><i>?</i><span>ヘルプ</span></button>
@@ -2111,7 +2111,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 </div>
 </div>
 <div id="proHud">
-<span id="proBadge">REAL POOL SIMULATOR <small>v8.57.0 · BILLIARDS LABO</small></span>
+<span id="proBadge">REAL POOL SIMULATOR <small>v8.57.1 · BILLIARDS LABO</small></span>
 <span aria-label="REAL ENGINE 6 稼働中" id="engineStatus" role="status"><i></i><b>REAL ENGINE 6</b><small>IMPACT · SPIN · POCKET · STRATEGY</small></span>
 <span class="hudLabel">GAME</span>
 <select aria-label="ゲーム種目" class="hudSelect" id="gameSelect">
@@ -2369,7 +2369,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 </div>
 </div>
 <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③スピードを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.57.0</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.57.1</b><span>BILLIARDS LABO · produced by littlepond</span></div>
 </section>
 </div>
 <div aria-hidden="true" class="drawer" id="proShotDrawer">
@@ -2478,7 +2478,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"/></div>
 <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
 </div>
-<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.57.0</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.57.1</b><span>BILLIARDS LABO · produced by littlepond</span></div>
 <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" data-close="labDrawer" type="button">適用して閉じる</button></div>
 </section>
 </div>
@@ -15771,7 +15771,7 @@ if(typeof module!=='undefined')module.exports=RULES_DOMAIN;
 // DOM、描画、乱数、試合進行から独立したV6の意思決定契約。
 // AI、コーチ、実行直前監査、Node回帰試験は同じ判定を共有する。
 const STRATEGY_DOMAIN=(()=>{
-  const VERSION='8.57.0',MINIMUM_PLANNING_WINDOW=3;
+  const VERSION='8.57.1',MINIMUM_PLANNING_WINDOW=3;
   // 「理想値」は候補順位、「上限値」は物理的に不自然な線だけを落とす。
   // v6.0 は理想値をそのまま絶対上限にしていたため、合法で展開の良い線まで
   // 全滅し、弱い緊急ブレイクへ落ちることがあった。
@@ -27859,7 +27859,7 @@ globalThis.__BILLIARD_EXACT_ATTACK_WIDTH_CERTIFICATES__ = Object.freeze({
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='8.57.0';
+const APP_VERSION='8.57.1';
 const SUSPENDED_PLAY_MODES=Object.freeze(['lesson','puzzle']);
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
@@ -28009,7 +28009,7 @@ try{
   const gradeKeys=['ideal','world','pro','sa','a','b','c'],grades=JSON.parse(localStorage.getItem('billiard-ai-grades-v1')||'null'),
     mental=localStorage.getItem('billiard-grade-mental'),hg=localStorage.getItem('billiard-human-grade');
   if(Array.isArray(grades)&&grades.length===2&&grades.every(x=>gradeKeys.includes(x)))MATCH.aiGrades=grades.slice();
-  else if(!/Headless/.test(navigator.userAgent||''))MATCH.aiGrades=['pro','pro'];
+  else if(!/Headless/.test(navigator.userAgent||'')&&!window.__BILLIARD_HEADLESS_AUDIT__)MATCH.aiGrades=['pro','pro'];
   if(['full','pressure','flat'].includes(mental))MATCH.gradeMental=mental;
   if(hg==='custom'||gradeKeys.includes(hg))MATCH.humanGrade=hg;
 }catch(_){ }
@@ -51851,18 +51851,38 @@ const CO = {
     const out = [],clip=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
     for (const pk of POCKETS) {
       if(S.rules?.game==='fujiyama'&&targetId!==8&&!((targetId<=7?['tr','br']:['tl','bl']).includes(pocketKey(pk))))continue;
-      const odx = pk.x - ob.p[0], ody = pk.y - ob.p[1], objDist = Math.hypot(odx, ody);
-      if (objDist < 0.075) continue;
-      const u = [odx / objDist, ody / objDist];
-      const ghost = [ob.p[0] - u[0] * 2 * PH.R, ob.p[1] - u[1] * 2 * PH.R];
-      if (Math.abs(ghost[0]) > PH.HX + 0.006 || Math.abs(ghost[1]) > PH.HY + 0.006) continue;
-      if (!CO.lineClear(balls, [ob.p[0], ob.p[1]], [pk.x, pk.y], new Set([targetId]))) continue;
-      if (!CO.lineClear(balls, cuePos, ghost, new Set([0, targetId]))) continue;
+      // 穴前の球（ポケット基準点から7.5cm以内）は、以前は候補から外していたため、
+      // 一番簡単な入れが「見えない」状態になり、クッション経由の無理な線を選んでいた。
+      // 基準点が近すぎて方向が不安定な時は、ポケットの奥（法線方向へ7cm）を狙い点にする。
+      // 穴前の球は口の中で受ける幅が広い。奥の中央と左右寄りの3点から、最も厚く当てられる狙い点を選ぶ。
+      let tx=pk.x,ty=pk.y,odx=tx-ob.p[0],ody=ty-ob.p[1],objDist=Math.hypot(odx,ody);
+      // 9/10ボールは的球が決まっているので、穴前の球を入れない理由は無い。
+      // 8ボール・ローテーション・14-1は穴前の球を「保険」「棚」として扱う専用の読みが
+      // 既にあり、ここでは従来どおり候補にしない（そちらの判断を壊さない）。
+      const hanger=objDist<0.075;
+      if(hanger&&(!pk.n||!['nine','ten'].includes(S.rules?.game)))continue;
+      const aimPoints=hanger?[0,.022,-.022].map(o=>[pk.x+pk.n[0]*.07-pk.n[1]*o,pk.y+pk.n[1]*.07+pk.n[0]*o]):[[pk.x,pk.y]];
+      let pick=null;
+      for(const [ax,ay] of aimPoints){const dx=ax-ob.p[0],dy=ay-ob.p[1],d=Math.hypot(dx,dy);if(d<0.03)continue;
+        const uu=[dx/d,dy/d],gh=[ob.p[0]-uu[0]*2*PH.R,ob.p[1]-uu[1]*2*PH.R];
+        if(Math.abs(gh[0])>PH.HX+0.006||Math.abs(gh[1])>PH.HY+0.006)continue;
+        if(!CO.lineClear(balls,[ob.p[0],ob.p[1]],[ax,ay],new Set([targetId])))continue;
+        // 穴前の球は的球側の許容が広いぶん「簡単」と評価されやすい。手球の通り道だけは
+        // 撞き出しのぶれ（距離に比例）を見込んだ余裕を要求し、他球すれすれの線は採らない。
+        if(!CO.lineClear(balls,cuePos,gh,new Set([0,targetId]),hanger?2.06*PH.R+.004*Math.hypot(gh[0]-cuePos[0],gh[1]-cuePos[1]):2.06*PH.R))continue;
+        const vv=CO.norm2(gh[0]-cuePos[0],gh[1]-cuePos[1]),cc=Math.abs(Math.atan2(vv[0]*uu[1]-vv[1]*uu[0],vv[0]*uu[0]+vv[1]*uu[1]));
+        if(!pick||cc<pick.cc)pick={ax,ay,d,uu,gh,cc};}
+      if(!pick)continue;
+      tx=pick.ax;ty=pick.ay;objDist=pick.d;
+      const u = pick.uu;
+      const ghost = pick.gh;
       const vin = CO.norm2(ghost[0] - cuePos[0], ghost[1] - cuePos[1]);
       const signedCut = Math.atan2(vin[0] * u[1] - vin[1] * u[0], vin[0] * u[0] + vin[1] * u[1]) * R2D;
       const cut = Math.abs(signedCut);
       if (cut > 68) continue;
       const cueDist = Math.hypot(ghost[0] - cuePos[0], ghost[1] - cuePos[1]);
+      // 口の中の球を遠くから薄く切るのは、角（ジョー）に当たる幅が狭く「簡単な穴前」ではない。
+      if (hanger && cut > 45 && cueDist > 1.2) continue;
       // ポケットの中心が見えていても、進入角が寝たサイドは有効開口が急減する。
       // さらに手球／的球が長クッション際なら、ブリッジと厚みの誤差を別リスクにする。
       const entryCos=clip(u[0]*pk.n[0]+u[1]*pk.n[1],-1,1),entryAngle=Math.acos(entryCos)*R2D,
@@ -51877,7 +51897,7 @@ const CO = {
         sharpSide=pk.type==='side'&&entryAngle>48,
         difficulty=Math.pow(cut/48,2)*1.7+Math.max(0,cueDist-.85)*.45+objDist*.22
           +(pk.type==='side'?.05:0)+Math.max(0,entryAngle-(pk.type==='side'?24:52))*.012+railRisk*.72;
-      out.push({pk,u,ghost,vin,signedCut,cut,cueDist,objDist,difficulty,entryAngle,sharpSide,
+      out.push({pk,u,ghost,vin,signedCut,cut,cueDist,objDist,difficulty,entryAngle,sharpSide,hanger,aimPoint:[tx,ty],
         cueRailClearance,objectRailClearance,cueBridgeRoom,longRailBall,railParallel,longRailRisk,railRisk});
     }
     if(!out.length)return cacheKey?aiGeometryCacheSet(cacheKey,out):out;
@@ -52288,7 +52308,8 @@ function calibrateDirectPotAim(balls,targetId,opt,prm,options={}){
       stepBall(object,PH.DT);
     }
     if(object.off||performance.now()>=deadline)return null;
-    const dx=pk.M[0]-object.p[0],dy=pk.M[1]-object.p[1],
+    // 穴前の球は口の手前の基準点Mより奥にあるので、選んだ狙い点へのずれで測る。
+    const tgt=opt.hanger&&opt.aimPoint?opt.aimPoint:pk.M,dx=tgt[0]-object.p[0],dy=tgt[1]-object.p[1],
       speed=Math.hypot(object.v[0],object.v[1]),length=Math.hypot(dx,dy);
     if(speed<.015)return null;
     const miss=(object.v[1]*dx-object.v[0]*dy)/speed,
@@ -63331,7 +63352,8 @@ function rackConditionFor(serial,variance='realistic',game='nine',seed=20260711)
   // 隣接球の間に0.1〜0.3mm程度の隙間が残る。完全密接の理想ラックは衝撃が均等に分散し、
   // ブレイクでほとんど球が入らない（本番物理で9ボール成功率25%以下、0.29mmの隙間で約75%＝プロ実績60〜87%）。
   const clothSpeed=1+centered(1)*.012*amp,cushion=1+centered(2)*.010*amp,ballElasticity=1+centered(3)*.004*amp,
-    gapM=(.00012+.00018*rackHashUnit(base,4))*amp,yawRad=centered(5)*.00175*amp,
+    // 監査専用：凍結ラックで検証済みの局面列を再現する回帰試験だけが__BILLIARD_FROZEN_RACK__を立てる。
+    gapM=typeof window!=='undefined'&&window.__BILLIARD_FROZEN_RACK__?0:(.00012+.00018*rackHashUnit(base,4))*amp,yawRad=centered(5)*.00175*amp,
     breakX=centered(6)*.012*amp,breakY=centered(7)*.020*amp,breakSpeed=1+centered(8)*.018*amp;
   return {active:true,variance,clothSpeed,slideFriction:1+centered(9)*.008*amp,spinFriction:1+centered(10)*.010*amp,
     cushion,ballElasticity,gapM,yawRad,breakX,breakY,breakSpeed,choice:rackHashUnit(base,11),
@@ -63343,7 +63365,8 @@ function activateRackCondition(game=currentGame){
   MATCH.rackCondition=rackConditionFor(MATCH.rackSerial,mode,game,seed);return MATCH.rackCondition;
 }
 function applyRackMicroVariation(layout,game,condition=MATCH.rackCondition){
-  if(!condition?.active||!['nine','ten','eight','rotation'].includes(game))return layout.map(b=>({...b}));
+  const frozenReplay=typeof window!=='undefined'&&window.__BILLIARD_FROZEN_RACK__;
+  if(!condition?.active||!(frozenReplay?['nine','ten']:['nine','ten','eight','rotation']).includes(game))return layout.map(b=>({...b}));
   const objects=layout.filter(b=>b.id!==0),anchor=game==='nine'
     ?objects.find(b=>b.id===(MATCH.nineFoot==='nine'?9:1))
     :game==='ten'||game==='rotation'?objects.find(b=>b.id===1):objects.slice().sort((a,b)=>a.x-b.x)[0];
@@ -63353,7 +63376,7 @@ function applyRackMicroVariation(layout,game,condition=MATCH.rackCondition){
   const c=Math.cos(condition.yawRad),s=Math.sin(condition.yawRad),k=(condition.gapM||0)/(2*PH.R),
     seed=Math.floor((condition.choice||0)*4294967295)>>>0;
   return layout.map(b=>{if(b.id===0||b===anchor)return {...b};const dx0=b.x-anchor.x,dy0=b.y-anchor.y,
-      a=rackHashUnit(seed,b.id*2+1)*2*Math.PI,j=(rackHashUnit(seed,b.id*2+2)-.5)*.00008,
+      a=rackHashUnit(seed,b.id*2+1)*2*Math.PI,j=k>0?(rackHashUnit(seed,b.id*2+2)-.5)*.00008:0,
       dx=dx0*(1+k)+Math.cos(a)*j,dy=dy0*(1+k)+Math.sin(a)*j;
     return {...b,x:anchor.x+dx*c-dy*s,y:anchor.y+dx*s+dy*c};});
 }
@@ -73708,7 +73731,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script data-v6-source="scripts/16-nine-world-class-test.js">
 (function(){
   const api=window.BILLIARD_LAB_TEST_API,core=window.__api;if(!api||!core)return;
-  api.version='8.57.0';
+  api.version='8.57.1';
   api.nineWorldClassDecisionGate=async function(){
     const saved={balls:core.S.balls,rules:core.S.rules,turn:core.MATCH.turn,mode:core.MATCH.mode,opp:core.MATCH.opponent,tempo:core.MATCH.matchTempo};
     const cases=[
