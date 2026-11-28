@@ -1864,7 +1864,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 #p0Name[data-grade]::after,#p1Name[data-grade]::after{content:attr(data-grade);margin-left:6px;padding:0 5px;border:1px solid rgba(214,180,106,.55);border-radius:6px;font-size:.72em;font-weight:700;color:#e8cf8f;vertical-align:1px;white-space:nowrap}
 </style>
 <style data-v8545-phone-landscape>
-/* v8.58.0 スマホ横向き（高さ520px以下）の最終層。
+/* v8.58.1 スマホ横向き（高さ520px以下）の最終層。
    旧層は保持し、ここで確定させる。盤面は左列に最大、右列は上から
    得点板（常時表示）→ AI思考・案内 → 操作盤／観戦時はショット振り返り。
    旧層では得点板と新ラックが盤面の下に隠れ、狙い欄が82px枠で切れ、
@@ -1989,7 +1989,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
     width:var(--v8545-side-in)!important;max-width:none!important;height:100px!important;max-height:100px!important;margin:0!important;transform:none!important}
 }
 
-/* v8.58.0 縦向き：AI推奨ボタン（例「ブレイク 成功—%・勝率30%」）の2行目が42px枠から落ちていた */
+/* v8.58.1 縦向き：AI推奨ボタン（例「ブレイク 成功—%・勝率30%」）の2行目が42px枠から落ちていた */
 @media (max-width:1024px) and (orientation:portrait) and (min-height:521px){
   html body #app .qcChoice{overflow:hidden!important;line-height:1.08!important;padding-top:2px!important;padding-bottom:2px!important}
   html body #app .qcChoice *{line-height:1.08!important}
@@ -2011,7 +2011,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <section class="noJsCard">
 <b>このプレビューではゲームを実行できません</b>
 <p>iPhoneの添付ファイル表示・クイックルックではJavaScriptが停止するため、盤面もボタンも動きません。SafariまたはGitHub Pagesの公開URLで開いてください。</p>
-<small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 8.58.0</small>
+<small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 8.58.1</small>
 </section>
 </div>
 </noscript>
@@ -2031,7 +2031,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="runtimeGateLogo">REAL POOL SIMULATOR</div>
 <h1>BILLIARDS LABO</h1>
 <p class="splashProducer">produced by littlepond</p>
-<p class="splashVersion">Version 8.58.0</p>
+<p class="splashVersion">Version 8.58.1</p>
 </section>
 </div>
 <script data-v6-source="scripts/00-boot-diagnostics.js">
@@ -2078,7 +2078,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="brandTitles">
 <h1>REAL POOL SIMULATOR</h1>
 <h2>BILLIARDS LABO</h2>
-<div class="brandMeta"><span>produced by littlepond</span><b>Ver. 8.58.0</b></div>
+<div class="brandMeta"><span>produced by littlepond</span><b>Ver. 8.58.1</b></div>
 </div>
 <div class="brandActions">
 <button aria-label="使い方" id="btnBrandHelp" type="button"><i>?</i><span>ヘルプ</span></button>
@@ -2111,7 +2111,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 </div>
 </div>
 <div id="proHud">
-<span id="proBadge">REAL POOL SIMULATOR <small>v8.58.0 · BILLIARDS LABO</small></span>
+<span id="proBadge">REAL POOL SIMULATOR <small>v8.58.1 · BILLIARDS LABO</small></span>
 <span aria-label="REAL ENGINE 6 稼働中" id="engineStatus" role="status"><i></i><b>REAL ENGINE 6</b><small>IMPACT · SPIN · POCKET · STRATEGY</small></span>
 <span class="hudLabel">GAME</span>
 <select aria-label="ゲーム種目" class="hudSelect" id="gameSelect">
@@ -2369,7 +2369,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 </div>
 </div>
 <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③スピードを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.58.0</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.58.1</b><span>BILLIARDS LABO · produced by littlepond</span></div>
 </section>
 </div>
 <div aria-hidden="true" class="drawer" id="proShotDrawer">
@@ -2478,7 +2478,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"/></div>
 <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
 </div>
-<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.58.0</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.58.1</b><span>BILLIARDS LABO · produced by littlepond</span></div>
 <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" data-close="labDrawer" type="button">適用して閉じる</button></div>
 </section>
 </div>
@@ -15771,7 +15771,7 @@ if(typeof module!=='undefined')module.exports=RULES_DOMAIN;
 // DOM、描画、乱数、試合進行から独立したV6の意思決定契約。
 // AI、コーチ、実行直前監査、Node回帰試験は同じ判定を共有する。
 const STRATEGY_DOMAIN=(()=>{
-  const VERSION='8.58.0',MINIMUM_PLANNING_WINDOW=3;
+  const VERSION='8.58.1',MINIMUM_PLANNING_WINDOW=3;
   // 「理想値」は候補順位、「上限値」は物理的に不自然な線だけを落とす。
   // v6.0 は理想値をそのまま絶対上限にしていたため、合法で展開の良い線まで
   // 全滅し、弱い緊急ブレイクへ落ちることがあった。
@@ -27859,7 +27859,7 @@ globalThis.__BILLIARD_EXACT_ATTACK_WIDTH_CERTIFICATES__ = Object.freeze({
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='8.58.0';
+const APP_VERSION='8.58.1';
 const SUSPENDED_PLAY_MODES=Object.freeze(['lesson','puzzle']);
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
@@ -49235,7 +49235,11 @@ function launchCooperativeAIRecovery(token,actor,reason='deadline'){
   const finish=plan=>{
     if(coachToken!==Coach.token||token!==MATCH.aiToken||MATCH.turn!==actor)return;
     cancelCoach(true);AI_RUNTIME_CONTROL.recoveryActive=false;
-    const fallback=plan||cachedAIRecoveryPlan()||(!opening&&!['fujiyama','kairun','straight'].includes(game)?quickLiveLegalContactPlan():null);
+    let fallback=plan||cachedAIRecoveryPlan()||(!opening&&!['fujiyama','kairun','straight'].includes(game)?quickLiveLegalContactPlan():null);
+    // 14-1 は単純な合法接触の近道が使えないので、ここで見つからないと同じ盤面を2回まるごと再解析していた
+    // （継続ブレイク直後に1打45秒の待ち）。物理合格済みの最終進行線があれば、それをすぐ撞く。
+    if(!fallback?.prm&&!opening&&game==='straight'){const rescue=tournamentLastLegalProgressPlan(actor);
+      if(rescue?.plan?.prm&&rescue.commit?.ok)fallback={...rescue.plan,boundedSameStateRecovery:true};}
     if(fallback?.prm){executeAIPlan({...fallback,cooperativeRecovery:true,recoveryReason:reason},token,true,actor);return;}
     addEventLog('協調復旧で確定線が得られず、有限回だけ盤面を再認識','AI RECOVERY');
     aiQueueBoundedReplan(actor,'cooperative-'+reason,70,token);
@@ -51961,6 +51965,25 @@ const CO = {
         if(!CO.lineClear(balls,cuePos,gh,new Set([0,targetId]),hanger?2.06*PH.R+.004*Math.hypot(gh[0]-cuePos[0],gh[1]-cuePos[1]):2.06*PH.R))continue;
         const vv=CO.norm2(gh[0]-cuePos[0],gh[1]-cuePos[1]),cc=Math.abs(Math.atan2(vv[0]*uu[1]-vv[1]*uu[0],vv[0]*uu[0]+vv[1]*uu[1]));
         if(!pick||cc<pick.cc)pick={ax,ay,d,uu,gh,cc};}
+      // 14-1：的球の真後ろに別の球が付いていて、2球がポケットへ一直線に並ぶ「押し出しコンビ」。
+      // 手前の球を厚く撞けば奥の的球がそのまま入る。プロは一目で入れる形なのに候補に無く、
+      // クッションに付いた2球の守り合いが68手番続いた（実戦で確認）。
+      // ラックの塊（付いている球が2個以上）は対象外：塊の中は押し出しの方向が定まらず、計算も重い。
+      const frozenNeighbours=!pick&&S.rules?.game==='straight'?balls.filter(k=>k.id!==0&&k.id!==targetId&&!k.pocketed&&!k.off&&
+        Math.hypot(k.p[0]-ob.p[0],k.p[1]-ob.p[1])<=2*PH.R+.0015).length:0;
+      if(!pick&&S.rules?.game==='straight'&&frozenNeighbours===1&&objDist<=1.0)for(const [ax,ay] of aimPoints){
+        const dx=ax-ob.p[0],dy=ay-ob.p[1],d=Math.hypot(dx,dy);if(d<0.03)continue;const uu=[dx/d,dy/d];
+        for(const k of balls){if(k.id===0||k.id===targetId||k.pocketed||k.off)continue;
+          const kx=ob.p[0]-k.p[0],ky=ob.p[1]-k.p[1],kd=Math.hypot(kx,ky);if(kd>2*PH.R+.0015)continue;
+          const uk=[kx/kd,ky/kd];if(uk[0]*uu[0]+uk[1]*uu[1]<Math.cos(7*D2R))continue;
+          // 付いている手前の球は的球の後ろにあるので、的球→ポケットの通り道の判定からは外す。
+          if(!CO.lineClear(balls,[ob.p[0],ob.p[1]],[ax,ay],new Set([targetId,k.id])))continue;
+          const gh=[k.p[0]-uk[0]*2*PH.R,k.p[1]-uk[1]*2*PH.R];
+          if(Math.abs(gh[0])>PH.HX+0.006||Math.abs(gh[1])>PH.HY+0.006)continue;
+          if(!CO.lineClear(balls,cuePos,gh,new Set([0,k.id,targetId]),2.06*PH.R+.002*Math.hypot(gh[0]-cuePos[0],gh[1]-cuePos[1])))continue;
+          const vv=CO.norm2(gh[0]-cuePos[0],gh[1]-cuePos[1]),cc=Math.abs(Math.atan2(vv[0]*uk[1]-vv[1]*uk[0],vv[0]*uk[0]+vv[1]*uk[1]));
+          if(cc>40*D2R)continue;
+          if(!pick||cc<pick.cc)pick={ax,ay,d,uu,gh,cc,comboVia:k.id};}}
       if(!pick)continue;
       tx=pick.ax;ty=pick.ay;objDist=pick.d;
       const u = pick.uu;
@@ -51986,7 +52009,7 @@ const CO = {
         sharpSide=pk.type==='side'&&entryAngle>48,
         difficulty=Math.pow(cut/48,2)*1.7+Math.max(0,cueDist-.85)*.45+objDist*.22
           +(pk.type==='side'?.05:0)+Math.max(0,entryAngle-(pk.type==='side'?24:52))*.012+railRisk*.72;
-      out.push({pk,u,ghost,vin,signedCut,cut,cueDist,objDist,difficulty,entryAngle,sharpSide,hanger,aimPoint:[tx,ty],
+      out.push({pk,u,ghost,vin,signedCut,cut,cueDist,objDist,difficulty:difficulty+(pick.comboVia!=null?.35:0),entryAngle,sharpSide,hanger,aimPoint:[tx,ty],comboVia:pick.comboVia??null,
         cueRailClearance,objectRailClearance,cueBridgeRoom,longRailBall,railParallel,longRailRisk,railRisk});
     }
     if(!out.length)return cacheKey?aiGeometryCacheSet(cacheKey,out):out;
@@ -52362,6 +52385,14 @@ function calibrateDirectPotAim(balls,targetId,opt,prm,options={}){
     target=balls.find(b=>b.id===targetId&&!b.pocketed&&!b.off),pk=opt?.pk;
   if(!cue||!target||!opt?.ghost||!pk?.M||!(prm.speed>0)||
       !Number.isFinite(prm.aim)||(prm.elev||0)>8*D2R)return null;
+  // 押し出しコンビ（付いた2球が一直線）は、手前の球を厚く撞けば奥の的球の進路が決まる。
+  // 初めの接触で測る較正は使えないので、全行程の物理で的球が入り手球が残ることだけを確かめる。
+  if(opt.comboVia!=null){
+    const sim=simulateShot(balls,{...prm},{maxT:4,dt:PH.DT,pathMode:'none',deadline});
+    const t=sim?.final?.find(b=>b.id===targetId),c=sim?.final?.find(b=>b.id===0);
+    return t?.pocketed&&c&&!c.pocketed&&!c.off?{prm:{...prm},converged:true,miss:0,iterations:1,samples:[],
+      combo:true,elapsedMs:performance.now()-started}:null;
+  }
   const distance=Math.hypot(target.p[0]-cue.p[0],target.p[1]-cue.p[1]);
   if(distance<2*PH.R+.003)return null;
   const nx=(target.p[0]-cue.p[0])/distance,ny=(target.p[1]-cue.p[1])/distance,
@@ -55350,9 +55381,12 @@ function rotationNoCallAllowed(r){
     replyThreat=clamp01(r.replyThreat??1),advantage=r.noCallAdvantage??((1-replyThreat)-nextThreat),
     position=clamp01(r.positionQuality??nextThreat),nextCut=r.nextCut??90,
     nextHard=position<.18&&nextThreat<=.16&&nextCut>=68;
-  // Deliberately giving up both points and the table is a last-resort lock,
-  // never an ordinary substitute for playing position on a called pot.
-  return remaining>0&&robust>=.84&&nextHard&&replyThreat<=.08&&advantage>=.68;
+  // ノーコールでわざと入れてフットへ戻させるのは、プロが実際に使う守り（ファウルにならず、相手に
+  // フリーボールも渡さない）。コールして入れても次が続かず（自分の次の入り35%以下）、
+  // 戻した配置で相手の返しが25%以下、差が30点以上ある時に選ぶ。以前は条件が厳しすぎて一度も
+  // 選ばれず、代わりにわざとのファウルが増えていた（実戦3回で0回／20回）。
+  if(nextHard&&robust>=.84&&replyThreat<=.08&&advantage>=.68)return remaining>0;
+  return remaining>0&&robust>=.80&&nextThreat<=.35&&replyThreat<=.25&&advantage>=.30;
 }
 function rotationNoCallCandidatesFromAttacks(balls,attacks,turn){
   if(!(S.rules&&S.rules.game==='rotation'))return [];
@@ -55428,6 +55462,7 @@ function planIntentionalFoul(balls,turn,auto=true){
         replyThreat,clusterPressure,runoutProb:0,twoWay:1-replyThreat,
         rackEV:robust*((1-replyThreat)*.74+clusterPressure*.10)-(1-robust)*.72,
         score:s.score+(1-robust)*7+replyThreat*2};
+      if(R.game==='rotation'&&replyThreat>.25)continue;
       r.winProb=tournamentCandidateWin(r,'foul');tested.push(r);}
   }
   return tested.sort((a,b)=>tournamentCandidateWin(b,'foul')-tournamentCandidateWin(a,'foul')||a.score-b.score)[0]||null;
@@ -55902,6 +55937,8 @@ function quickLiveIntentionalFoulPlan(balls=S.balls,turn=MATCH.turn,options={}){
       // live decision tree may attach that state-bound last-resort proof.
       planLabel:'攻撃・本セーフティ不成立後、相手フリーボール込みで最も難しい配置へ回す'};
     if(replyThreat>.64&&center.clusterPressure<.30&&center.obstruction<.40)continue;
+    // ここは攻撃・本セーフティ・合法の脱出が全部尽きた後の最後の手段（無ければ時間切れのファウルになる）。
+    // 好んで選ぶ側（planIntentionalFoul）はローテーションで相手の返し25%以下に絞ってある。
     r.winProb=tournamentCandidateWin(r,'foul');finalists.push(r);
   }
   trace.finalists=finalists.length;const result=finalists.sort((a,b)=>b.winProb-a.winProb||
@@ -73824,7 +73861,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script data-v6-source="scripts/16-nine-world-class-test.js">
 (function(){
   const api=window.BILLIARD_LAB_TEST_API,core=window.__api;if(!api||!core)return;
-  api.version='8.58.0';
+  api.version='8.58.1';
   api.nineWorldClassDecisionGate=async function(){
     const saved={balls:core.S.balls,rules:core.S.rules,turn:core.MATCH.turn,mode:core.MATCH.mode,opp:core.MATCH.opponent,tempo:core.MATCH.matchTempo};
     const cases=[
