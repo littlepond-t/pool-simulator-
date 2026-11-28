@@ -1864,7 +1864,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 #p0Name[data-grade]::after,#p1Name[data-grade]::after{content:attr(data-grade);margin-left:6px;padding:0 5px;border:1px solid rgba(214,180,106,.55);border-radius:6px;font-size:.72em;font-weight:700;color:#e8cf8f;vertical-align:1px;white-space:nowrap}
 </style>
 <style data-v8545-phone-landscape>
-/* v8.57.1 スマホ横向き（高さ520px以下）の最終層。
+/* v8.58.0 スマホ横向き（高さ520px以下）の最終層。
    旧層は保持し、ここで確定させる。盤面は左列に最大、右列は上から
    得点板（常時表示）→ AI思考・案内 → 操作盤／観戦時はショット振り返り。
    旧層では得点板と新ラックが盤面の下に隠れ、狙い欄が82px枠で切れ、
@@ -1989,7 +1989,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
     width:var(--v8545-side-in)!important;max-width:none!important;height:100px!important;max-height:100px!important;margin:0!important;transform:none!important}
 }
 
-/* v8.57.1 縦向き：AI推奨ボタン（例「ブレイク 成功—%・勝率30%」）の2行目が42px枠から落ちていた */
+/* v8.58.0 縦向き：AI推奨ボタン（例「ブレイク 成功—%・勝率30%」）の2行目が42px枠から落ちていた */
 @media (max-width:1024px) and (orientation:portrait) and (min-height:521px){
   html body #app .qcChoice{overflow:hidden!important;line-height:1.08!important;padding-top:2px!important;padding-bottom:2px!important}
   html body #app .qcChoice *{line-height:1.08!important}
@@ -2011,7 +2011,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <section class="noJsCard">
 <b>このプレビューではゲームを実行できません</b>
 <p>iPhoneの添付ファイル表示・クイックルックではJavaScriptが停止するため、盤面もボタンも動きません。SafariまたはGitHub Pagesの公開URLで開いてください。</p>
-<small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 8.57.1</small>
+<small>REAL POOL SIMULATOR · BILLIARDS LABO · Version 8.58.0</small>
 </section>
 </div>
 </noscript>
@@ -2031,7 +2031,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="runtimeGateLogo">REAL POOL SIMULATOR</div>
 <h1>BILLIARDS LABO</h1>
 <p class="splashProducer">produced by littlepond</p>
-<p class="splashVersion">Version 8.57.1</p>
+<p class="splashVersion">Version 8.58.0</p>
 </section>
 </div>
 <script data-v6-source="scripts/00-boot-diagnostics.js">
@@ -2078,7 +2078,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="brandTitles">
 <h1>REAL POOL SIMULATOR</h1>
 <h2>BILLIARDS LABO</h2>
-<div class="brandMeta"><span>produced by littlepond</span><b>Ver. 8.57.1</b></div>
+<div class="brandMeta"><span>produced by littlepond</span><b>Ver. 8.58.0</b></div>
 </div>
 <div class="brandActions">
 <button aria-label="使い方" id="btnBrandHelp" type="button"><i>?</i><span>ヘルプ</span></button>
@@ -2111,7 +2111,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 </div>
 </div>
 <div id="proHud">
-<span id="proBadge">REAL POOL SIMULATOR <small>v8.57.1 · BILLIARDS LABO</small></span>
+<span id="proBadge">REAL POOL SIMULATOR <small>v8.58.0 · BILLIARDS LABO</small></span>
 <span aria-label="REAL ENGINE 6 稼働中" id="engineStatus" role="status"><i></i><b>REAL ENGINE 6</b><small>IMPACT · SPIN · POCKET · STRATEGY</small></span>
 <span class="hudLabel">GAME</span>
 <select aria-label="ゲーム種目" class="hudSelect" id="gameSelect">
@@ -2369,7 +2369,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 </div>
 </div>
 <div class="mobileHelp">普段は、①的球をタップ ②入れたいポケットをタップ ③スピードを決めてショット。空クッションやセーフティは盤面をなぞって自由に狙えます。手球はフリーボール時だけ直接動かせます。</div>
-<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.57.1</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.58.0</b><span>BILLIARDS LABO · produced by littlepond</span></div>
 </section>
 </div>
 <div aria-hidden="true" class="drawer" id="proShotDrawer">
@@ -2478,7 +2478,7 @@ body.v6-mode-spectator #scoreBoard.show{grid-column:1/4!important;grid-row:2!imp
 <div class="settingRow"><label>乱数シード</label><input id="seedInput" type="number" value="20260711"/></div>
 <div class="settingRow"><label>予測線</label><select id="guideMode"><option value="full">全軌道</option><option value="contact">接触まで</option><option value="none">非表示</option></select></div>
 </div>
-<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.57.1</b><span>BILLIARDS LABO · produced by littlepond</span></div>
+<div class="appCredit"><b>REAL POOL SIMULATOR · Version 8.58.0</b><span>BILLIARDS LABO · produced by littlepond</span></div>
 <div class="drawerActions"><button id="btnEnvStandard" type="button">競技標準・予測一致へ戻す</button><button class="primary" data-close="labDrawer" type="button">適用して閉じる</button></div>
 </section>
 </div>
@@ -15771,7 +15771,7 @@ if(typeof module!=='undefined')module.exports=RULES_DOMAIN;
 // DOM、描画、乱数、試合進行から独立したV6の意思決定契約。
 // AI、コーチ、実行直前監査、Node回帰試験は同じ判定を共有する。
 const STRATEGY_DOMAIN=(()=>{
-  const VERSION='8.57.1',MINIMUM_PLANNING_WINDOW=3;
+  const VERSION='8.58.0',MINIMUM_PLANNING_WINDOW=3;
   // 「理想値」は候補順位、「上限値」は物理的に不自然な線だけを落とす。
   // v6.0 は理想値をそのまま絶対上限にしていたため、合法で展開の良い線まで
   // 全滅し、弱い緊急ブレイクへ落ちることがあった。
@@ -27859,7 +27859,7 @@ globalThis.__BILLIARD_EXACT_ATTACK_WIDTH_CERTIFICATES__ = Object.freeze({
 'use strict';
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const $ = id => document.getElementById(id);
-const APP_VERSION='8.57.1';
+const APP_VERSION='8.58.0';
 const SUSPENDED_PLAY_MODES=Object.freeze(['lesson','puzzle']);
 const CLOTH_THEMES={
   blue:{label:'トーナメントブルー',cloth:'#1d6aa8',cushion:'#18598f'},
@@ -30101,6 +30101,8 @@ function proReadGame(){return S.rules?.game||'nine';}
 function proReadApplies(plan,actor){
   const game=proReadGame();
   if(!PRO_READ.enabled||!plan?.prm||!['nine','ten','eight','rotation','straight'].includes(game))return false;
+  // 監査専用：種目ごとに読みを切って比べる（__proReadGames に無い種目は読みを足さない）。
+  if(Array.isArray(window.__proReadGames)&&!window.__proReadGames.includes(game))return false;
   // B級・C級は「自分の腕に見合わない球も狙う」のが実戦。読みを足すのはA級以上。
   if(!['world','pro','sa','a'].includes(shooterGradeKey(actor))||!isAISeat(actor))return false;
   if(S.rules?.broken===false||S.rules?.ballInHand||MATCH.optionPending)return false;
@@ -30126,14 +30128,51 @@ function proReadGameBall(game,legal){
 function proReadAngleQuality(cut){
   if(cut<3)return .55;if(cut<8)return .55+.45*(cut-3)/5;if(cut<=38)return 1;if(cut<=58)return 1-.45*(cut-38)/20;return .5;
 }
+// 次の次の球まで読む（プレイヤーは最低でも次の次の球への振り・ポジション・距離を考えて撞く）。
+// 次の球 B を入れた後、手球が届く範囲（止め・押し・引きの扇形 × 近・中・遠）を置き、
+// そこから次の次の球 C がどの角度・距離で入るかを測る。返り値は 0〜1（届く範囲で最も入る見込み）。
+function proReadNextCandidates(game,balls,afterId,group){
+  const alive=balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off&&b.id!==afterId).map(b=>b.id);if(!alive.length)return [];
+  if(game==='nine'||game==='ten'||game==='rotation')return [Math.min(...alive)];
+  if(game==='straight')return alive;
+  const own=group?alive.filter(id=>GROUP_OF(id)===group):alive.filter(id=>id!==8);
+  return own.length?own:(alive.includes(8)?[8]:[]);
+}
+function proReadFollowUpQuality(balls,opt,idB,gradeKey,actor){
+  const game=proReadGame(),group=game==='eight'?(S.rules?.groups?.[actor]||MATCH.groups?.[actor]||null):null,
+    after=balls.map(b=>b.id===idB?{...b,pocketed:true}:b),cue=after.find(b=>b.id===0);
+  let next=proReadNextCandidates(game,after,idB,group);if(!next.length||!cue)return 1;
+  const g=opt.ghost,u=opt.u,v=opt.vin;
+  // 次の次の球は、B の近くから順に最大2個（14-1・8ボールで全部は見ない）。
+  next=next.map(id=>({id,b:after.find(x=>x.id===id)})).filter(x=>x.b).sort((a,b)=>
+    Math.hypot(a.b.p[0]-g[0],a.b.p[1]-g[1])-Math.hypot(b.b.p[0]-g[0],b.b.p[1]-g[1])).slice(0,2).map(x=>x.id);
+  const dot=v[0]*u[0]+v[1]*u[1];let t=[v[0]-dot*u[0],v[1]-dot*u[1]];const tl=Math.hypot(t[0],t[1]);
+  const dirs=[];
+  if(tl<.05){dirs.push(u,[-v[0],-v[1]]);}   // ほぼ真っ直ぐ：押しで前、引きで戻るだけ
+  else{t=[t[0]/tl,t[1]/tl];const side=Math.sign(t[0]*u[1]-t[1]*u[0])||1;
+    for(const deg of [-28,0,28]){const a=deg*D2R*-side,c=Math.cos(a),sn=Math.sin(a);dirs.push([t[0]*c-t[1]*sn,t[0]*sn+t[1]*c]);}}
+  const lim=[PH.HX-PH.R*1.05,PH.HY-PH.R*1.05];let best=0;
+  for(const d of dirs)for(const dist of [.28,.55,.85]){
+    let x=g[0]+d[0]*dist,y=g[1]+d[1]*dist;x=Math.max(-lim[0],Math.min(lim[0],x));y=Math.max(-lim[1],Math.min(lim[1],y));
+    const travel=Math.hypot(x-g[0],y-g[1]),w=1-.18*Math.min(1,travel/.85);
+    for(const idC of next)for(const o of CO.potOptions(after,[x,y],idC)||[]){if(o.cut>60)continue;
+      const pc=gradeShotMakeProbability(o,gradeKey,null,actor);if(pc==null)continue;
+      const val=pc*(.85+.15*proReadAngleQuality(o.cut))*w;if(val>best)best=val;}}
+  return best;
+}
 function proReadBestMake(balls,legal,gradeKey,actor,positional=true){
   const cue=balls.find(b=>b.id===0&&!b.pocketed&&!b.off);if(!cue)return {q:0,hidden:true};
-  let q=0,raw=0,visible=false;const cp=[cue.p[0],cue.p[1]],more=balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off).length>1;
+  let q=0,raw=0,visible=false;const cp=[cue.p[0],cue.p[1]],more=balls.filter(b=>b.id!==0&&!b.pocketed&&!b.off).length>1,rows=[];
   for(const id of legal.slice(0,7)){
     if(!CO.hidden(balls,id))visible=true;
     for(const opt of CO.potOptions(balls,cp,id)||[]){if(opt.cut>66)continue;
       const p=gradeShotMakeProbability(opt,gradeKey,null,actor);if(p==null)continue;
-      if(p>raw)raw=p;const eff=positional&&more?p*(.78+.22*proReadAngleQuality(opt.cut)):p;if(eff>q)q=eff;}}
+      if(p>raw)raw=p;rows.push({id,opt,p});}}
+  if(!positional||!more){for(const r of rows)if(r.p>q)q=r.p;return {q,raw,hidden:!visible};}
+  // 入りの良い上位3本だけ、次の次の球まで読む（残りは角度だけの簡易評価）。
+  rows.sort((a,b)=>b.p-a.p);
+  rows.forEach((r,i)=>{const eff=i<3?r.p*(.62+.38*proReadFollowUpQuality(balls,r.opt,r.id,gradeKey,actor)):
+    r.p*(.62+.30*proReadAngleQuality(r.opt.cut));if(eff>q)q=eff;});
   return {q,raw,hidden:!visible};
 }
 // 台を持っている側の持ち分。プロ同士の自己対戦32ラック・568局面の実績で較正（2026-11-25）：
@@ -30154,8 +30193,11 @@ function proReadOutcome(plan,startBalls,sim,actor,legalNow){
   if(game==='nine'&&potted.includes(9)&&!foul)return {eq:1,kind:'win',potted,foul};
   if(game==='ten'&&potted.includes(10)&&!foul&&target===10)return {eq:1,kind:'win',potted,foul};
   const kept=!foul&&(game==='nine'?potted.length>0:potted.includes(target));
-  if(foul){const bihQ={world:.97,pro:.95,sa:.92,a:.88,b:.78,c:.66}[opp]||.9,
-      oppLegal=proReadLegal(game,final.map(b=>b.id===0?{...b,pocketed:false,off:false}:b),oppGroup);
+  if(foul){let bihQ={world:.97,pro:.95,sa:.92,a:.88,b:.78,c:.66}[opp]||.9;
+    const oppLegal=proReadLegal(game,final.map(b=>b.id===0?{...b,pocketed:false,off:false}:b),oppGroup);
+    // NBAローテーションのファウルは「どこでもフリーボール」ではない。相手は手球を現状かヘッドライン内、
+    // 最小番号球を現状・センタースポット・フットスポットから1回選ぶだけ。その中で相手が一番入れやすい形を測る。
+    if(game==='rotation'&&oppLegal.length)bihQ=proReadRotationFoulReplyQ(final,oppLegal[0],opp,1-actor);
     return {eq:1-proReadShooterEquity(bihQ,proReadGameBall(game,oppLegal)),kind:'foul',potted,foul};}
   if(kept){const g=game==='eight'&&!group&&potted.length?GROUP_OF(potted.find(id=>id!==8)??potted[0]):group,
       legal=proReadLegal(game,final,g),r=proReadBestMake(final,legal,me,actor);
@@ -30165,6 +30207,21 @@ function proReadOutcome(plan,startBalls,sim,actor,legalNow){
     e=1-proReadShooterEquity(r.q,proReadGameBall(game,oppLegal));
   // 隠した時は相手がキック。プロのキックはファウルや甘い球も出る。
   return {eq:r.hidden?Math.max(e,.56):e,kind:r.hidden?'hidden':'passed',q:r.q,potted,foul};
+}
+function proReadRotationFoulReplyQ(final,lowId,gradeKey,actor){
+  const base=final.map(b=>b.id===0?{...b,pocketed:false,off:false}:{...b}),low=base.find(b=>b.id===lowId),cue0=base.find(b=>b.id===0);
+  if(!low||!cue0)return .9;
+  const head=-PH.TABLE_W/4,spots=[[low.p[0],low.p[1]],[0,0],[PH.TABLE_W/4,0]],cues=[[cue0.p[0],cue0.p[1]]];
+  for(const x of [head-.08,head-.30])for(const y of [-.42,-.21,0,.21,.42])cues.push([x,y]);
+  let best=0;
+  for(const sp of spots){
+    if(base.some(b=>b.id!==lowId&&b.id!==0&&!b.pocketed&&!b.off&&Math.hypot(b.p[0]-sp[0],b.p[1]-sp[1])<PH.R*2.05))continue;
+    for(const cp of cues){
+      if(base.some(b=>b.id!==0&&b.id!==lowId&&!b.pocketed&&!b.off&&Math.hypot(b.p[0]-cp[0],b.p[1]-cp[1])<PH.R*2.05))continue;
+      if(Math.hypot(sp[0]-cp[0],sp[1]-cp[1])<PH.R*2.2)continue;
+      const balls=base.map(b=>b.id===lowId?{...b,p:[sp[0],sp[1],b.p[2]]}:b.id===0?{...b,p:[cp[0],cp[1],b.p[2]]}:b),
+        q=proReadBestMake(balls,[lowId],gradeKey,actor,false).q;if(q>best)best=q;}}
+  return best;
 }
 function proReadSimulate(balls,prm){
   return simulateShot(balls,prm,{maxT:14,dt:PH.DT,pathMode:'none'});
@@ -30314,6 +30371,10 @@ async function proReadBreakSelect(plan,actor,token){
     if(head)for(const [label,raw] of [['反対側から正面',[plan.breakCuePlacement[0],-plan.breakCuePlacement[1]]],['中央から正面',[plan.breakCuePlacement[0],0]]]){
       if(!breakCuePlacementOpen(S.balls,raw))continue;
       variants.push([label,{...p0,aim:Math.atan2(head.p[1]-raw[1],head.p[0]-raw[0]),tipX:0,tipY:-.08,speed:p0.speed},raw]);}
+    // 10ボールは実ラック実測で最も通った形（小オフセットから①へ正面・少し引き・8.8m/s、成功50〜60%・ファウル0%）を必ず比べる。
+    if(head&&proReadGame()==='ten')for(const y of [.12,-.12]){const raw=[-.69,y];
+      if(Math.abs(raw[1]-plan.breakCuePlacement[1])<.02||!breakCuePlacementOpen(S.balls,raw))continue;
+      variants.splice(1,0,['小オフセット・①へ正面',{...p0,aim:Math.atan2(head.p[1]-raw[1],head.p[0]-raw[0]),tipX:0,tipY:-.20,speed:8.8},raw]);break;}
     for(const [label,prm,place] of variants){if(performance.now()>deadline||!alive())break;let sum=0,n=0,made=0,fouls=0;
       const vb=tournamentAuditPlanState({breakCuePlacement:place},S.balls);
       for(let i=0;i<6;i++){const p=gradedStroke(prm,shooterGradeKey(actor),{actor,plan:{kind:'break'},balls:vb,rand,silent:true}),
@@ -36291,22 +36352,24 @@ function baseTournamentBreakProfiles(game=S.rules?.game,nineFoot=MATCH.nineFoot)
   if(game==='ten')return [
     {family:'ten-perfect-window-runout-R',label:'右オフセット・得点窓＋取り切り線',cue:[-.7055,.30],target:'apex',
       speed:9.384,aimOffset:.71,tipX:0,tipY:.05,power:.96,control:1,routeRows:[1],
-      concept:'scoring-window-runout',evidencePrior:1,breakIntent:'second-row-sides'},
+      concept:'scoring-window-runout',evidencePrior:.55,breakIntent:'second-row-sides'},
     {family:'ten-scoring-possession-R',label:'右オフセット・得点継続線',cue:[-.7055,.30],target:'apex',
       speed:8.00,aimOffset:.75,tipX:0,tipY:-.10,power:.78,control:1,routeRows:[1],
-      concept:'scoring-possession',evidencePrior:.99,breakIntent:'second-row-sides'},
+      concept:'scoring-possession',evidencePrior:.50,breakIntent:'second-row-sides'},
     {family:'ten-scoring-possession-L',label:'左オフセット・得点継続線',cue:[-.7055,-.30],target:'apex',
       speed:8.00,aimOffset:-.75,tipX:0,tipY:-.10,power:.78,control:.98,routeRows:[1],
-      concept:'scoring-possession-mirror',evidencePrior:.94,breakIntent:'second-row-sides'},
+      concept:'scoring-possession-mirror',evidencePrior:.50,breakIntent:'second-row-sides'},
     {family:'ten-measured-route-L',label:'中央・第2列左サイド経路',cue:[centerX,0],target:'apex',speed:9.05,aimOffset:-.36,tipX:0,tipY:-.10,power:.98,control:1,routeRows:[1],concept:'square-head-route-L',evidencePrior:.85,breakIntent:'second-row-sides'},
     {family:'ten-measured-route-R',label:'中央・第2列右サイド経路',cue:[centerX,0],target:'apex',speed:9.05,aimOffset:.36,tipX:0,tipY:-.10,power:.98,control:1,routeRows:[1],concept:'square-head-route-R',evidencePrior:.85,breakIntent:'second-row-sides'},
     {family:'ten-center-power',label:'中央・正面パワー比較',cue:[centerX,0],target:'apex',speed:8.78,aimOffset:0,tipX:0,tipY:.06,power:.96,control:.74,routeRows:[1],concept:'square-head-power',evidencePrior:.76,breakIntent:'second-row-sides'},
-    mirror('ten-square-control','小オフセット・厚いヘッドヒット',-.12,{x:nearX,speed:8.55,aimOffset:.08,tipX:.02,tipY:.055,power:.87,control:.94,routeRows:[1],concept:'slight-offset-head',evidencePrior:.88,breakIntent:'second-row-sides'}),
-    mirror('ten-square-control','小オフセット・厚いヘッドヒット', .12,{x:nearX,speed:8.55,aimOffset:.08,tipX:.02,tipY:.055,power:.87,control:.94,routeRows:[1],concept:'slight-offset-head',evidencePrior:.88,breakIntent:'second-row-sides'}),
-    mirror('ten-control','中オフセット・第2列経路',-halfY,{x:nearX,speed:8.45,aimOffset:.24,power:.84,control:.86,routeRows:[1],concept:'medium-offset-head',evidencePrior:.73,breakIntent:'second-row-sides'}),
-    mirror('ten-control','中オフセット・第2列経路',halfY,{x:nearX,speed:8.45,aimOffset:.24,power:.84,control:.86,routeRows:[1],concept:'medium-offset-head',evidencePrior:.73,breakIntent:'second-row-sides'}),
-    mirror('ten-side-head','三角ラック読解・サイドから①',-sideY,{speed:8.58,aimOffset:.42,power:.91,control:.72,routeIds:[1],concept:'contextual-side-head',evidencePrior:.58,breakIntent:'one-to-side'}),
-    mirror('ten-side-head','三角ラック読解・サイドから①',sideY,{speed:8.58,aimOffset:.42,power:.91,control:.72,routeIds:[1],concept:'contextual-side-head',evidencePrior:.58,breakIntent:'one-to-side'})
+    // v8.58：実ラック（0.12〜0.30mmの隙間）10ラック×3撞き・プロの撞きで実測。小オフセットから①へ正面・少し引き・8.6〜9.4m/sが
+    // 成功50〜60%・ファウル0%（プロの実績46〜58%と一致）。サイドからの①カットはファウル83〜100%だったので事前評価を下げた。
+    mirror('ten-square-control','小オフセット・①へ正面',-.12,{x:-.69,speed:8.8,aimOffset:0,tipX:0,tipY:-.20,power:.90,control:.96,routeRows:[1],concept:'slight-offset-head',evidencePrior:.97,breakIntent:'second-row-sides'}),
+    mirror('ten-square-control','小オフセット・①へ正面', .12,{x:-.69,speed:8.8,aimOffset:0,tipX:0,tipY:-.20,power:.90,control:.96,routeRows:[1],concept:'slight-offset-head',evidencePrior:.97,breakIntent:'second-row-sides'}),
+    mirror('ten-control','中オフセット・第2列経路',-halfY,{x:nearX,speed:8.45,aimOffset:.24,power:.84,control:.86,routeRows:[1],concept:'medium-offset-head',evidencePrior:.45,breakIntent:'second-row-sides'}),
+    mirror('ten-control','中オフセット・第2列経路',halfY,{x:nearX,speed:8.45,aimOffset:.24,power:.84,control:.86,routeRows:[1],concept:'medium-offset-head',evidencePrior:.45,breakIntent:'second-row-sides'}),
+    mirror('ten-side-head','三角ラック読解・サイドから①',-sideY,{speed:8.58,aimOffset:.42,power:.91,control:.72,routeIds:[1],concept:'contextual-side-head',evidencePrior:.20,breakIntent:'one-to-side'}),
+    mirror('ten-side-head','三角ラック読解・サイドから①',sideY,{speed:8.58,aimOffset:.42,power:.91,control:.72,routeIds:[1],concept:'contextual-side-head',evidencePrior:.20,breakIntent:'one-to-side'})
   ];
   if(game==='eight')return [
     mirror('eight-front-possession','実測・厚めヘッドで攻撃継続',-.17,{x:nearX,speed:8.10,aimOffset:.80,tipX:0,tipY:-.16,power:.90,control:1,routeRows:[1],concept:'slight-offset-head',evidencePrior:.86,breakIntent:'head-ball-squat-and-run'}),
@@ -37360,17 +37423,20 @@ const TOURNAMENT_BREAK_BOOK=Object.freeze({
       experienceCertified:true,experienceExactOnly:true,strictPerfectRackCertified:true,releaseAimToleranceDeg:0}),
     Object.freeze({cue:Object.freeze([-.7055,.30]),speed:9.384,aimOffset:.71,tipX:0,tipY:.05,target:'apex',
       family:'ten-perfect-window-runout-R',label:'右オフセット・得点窓＋取り切り線［キッチン全域］',concept:'scoring-window-runout',
-      evidencePrior:1,targetId:1,moved:7,potted:1,peak:.03,settled:.02,opening:.4699532398,score:-3.3816550494,
+      evidencePrior:.55,targetId:1,moved:7,potted:1,peak:.03,settled:.02,opening:.4699532398,score:-3.3816550494,
       experienceCertified:true,releaseAimToleranceDeg:.04}),
     Object.freeze({cue:Object.freeze([-.7055,.30]),speed:8.00,aimOffset:.75,tipX:0,tipY:-.10,target:'apex',
       family:'ten-scoring-possession-R',label:'右オフセット・得点継続線［キッチン全域］',concept:'scoring-possession',
-      evidencePrior:.99,targetId:1,moved:7,potted:1,peak:.03,settled:.02,opening:.6181314450,score:-2.8072226646}),
+      evidencePrior:.50,targetId:1,moved:7,potted:1,peak:.03,settled:.02,opening:.6181314450,score:-2.8072226646}),
     Object.freeze({cue:Object.freeze([-.86,0]),speed:9.05,aimOffset:-.36,tipX:0,tipY:-.10,target:'apex',
       family:'ten-measured-route-L',label:'中央・第2列左サイド経路［キッチン全域］',concept:'square-head-route-L',evidencePrior:.85,targetId:1,moved:9,potted:2,peak:.010,settled:.010,opening:.801,score:-5.10}),
     Object.freeze({cue:Object.freeze([-.86,0]),speed:9.05,aimOffset:.36,tipX:0,tipY:-.10,target:'apex',
       family:'ten-measured-route-R',label:'中央・第2列右サイド経路［キッチン全域］',concept:'square-head-route-R',evidencePrior:.85,targetId:1,moved:9,potted:2,peak:.010,settled:.010,opening:.801,score:-5.10}),
-    Object.freeze({cue:Object.freeze([-.72,-.12]),speed:8.55,aimOffset:.08,tipX:.02,tipY:.055,target:'apex',
-      family:'ten-square-control-L',label:'小オフセット・厚い①・左［キッチン全域］',concept:'slight-offset-head',evidencePrior:.88,targetId:1,moved:9,potted:1,peak:.03,settled:.02,opening:.70,score:-4.10})
+    // v8.58：実ラック実測（成功50〜60%・ファウル0%）で置き換え。左右とも持つ。
+    Object.freeze({cue:Object.freeze([-.69,-.12]),speed:8.8,aimOffset:0,tipX:0,tipY:-.20,target:'apex',
+      family:'ten-square-control-L',label:'小オフセット・①へ正面・左［キッチン全域］',concept:'slight-offset-head',evidencePrior:.97,targetId:1,moved:9,potted:1,peak:.03,settled:.02,opening:.70,score:-4.10}),
+    Object.freeze({cue:Object.freeze([-.69,.12]),speed:8.8,aimOffset:0,tipX:0,tipY:-.20,target:'apex',
+      family:'ten-square-control-R',label:'小オフセット・①へ正面・右［キッチン全域］',concept:'slight-offset-head',evidencePrior:.97,targetId:1,moved:9,potted:1,peak:.03,settled:.02,opening:.70,score:-4.10})
   ]),
   'eight|default':Object.freeze([
     Object.freeze({cue:Object.freeze([-.745985813,.114826381]),speed:7.886223245,
@@ -39951,6 +40017,20 @@ async function planKairunTurnCooperative(balls=S.balls,options={}){
       result=await kairunCooperativeEvaluate(working,task,stage,opening,token,{maxT:best.exactBookCertificate?14:9,
         dt:PH.DT});attempted++;
     if(result){ok++;minArrival=Math.min(minArrival,result.arrivalSpeed);if(tag==='slow')slowOK=true;}
+  }
+  // 今のSTEPが半分も通らない線は、次STEPの形が良くてもプロは選ばない（失敗すれば手番が終わる）。
+  // 撞き誤差のある段位では、他の実走済み候補の通る幅も測り、明らかに広い線へ替える。
+  const robust0=attempted>1?ok/attempted:null;
+  if(aiStrokeGradeKey(MATCH.turn)!=='ideal'&&robust0!=null&&robust0<.6&&exact.length>1&&!expired(650)){
+    const same=(x,y)=>Math.abs(x.prm.aim-y.prm.aim)<1e-6&&Math.abs(x.prm.speed-y.prm.speed)<1e-6;let bestAlt=null;
+    for(const alt of exact.filter(x=>!same(x,best)).slice(0,2)){
+      if(!alive()||expired(520))break;let aok=1,att=1;
+      for(const [da,sm] of kairunDeliveryVariants(stage)){if(!alive()||expired(460))break;
+        const task={...(alt._cooperativeTask||alt),prm:{...alt.prm,aim:alt.prm.aim+da*D2R,speed:alt.prm.speed*sm}};
+        if(await kairunCooperativeEvaluate(working,task,stage,opening,token,{maxT:9,dt:PH.DT}))aok++;att++;}
+      const rate=aok/att;if(att>2&&rate>=robust0+.2&&rate>(bestAlt?.rate??0))bestAlt={alt,rate,aok,att};}
+    if(bestAlt){best={...bestAlt.alt,currentRobustChoice:true};ok=bestAlt.aok;attempted=bestAlt.att;slowOK=false;
+      minArrival=best.arrivalSpeed??Infinity;trace.currentRobust={from:robust0,to:bestAlt.rate};}
   }
   const robust=attempted>1?ok/attempted:null;best={...best,kind:'kairun',robust,confidence:attempted===1?.5:robust,slowOK,minArrivalSpeed:minArrival,
     cooperativeSearch:true,toleranceVerified:attempted>1,successfulTrials:ok,verifiedTrials:attempted,analysisMs:performance.now()-started,
@@ -49290,7 +49370,11 @@ function tournamentLastLegalProgressPlan(actor=MATCH.turn){
 function aiStopSameStateLoop(actor=MATCH.turn,reason='replan-limit'){
   clearAIWatchdog();cancelCoach(true);AI_RUNTIME_CONTROL.recoveryActive=false;AI_RUNTIME_CONTROL.cancelled=true;
   MATCH.aiBusy=false;MATCH.aiPlan=null;
-  const count=MATCH.aiReplanCount,limit=AI_REPLAN_LIMIT,rescue=tournamentLastLegalProgressPlan(actor),
+  // 同じ局面で救済線を何度も差し戻されたら、それ以上は救済を作らず競技時計の進行へ移る（無限ループ防止）。
+  const turnKey=aiRecoveryTurnKey(actor);
+  if(MATCH.aiRescueKey!==turnKey){MATCH.aiRescueKey=turnKey;MATCH.aiRescueCount=0;}
+  MATCH.aiRescueCount=(MATCH.aiRescueCount||0)+1;
+  const count=MATCH.aiReplanCount,limit=AI_REPLAN_LIMIT,rescue=MATCH.aiRescueCount<=2?tournamentLastLegalProgressPlan(actor):null,
     token=++MATCH.aiToken;
   if(rescue?.plan?.prm&&rescue.commit?.ok){
     MATCH.aiBusy=true;finishAIThinking('合法進行線を確定');updateHUD();
@@ -49855,7 +49939,11 @@ function executeAIPlan(plan,token,recovered=false,actor=MATCH.turn){
     // 14-1の役割球保護はラック終盤だけの契約。オープニングの15球ラックへ
     // 適用すると、物理合格済みの薄当てセーフティを通常ショットへ差し替え、
     // breaking foul→再ラックを繰り返してしまう。opening break は専用監査だけを通す。
-    if(S.rules?.game==='straight'&&!aiOpeningBreakPlan(plan)){
+    // 有限再解析の上限で選ばれた「合法な最終進行線」は、役割球を守れなくても撞く。
+    // ここで再び差し戻すと、再解析→救済→差し戻しの無限ループで台が止まる（14-1の穴前2球で再現）。
+    if(S.rules?.game==='straight'&&!aiOpeningBreakPlan(plan)&&plan?.boundedSameStateRecovery){
+      addEventLog('有限再解析の上限 — 役割球の保護より手番の進行を優先して合法線を撞く','14-1');
+    } else if(S.rules?.game==='straight'&&!aiOpeningBreakPlan(plan)){
       const cue=cueBall();straightEnsureEndPlan(S.balls,cue?[cue.p[0],cue.p[1]]:null);
       const rolePlan=straightPatternContext(S.balls,cue?[cue.p[0],cue.p[1]]:null),violation=straightEndPatternCandidateViolation(plan,S.balls,rolePlan);
       if(violation){const replacement=rolePlan.breakShotDue?planStraightContinuationBreak({fast:false,maxMs:2400}):quickVerifiedPoolEmergencyPlan(),
@@ -51856,11 +51944,12 @@ const CO = {
       // 基準点が近すぎて方向が不安定な時は、ポケットの奥（法線方向へ7cm）を狙い点にする。
       // 穴前の球は口の中で受ける幅が広い。奥の中央と左右寄りの3点から、最も厚く当てられる狙い点を選ぶ。
       let tx=pk.x,ty=pk.y,odx=tx-ob.p[0],ody=ty-ob.p[1],objDist=Math.hypot(odx,ody);
-      // 9/10ボールは的球が決まっているので、穴前の球を入れない理由は無い。
-      // 8ボール・ローテーション・14-1は穴前の球を「保険」「棚」として扱う専用の読みが
-      // 既にあり、ここでは従来どおり候補にしない（そちらの判断を壊さない）。
+      // 9/10ボールは的球が決まっているので、穴前の球を入れない理由は無い。14-1も同じで、
+      // 穴前の球が見えないと終盤に「入れる球が無い」と判断して台が止まった（穴前2球で再現）。
+      // 8ボール・ローテーションは穴前の球を「保険」「棚」として扱う専用の読みが既にあり、
+      // ここでは従来どおり候補にしない（そちらの判断を壊さない）。
       const hanger=objDist<0.075;
-      if(hanger&&(!pk.n||!['nine','ten'].includes(S.rules?.game)))continue;
+      if(hanger&&(!pk.n||!['nine','ten','straight'].includes(S.rules?.game)))continue;
       const aimPoints=hanger?[0,.022,-.022].map(o=>[pk.x+pk.n[0]*.07-pk.n[1]*o,pk.y+pk.n[1]*.07+pk.n[0]*o]):[[pk.x,pk.y]];
       let pick=null;
       for(const [ax,ay] of aimPoints){const dx=ax-ob.p[0],dy=ay-ob.p[1],d=Math.hypot(dx,dy);if(d<0.03)continue;
@@ -54066,6 +54155,10 @@ function straightEndPatternCandidateViolation(candidate,before=S.balls,plan=null
     // centre and both +/-0.08 degree edges.  The next turn then reads the real
     // fourteen-ball rack rather than trusting this older pre-rack proxy.
     if(certifiedFreshRerackCash)return null;
+    // 14点目を確実に入れられるなら、ブレイク球の角度が無くても入れる（+1点で手番が続き、次は再ラックからの守りを選べる）。
+    // ここで差し戻すと、残り2球で両者が守り合うだけの長い膠着になった（実戦で38手番0点を確認）。
+    const sureCash=Math.max(+candidate.robust||0,+candidate.makeProb||0,+candidate.potProb||0);
+    if(sureCash>=.85)return null;
     if(!finalPair.breakBall)return pattern?.rolesLocked
       ?'break-ball-consumed-before-rerack':'unlocked-end-pair-has-no-break-ball';
     if(!pattern?.rolesLocked)return 'unlocked-key-ball-misses-post-rerack-break-angle';
@@ -64251,7 +64344,7 @@ requestAnimationFrame(() => {
 });
 
 // テスト用フック
-window.__api = { S, PH, ENV, MATCH, POCKETS, CO, coachBank, coachKick, coachSpecial, coachThink, coachSafety,
+window.__api = { S, PH, ENV, MATCH, POCKETS, CO, proReadBestMake, proReadFollowUpQuality, proReadRotationFoulReplyQ, coachBank, coachKick, coachSpecial, coachThink, coachSafety,
   tournamentBreakProfileAim,breakContinuationFutureIds,tournamentBreakOpeningQuality,tournamentBreakRouteIds,tournamentBreakPostSpotState,breakEightGroupRoutes,kairunOpeningGather,simulateShotWithSparseComponentCertificate,
   aiPhysicsStateKey,ANTI_CONCESSION_POLICY_VERSION,tournamentLegalTargetSignature,
   tournamentIntentionalFoulLastResortProof,tournamentIntentionalFoulProofMatches,
@@ -73731,7 +73824,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script data-v6-source="scripts/16-nine-world-class-test.js">
 (function(){
   const api=window.BILLIARD_LAB_TEST_API,core=window.__api;if(!api||!core)return;
-  api.version='8.57.1';
+  api.version='8.58.0';
   api.nineWorldClassDecisionGate=async function(){
     const saved={balls:core.S.balls,rules:core.S.rules,turn:core.MATCH.turn,mode:core.MATCH.mode,opp:core.MATCH.opponent,tempo:core.MATCH.matchTempo};
     const cases=[
